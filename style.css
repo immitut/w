@@ -99,7 +99,7 @@ body {
     --radius: 3rem;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
-    scroll-snap-align: end;
+/*     scroll-snap-align: end; */
     line-height: 3rem;
     background-color: var(--card-bg-color);
 /*     border: 1px solid var(--border-color); */
