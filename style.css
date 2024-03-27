@@ -146,7 +146,7 @@ body {
   .footer {
     padding-top: 15rem;
     line-height: 3rem;
-    scroll-snap-align: end;
+/*     scroll-snap-align: end; */
     font-size: var(--small-font-size);
     text-align: center;
     a {
