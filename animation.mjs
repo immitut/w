@@ -55,12 +55,12 @@ function updateStyles() {
   // const { scrollTop: scroll } = appEl;
   // console.log("updateStyles:", scroll);
   header.style.transform = translateAnimation(scroll, {
-    endValue: -36,
+    endValue: -34,
   });
   const action = scroll === 0 ? "remove" : "add";
   header.classList[action]("shadow");
   temp_cur.style.transform = transformAnimation(scroll, { endValue: 6 });
-  icon_main.style.transform = transformAnimation(scroll, { endValue: 30 });
+  icon_main.style.transform = transformAnimation(scroll, { endValue: 28 });
   temp_secondary.style.opacity = opacityAnimation(scroll, {
     scrollEnd: SCROLLEND / 4,
     endValue: 0,
