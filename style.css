@@ -22,7 +22,7 @@ body {
 
 :root {
   --max-font-size: 5rem;
-  --normal-font-size: 2rem;
+  --normal-font-size: 1.5rem;
   --small-font-size: 12px;
   --bg-color: #212121;
   --font-color: #fff;
@@ -39,7 +39,7 @@ body {
   background: var(--bg-color);
   font-size: var(--normal-font-size);
   color: var(--font-color);
-  font-weight: 600;
+  /* font-weight: 600; */
   user-select: none;
 }
 
@@ -96,6 +96,7 @@ body {
 .content {
   margin: 0 1rem;
   .items {
+    position: relative;
     --radius: 3rem;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
@@ -136,10 +137,11 @@ body {
       }
     }
 
-    &.overview {
+    &.one-line {
       line-height: 3rem;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
   }
 
@@ -155,6 +157,47 @@ body {
   }
 }
 
+.sun_info {
+  position: relative;
+  --sunrisePer: calc(var(--time_sunrise) / 0.24 * 1%);
+  --sunsetPer: calc(var(--time_sunset) / 0.24 * 1%);
+  display: block;
+  width: 96%;
+  aspect-ratio: 3;
+  /* height: 10rem; */
+  margin: 2rem auto;
+  border-radius: 50%/100% 100% 0 0;
+  border: 1px solid var(--font-color);
+  font-size: var(--small-font-size);
+  background-image: linear-gradient(
+    to right,
+    transparent calc(var(--sunrisePer) - 2px),
+    red calc(var(--sunrisePer)),
+    transparent calc(var(--sunrisePer)),
+    transparent calc(var(--sunsetPer) - 2px),
+    #e96e50 calc(var(--sunsetPer)),
+    transparent calc(var(--sunsetPer))
+  );
+
+  .time_sunrise {
+    position: absolute;
+    bottom: -3rem;
+    left: calc(var(--sunrisePer));
+    transform: translateX(-50%);
+    &::before {
+      content: "日出 ";
+    }
+  }
+  .time_sunset {
+    position: absolute;
+    bottom: -3rem;
+    left: calc(var(--sunsetPer));
+    transform: translateX(-50%);
+    &::before {
+      content: "日落 ";
+    }
+  }
+}
 .deg_wind {
   position: relative;
   text-align: center;
@@ -167,8 +210,9 @@ body {
 
   &::before {
     display: block;
+    font-size: 12px;
     content: "N";
-    transform: translate(-54%, -50%) scale(0.3);
+    transform: translate(-54%, -50%) scale(0.6);
     position: absolute;
     top: 0;
     left: 1.5rem;
@@ -176,7 +220,7 @@ body {
   &::after {
     display: block;
     content: "↓";
-    transform: rotate(var(--deg));
+    transform: scale(1.4) rotate(var(--deg));
   }
 }
 

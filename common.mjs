@@ -8,18 +8,18 @@ export function tempRander(value) {
 
 export function timeRander(t) {
   const d = new Date(t * 1000);
-  const hour = _zeroPrefix(d.getHours());
-  const min = _zeroPrefix(d.getMinutes());
-  return `${hour}:${min}`;
+  const h = _zeroPrefix(d.getHours());
+  const m = _zeroPrefix(d.getMinutes());
+  return { h, m };
 }
 
-export function dateRander(t) {
-  const d = new Date(t * 1000);
-  const m = _zeroPrefix(d.getMonth() + 1);
-  const day = _zeroPrefix(d.getDate());
-  const time = timeRander(t);
-  return `${m}.${day} ${time}`;
-}
+// export function dateRander(t) {
+//   const d = new Date(t * 1000);
+//   const m = _zeroPrefix(d.getMonth() + 1);
+//   const day = _zeroPrefix(d.getDate());
+//   const time = timeRander(t);
+//   return `${m}.${day} ${time}`;
+// }
 
 export function _getIconPath(value) {
   if (!value) return null;
@@ -42,7 +42,7 @@ export function _getIconPath(value) {
   let icon = map[i] ?? "unknown";
   const styles = ["dark", "light"];
   if (icon.endsWith("-")) icon += types[t];
-  return `./assets/icons/${styles[1]}/${icon}.png`; // ./assets/icons/dark/unknown.png
+  return `./assets/icons/${styles[0]}/${icon}.png`; // ./assets/icons/dark/unknown.png
 }
 
 export function _toQueryString(o) {

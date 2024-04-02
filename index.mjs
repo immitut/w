@@ -26,10 +26,15 @@ const proxy = new Proxy(
         value = `${value}%`;
       }
       if (key.startsWith("spe_")) {
-        value = `${value?.toFixed(1)}m/sec`;
+        value = `${value?.toFixed(1)}m/s`;
       }
       if (key.startsWith("time_")) {
-        value = timeRander(value);
+        const { h, m } = timeRander(value);
+        document.documentElement.style.setProperty(
+          `--${key}`,
+          (+h + m / 60).toFixed(2)
+        );
+        value = `${h}:${m}`;
       }
       if (key.startsWith("icon_")) {
         updateIcon(key, value);
@@ -59,7 +64,8 @@ function renderList(list) {
     const div = document.createElement("div");
     div.classList.add("item_forecast");
     const time = document.createElement("p");
-    time.textContent = timeRander(dt);
+    const { h, m } = timeRander(dt);
+    time.textContent = `${h}:${m}`;
     const icon = document.createElement("img");
     icon.src = _getIconPath(weather?.[0]?.icon);
     const temp = document.createElement("p");
@@ -109,13 +115,11 @@ async function init() {
   const curr = await getCurrWeather(geoData);
   const forecast = await getForecastWeather({ cnt: 8, ...geoData });
   const aqi = await getAQI(geoData);
-  // console.log(aqi.list.length);
   const data = {
     ...curr,
     forecast: forecast.list,
     aqi: aqi.list[0],
   };
-  // console.log(data);
   updateData(data);
   loading(false);
 }
