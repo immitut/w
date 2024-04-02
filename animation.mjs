@@ -1,7 +1,7 @@
 import { $ } from "./common.mjs";
 
 const SCROLLSTART = 60;
-const SCROLLEND = 400;
+const SCROLLEND = 440;
 
 function creatAnimation(
   scrollStart = SCROLLSTART,
@@ -50,19 +50,21 @@ function opacityAnimation(
 }
 
 function updateStyles() {
-  // const { scrollY: scroll } = window;
   const { scrollTop: scroll } = document.body;
   // const { scrollTop: scroll } = appEl;
   // console.log("updateStyles:", scroll);
+  header.classList.toggle("shadow", scroll >= SCROLLEND);
   header.style.transform = translateAnimation(scroll, {
+    scrollStart: 0,
     endValue: -34,
   });
-  const action = scroll === 0 ? "remove" : "add";
-  header.classList[action]("shadow");
   temp_cur.style.transform = transformAnimation(scroll, { endValue: 6 });
-  icon_main.style.transform = transformAnimation(scroll, { endValue: 28 });
+  icon_main.style.transform = transformAnimation(scroll, {
+    scrollStart: 30,
+    endValue: 30,
+  });
   temp_secondary.style.opacity = opacityAnimation(scroll, {
-    scrollEnd: SCROLLEND / 4,
+    scrollEnd: SCROLLEND * 0.4,
     endValue: 0,
     startValue: 1,
   });
@@ -75,5 +77,4 @@ const temp_secondary = $(".temp_secondary");
 const icon_main = $(".icon_main");
 
 document.body.addEventListener("scroll", updateStyles);
-// document.addEventListener("scroll", updateStyles);
 updateStyles();
