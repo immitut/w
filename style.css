@@ -74,7 +74,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  height: 42rem;
+  /* height: 80%; */
+  height: 40rem;
   background: var(--bg-color);
   /* backdrop-filter: blur(20px); */
 
