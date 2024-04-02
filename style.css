@@ -99,10 +99,10 @@ body {
     --radius: 3rem;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
-/*     scroll-snap-align: end; */
+    /*     scroll-snap-align: end; */
     line-height: 3rem;
     background-color: var(--card-bg-color);
-/*     border: 1px solid var(--border-color); */
+    /*     border: 1px solid var(--border-color); */
     margin-top: 1rem;
     &.forecast {
       margin-top: 0;
@@ -146,7 +146,7 @@ body {
   .footer {
     padding-top: 15rem;
     line-height: 3rem;
-/*     scroll-snap-align: end; */
+    /*     scroll-snap-align: end; */
     font-size: var(--small-font-size);
     text-align: center;
     a {
@@ -154,15 +154,32 @@ body {
     }
   }
 }
+
 .deg_wind {
+  position: relative;
   text-align: center;
   border-radius: 100%;
   width: 3rem;
   aspect-ratio: 1/1;
   color: var(--font-color);
   border: 1px solid var(--font-color);
-  transform: scale(1.4) rotate(var(--deg));
+  transform: scale(1.4);
+
+  &::before {
+    display: block;
+    content: "N";
+    transform: translate(-54%, -50%) scale(0.3);
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+  }
+  &::after {
+    display: block;
+    content: "↓";
+    transform: rotate(var(--deg));
+  }
 }
+
 .loading {
   filter: blur(10px);
   overflow: hidden;
