@@ -79,8 +79,33 @@ function renderList(list) {
   return frag;
 }
 
+const _switchTheme = switchTheme();
 window.onload = init;
 $(".icon_main").onclick = init;
+$(".version").onclick = _switchTheme;
+
+function switchTheme() {
+  let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = {
+    dark: {
+      "bg-color": "33, 33, 33",
+      "font-color": "255, 255, 255",
+      "card-bg-color": "51, 51, 51",
+    },
+    light: {
+      "bg-color": "238, 238, 238",
+      "font-color": "51, 51, 51",
+      "card-bg-color": "246, 246, 246",
+    },
+  };
+  return function () {
+    isDark = !isDark;
+    const currTheme = theme[isDark ? "dark" : "light"];
+    for (const prop in currTheme) {
+      document.body.style.setProperty(`--${prop}`, currTheme[prop]);
+    }
+  };
+}
 
 function loading(isLoading) {
   const action = isLoading ? "add" : "remove";

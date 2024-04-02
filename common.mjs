@@ -40,9 +40,10 @@ export function _getIconPath(value) {
     n: "night",
   };
   let icon = map[i] ?? "unknown";
-  const styles = ["dark", "light"];
+  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const style = isDarkMode ? "dark" : "light";
   if (icon.endsWith("-")) icon += types[t];
-  return `./assets/icons/${styles[0]}/${icon}.png`; // ./assets/icons/dark/unknown.png
+  return `./assets/icons/${style}/${icon}.png`; // ./assets/icons/dark/unknown.png
 }
 
 export function _toQueryString(o) {
