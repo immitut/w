@@ -50,7 +50,9 @@ function opacityAnimation(
 }
 
 function updateStyles() {
-  const { scrollTop: scroll } = appEl;
+  // const { scrollY: scroll } = window;
+  const { scrollTop: scroll } = document.body;
+  // const { scrollTop: scroll } = appEl;
   // console.log("updateStyles:", scroll);
   header.style.transform = translateAnimation(scroll, {
     endValue: -36,
@@ -66,12 +68,12 @@ function updateStyles() {
   });
 }
 
-const appEl = $(".app");
+// const appEl = $(".app");
 const header = $(".header");
 const temp_cur = $(".temp_cur");
 const temp_secondary = $(".temp_secondary");
 const icon_main = $(".icon_main");
 
-appEl.addEventListener("scroll", () => {
-  updateStyles();
-});
+document.body.addEventListener("scroll", updateStyles);
+// document.addEventListener("scroll", updateStyles);
+updateStyles();

@@ -84,7 +84,7 @@ $(".icon_main").onclick = init;
 
 function loading(isLoading) {
   const action = isLoading ? "add" : "remove";
-  $(".app").classList[action]("loading");
+  $("body").classList[action]("loading");
 }
 
 function updateIcon(key, value) {
@@ -127,8 +127,8 @@ async function init() {
 function updateData({ main, wind, sys, weather, dt, clouds, aqi, forecast }) {
   const data = {
     temp_cur: main?.temp,
-    temp_min: main?.temp_min,
-    temp_max: main?.temp_max,
+    // temp_min: main?.temp_min,
+    // temp_max: main?.temp_max,
     per_humidity: main?.humidity,
     per_clouds: clouds?.all,
     spe_wind: wind?.speed,

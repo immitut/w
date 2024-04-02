@@ -14,6 +14,10 @@ a {
   text-decoration: none;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 html,
 body {
   height: 100%;
@@ -24,13 +28,16 @@ body {
   --max-font-size: 5rem;
   --normal-font-size: 1.5rem;
   --small-font-size: 12px;
+
   --bg-color: #212121;
   --font-color: #fff;
   --border-color: rgba(255, 255, 255, 0.8);
   --card-bg-color: #333;
-  /* --bg-color: rgb(238, 238, 238);
+
+  --bg-color: rgb(238, 238, 238);
   --font-color: #333;
-  --border-color: rgba(51, 51, 51, 0.2); */
+  --border-color: rgba(51, 51, 51, 0.2);
+  --card-bg-color: #f6f6f6;
 }
 
 body {
@@ -39,34 +46,35 @@ body {
   background: var(--bg-color);
   font-size: var(--normal-font-size);
   color: var(--font-color);
-  /* font-weight: 600; */
+  font-weight: 600;
   user-select: none;
+  scrollbar-width: none;
+  overflow-y: auto;
+  filter: blur(0px);
+  max-width: 55rem;
+  margin: 0 auto;
 }
+
+/* @supports (-webkit-touch-callout: none) {
+  body {
+    height: -webkit_fill_available;
+  }
+} */
 
 .app {
   position: relative;
-  height: 100vh;
-  /* mix-blend-mode: difference; */
-  max-width: 55rem;
-  margin: 0 auto;
-  filter: blur(0px);
-  scroll-snap-type: y proximity;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+  /* height: 100vh; */
+  /* scroll-snap-type: y proximity; */
   transition: filter 0.4s ease-out;
 }
 .shadow {
-  box-shadow: 0 -4px 8px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.2);
 }
 .header {
   position: sticky;
   top: 0;
-  text-align: left;
+  z-index: 10;
   height: 42rem;
-  /* height: 80%; */
-  /* height: 50%; */
-  /* padding: 10rem 0 1rem; */
   background: var(--bg-color);
   /* backdrop-filter: blur(20px); */
 
@@ -97,6 +105,7 @@ body {
   margin: 0 1rem;
   .items {
     position: relative;
+    z-index: 1;
     --radius: 3rem;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
@@ -144,17 +153,6 @@ body {
       align-items: center;
     }
   }
-
-  .footer {
-    padding-top: 15rem;
-    line-height: 3rem;
-    /*     scroll-snap-align: end; */
-    font-size: var(--small-font-size);
-    text-align: center;
-    a {
-      color: #e96e50 !important;
-    }
-  }
 }
 
 .sun_info {
@@ -164,7 +162,6 @@ body {
   display: block;
   width: 96%;
   aspect-ratio: 3;
-  /* height: 10rem; */
   margin: 2rem auto;
   border-radius: 50%/100% 100% 0 0;
   border: 1px solid var(--font-color);
@@ -228,4 +225,15 @@ body {
   filter: blur(10px);
   overflow: hidden;
   pointer-events: none;
+}
+
+.footer {
+  padding-top: 15rem;
+  line-height: 3rem;
+  /*     scroll-snap-align: end; */
+  font-size: var(--small-font-size);
+  text-align: center;
+  a {
+    color: #e96e50 !important;
+  }
 }
