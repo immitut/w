@@ -68,6 +68,7 @@ function renderList(list) {
     time.textContent = `${h}:${m}`;
     const icon = document.createElement("img");
     icon.src = _getIconPath(weather?.[0]?.icon);
+    icon.alt = weather?.[0]?.description;
     const temp = document.createElement("p");
     temp.textContent = tempRander(main?.temp);
 
