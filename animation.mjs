@@ -76,5 +76,7 @@ const temp_cur = $(".temp_cur");
 const temp_secondary = $(".temp_secondary");
 const icon_main = $(".icon_main");
 
-document.body.addEventListener("scroll", updateStyles);
+document.body.addEventListener("scroll", updateStyles, {
+  passive: true,
+});
 updateStyles();

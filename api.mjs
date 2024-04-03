@@ -16,7 +16,6 @@ const getInfo = async (api, { cached = false } = {}) => {
     _cache.delete(api);
   }
   try {
-    // const data = ;
     return await fetch(api)
       .then((res) => res.json())
       .then((data) => {
