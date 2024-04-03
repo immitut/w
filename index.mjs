@@ -138,9 +138,11 @@ async function init() {
   // console.log(geoData);
   if (!geoData) return;
 
-  const curr = await getCurrWeather(geoData);
-  const forecast = await getForecastWeather({ cnt: 8, ...geoData });
-  const aqi = await getAQI(geoData);
+  const [curr, forecast, aqi] = await Promise.all([
+    getCurrWeather(geoData),
+    getForecastWeather({ cnt: 8, ...geoData }),
+    getAQI(geoData),
+  ]);
   const data = {
     ...curr,
     forecast: forecast.list,

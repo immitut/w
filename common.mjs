@@ -72,7 +72,7 @@ export function initGeo() {
           });
         },
         function (err) {
-          console.error(`[Error code${err.code}]: ${err.message}`);
+          console.log(`[code:${err.code}] ${err.message}`);
           resolve(defaultPos);
         }
       );
@@ -121,11 +121,10 @@ export function AQIcalculation(data) {
       max = res;
       x = k;
     }
-    console.log(res, k);
+    // console.log(res, k);
   }
   console.log(max, x);
   const finalRange = [0, 50, 100, 150, 200, 300, Infinity];
   const fin = finalRange.findIndex((y) => y >= max);
-  console.log(fin);
   return fin;
 }
