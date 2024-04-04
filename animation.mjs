@@ -1,7 +1,5 @@
 import { $ } from "./common.mjs";
-const _1REM = 12;
-// const _1REM = document.documentElement.style.getPropertyValue("--rem");
-
+const _1REM = parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
 const SCROLLSTART = 5 * _1REM;
 const SCROLLEND = 38 * _1REM;
 
