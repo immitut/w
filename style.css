@@ -229,8 +229,11 @@ body {
   }
   &::after {
     display: block;
-    content: "↓";
-    transform: rotate(var(--deg)) scaleY(1.5);
+    /* content: "↓"; */
+    /* content: "⇂"; */
+    content: "➤";
+    transform: rotate(calc(var(--deg) + 90deg)) scaleY(0.8) translateX(2px);
+    /* transform: rotate(var(--deg)) scaleY(1.5); */
   }
 }
 
@@ -241,7 +244,7 @@ body {
 }
 
 .footer {
-  padding-top: 30rem;
+  padding: 30rem 0 1rem;
   line-height: 2rem;
   /*     scroll-snap-align: end; */
   font-size: var(--small-font-size);

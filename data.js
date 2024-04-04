@@ -25,7 +25,7 @@ export const data = {
   visibility: 10000,
   wind: {
     speed: 3.82,
-    deg: 43,
+    deg: 180,
     gust: 3.95,
   },
   clouds: {
