@@ -360,5 +360,9 @@ export function _mockData() {
       dt: 1711442741,
     },
   };
-  return data;
+  return new Promise((r) => {
+    setTimeout(() => {
+      r(data);
+    }, 1e3);
+  });
 }
