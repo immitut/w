@@ -159,7 +159,8 @@ async function init() {
 
   if (isDevEnv()) {
     import("./dev.mjs");
-    ({ data } = await import("./data.mjs"));
+    const { _mockData } = await import("./data.mjs");
+    data = _mockData();
   } else {
     const [curr, forecast, aqi] = await Promise.all([
       getCurrWeather(geoData),
