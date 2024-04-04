@@ -119,7 +119,7 @@ function switchTheme() {
     const currTheme = theme[isDark ? "dark" : "light"];
     for (const prop in currTheme) {
       if (prop === "bg-color") {
-        // $("#theme-color").setAttribute("content", `rgb(${currTheme[prop]})`);
+        $("#theme-color").setAttribute("content", `rgb(${currTheme[prop]})`);
       }
       $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
     }
