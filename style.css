@@ -34,15 +34,16 @@ html {
   --middle-font-size: 2.5rem;
   --normal-font-size: 1.5rem;
   --small-font-size: 12px;
+  --radius: 3rem;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --bg-color: 33, 33, 33;
     --font-color: 255, 255, 255;
     --card-bg-color: 51, 51, 51;
   }
-}
+} */
 
 @supports (font-variation-settings: normal) {
   body {
@@ -116,16 +117,16 @@ body {
   .items {
     position: relative;
     z-index: 1;
-    --radius: 3rem;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
     /*     scroll-snap-align: end; */
     line-height: 3rem;
     background-color: rgb(var(--card-bg-color));
     transition: all 0.4s ease-out;
-    margin-top: 1rem;
+    &:not(:first-child) {
+      margin-top: 1rem;
+    }
     &.forecast {
-      margin-top: 0;
       font-size: var(--small-font-size);
       overflow-x: auto;
       overscroll-behavior-x: none;
@@ -158,7 +159,6 @@ body {
     }
 
     &.one-line {
-      line-height: 3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
