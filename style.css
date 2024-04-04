@@ -133,6 +133,7 @@ body {
       margin-top: 0;
       font-size: var(--small-font-size);
       overflow-x: auto;
+      overscroll-behavior-x: none;
       scroll-snap-type: x mandatory;
       scrollbar-width: none;
       .list_forecast {
@@ -147,13 +148,12 @@ body {
           scroll-snap-align: start;
           border-radius: 1rem;
           height: 6rem;
+          padding: 0 1.3rem;
           text-align: center;
           &:last-child {
             margin-right: 6rem;
           }
           P {
-            width: 6rem;
-            /* width: 6.5rem; */
             line-height: 1rem;
           }
           img {
