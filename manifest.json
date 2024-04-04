@@ -1,0 +1,19 @@
+{
+	"name": "天气",
+	"short_name": "天气",
+	"lang": "zh-CN",
+	"start_url": "../index.html",
+	"display": "standalone",
+	"display_override": [
+		"fullscreen",
+		"minimal-ui"
+	],
+	"background_color": "#eeeeee",
+	"icons": [
+		{
+			"src": "assets/icons/light/clear-day.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	]
+}
