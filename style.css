@@ -1,6 +1,7 @@
 * {
   padding: 0;
   margin: 0;
+  scrollbar-width: none;
 }
 
 html,
@@ -14,20 +15,22 @@ a {
   text-decoration: none;
 }
 
-html {
-  overflow-x: hidden;
-}
-
 html,
 body {
   height: 100%;
   scroll-behavior: smooth;
-  scrollbar-width: none;
   overscroll-behavior-y: none;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 :root {
+  --rem: 12;
+  font-size: calc(var(--rem) * 1px);
   --max-font-size: 5rem;
+  --middle-font-size: 2.5rem;
   --normal-font-size: 1.5rem;
   --small-font-size: 12px;
 }
@@ -57,7 +60,7 @@ body {
   overflow-y: auto;
   filter: blur(0px);
   transition: all 0.4s ease-out;
-  max-width: 55rem;
+  max-width: 58rem;
   margin: 0 auto;
 }
 
@@ -75,7 +78,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  height: 40rem;
+  height: 45rem;
   background: linear-gradient(
     rgb(var(--bg-color)) 88%,
     rgba(var(--bg-color), 0.7) 100%
@@ -93,7 +96,7 @@ body {
     position: absolute;
     left: 1rem;
     bottom: 3rem;
-    font-size: 2.5rem;
+    font-size: var(--middle-font-size);
   }
   .icon_main {
     position: absolute;
@@ -139,11 +142,11 @@ body {
           scroll-snap-align: start;
           border-radius: 1rem;
           height: 6rem;
-          padding: 0 1.3rem;
+          padding: 0 1.5rem;
           text-align: center;
-          &:last-child {
+          /* &:last-child {
             margin-right: 6rem;
-          }
+          } */
           P {
             line-height: 1rem;
           }
@@ -213,13 +216,13 @@ body {
   aspect-ratio: 1/1;
   color: rgb(var(--font-color));
   border: 1px solid rgb(var(--font-color));
-  transform: scale(1.4);
+  transform: scale(1.5);
 
   &::before {
     display: block;
     font-size: 12px;
     content: "N";
-    transform: translate(-54%, -36%) scale(0.7);
+    transform: translate(-54%, -36%) scale(0.6);
     position: absolute;
     top: 0;
     left: 1.5rem;
@@ -227,19 +230,19 @@ body {
   &::after {
     display: block;
     content: "↓";
-    transform: scale(1.4) rotate(var(--deg));
+    transform: rotate(var(--deg)) scaleY(1.5);
   }
 }
 
 .loading {
-  filter: blur(10px);
+  filter: blur(30px);
   overflow: hidden;
   pointer-events: none;
 }
 
 .footer {
-  padding-top: 15rem;
-  line-height: 3rem;
+  padding-top: 30rem;
+  line-height: 2rem;
   /*     scroll-snap-align: end; */
   font-size: var(--small-font-size);
   text-align: center;

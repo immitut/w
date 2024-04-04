@@ -1,7 +1,9 @@
 import { $ } from "./common.mjs";
+const _1REM = 12;
+// const _1REM = document.documentElement.style.getPropertyValue("--rem");
 
-const SCROLLSTART = 60;
-const SCROLLEND = 440;
+const SCROLLSTART = 5 * _1REM;
+const SCROLLEND = 38 * _1REM;
 
 function creatAnimation(
   scrollStart = SCROLLSTART,
@@ -51,17 +53,16 @@ function opacityAnimation(
 
 function updateStyles() {
   const { scrollTop: scroll } = document.body;
-  // const { scrollTop: scroll } = appEl;
   // console.log("updateStyles:", scroll);
-  header.classList.toggle("shadow", scroll >= SCROLLEND);
+  header.classList.toggle("shadow", scroll >= 39 * _1REM);
   header.style.transform = translateAnimation(scroll, {
     scrollStart: 0,
-    endValue: -34,
+    endValue: -39,
   });
   temp_cur.style.transform = transformAnimation(scroll, { endValue: 6 });
   icon_main.style.transform = transformAnimation(scroll, {
-    scrollStart: 30,
-    endValue: 30,
+    scrollStart: 2 * _1REM,
+    endValue: 35,
   });
   temp_secondary.style.opacity = opacityAnimation(scroll, {
     scrollEnd: SCROLLEND * 0.4,
@@ -70,7 +71,6 @@ function updateStyles() {
   });
 }
 
-// const appEl = $(".app");
 const header = $(".header");
 const temp_cur = $(".temp_cur");
 const temp_secondary = $(".temp_secondary");

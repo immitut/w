@@ -21,6 +21,11 @@ export function timeRander(t) {
 //   return `${m}.${day} ${time}`;
 // }
 
+export function isDevEnv() {
+  const { searchParams } = new URL(location.href);
+  return searchParams.has("dev");
+}
+
 export function _getIconPath(value) {
   if (!value) return null;
   const [i, t] = value.match(/(\d+)|(\D+)/g);

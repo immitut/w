@@ -32,7 +32,9 @@
         </div>
         <div class="items one-line">
           <p>湿度 <span class="per_humidity">??</span></p>
-          <p>云量 <span class="per_clouds">?</span></p>
+
+          <p>气压 <span class="atm_pressure">?</span></p>
+          <!-- <p>云量 <span class="per_clouds">?</span></p> -->
         </div>
 
         <div class="items one-line">
@@ -47,19 +49,21 @@
         </div>
       </div>
       <div class="footer">
-        <span class="version">[ver: 0.0.11]</span>
-        数据来源于
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://openweathermap.org/"
-          >OpenWeather</a
-        >
-        ，<span class="time_dt">00:00</span>更新
+        <p class="version">[ver: 0.0.15]</p>
+        <p>
+          数据来源于
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://openweathermap.org/"
+            >OpenWeather</a
+          >
+          ，<span class="time_dt">00:00</span>更新
+        </p>
       </div>
     </div>
   </body>
-  <script defer type="module" src="./dev.mjs?a=1"></script>
-  <script type="module" src="./index.mjs"></script>
+  <script defer type="module" src="./dev.mjs"></script>
   <script type="module" src="./animation.mjs"></script>
+  <script type="module" src="./index.mjs"></script>
 </html>

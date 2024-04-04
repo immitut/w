@@ -3,12 +3,12 @@ import {
   tempRander,
   timeRander,
   AQIcalculation,
+  isDevEnv,
   _getIconPath,
   $,
   initGeo,
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
-// import { data } from "./data.js";
 
 const proxy = new Proxy(
   {},
@@ -27,6 +27,9 @@ const proxy = new Proxy(
       }
       if (key.startsWith("spe_")) {
         value = `${value?.toFixed(1)}m/s`;
+      }
+      if (key.startsWith("atm_")) {
+        value = `${value}hPa`;
       }
       if (key.startsWith("time_")) {
         const { h, m } = timeRander(value);
@@ -146,17 +149,22 @@ async function init() {
   // };
   // console.log(geoData);
   if (!geoData) return;
+  let data = {};
 
-  const [curr, forecast, aqi] = await Promise.all([
-    getCurrWeather(geoData),
-    getForecastWeather({ cnt: 8, ...geoData }),
-    getAQI(geoData),
-  ]);
-  const data = {
-    ...curr,
-    forecast: forecast.list,
-    aqi: aqi.list[0],
-  };
+  if (isDevEnv()) {
+    ({ data } = await import("./data.js"));
+  } else {
+    const [curr, forecast, aqi] = await Promise.all([
+      getCurrWeather(geoData),
+      getForecastWeather({ cnt: 8, ...geoData }),
+      getAQI(geoData),
+    ]);
+    data = {
+      ...curr,
+      forecast: forecast.list,
+      aqi: aqi.list[0],
+    };
+  }
   updateData(data);
   loading(false);
 }
@@ -166,8 +174,9 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, forecast }) {
     temp_cur: main?.temp,
     // temp_min: main?.temp_min,
     // temp_max: main?.temp_max,
+    atm_pressure: main?.pressure,
     per_humidity: main?.humidity,
-    per_clouds: clouds?.all,
+    // per_clouds: clouds?.all,
     spe_wind: wind?.speed,
     deg_wind: wind?.deg,
     time_sunrise: sys?.sunrise,
