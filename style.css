@@ -82,8 +82,11 @@ body {
   top: 0;
   z-index: 10;
   height: 40rem;
-  background: rgba(var(--bg-color), 0.8);
-  transition: background-color 0.4s ease-out;
+  background: linear-gradient(
+    rgb(var(--bg-color)) 88%,
+    rgba(var(--bg-color), 0.7) 100%
+  );
+  transition: background 0.4s ease-out;
   backdrop-filter: blur(10px);
 
   .temp_cur {
