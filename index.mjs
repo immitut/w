@@ -30,10 +30,7 @@ const proxy = new Proxy(
       }
       if (key.startsWith("time_")) {
         const { h, m } = timeRander(value);
-        document.documentElement.style.setProperty(
-          `--${key}`,
-          (+h + m / 60).toFixed(2)
-        );
+        $(":root").style.setProperty(`--${key}`, (+h + m / 60).toFixed(2));
         value = `${h}:${m}`;
       }
       if (key.startsWith("icon_")) {
@@ -81,9 +78,16 @@ function renderList(list) {
 }
 
 const _switchTheme = switchTheme();
-window.onload = init;
+
+window.onload = () => {
+  _switchTheme(true);
+  init();
+};
+
 $(".icon_main").onclick = init;
-$(".version").onclick = _switchTheme;
+$(".version").onclick = () => {
+  _switchTheme();
+};
 
 function switchTheme() {
   let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -99,11 +103,16 @@ function switchTheme() {
       "card-bg-color": "246, 246, 246",
     },
   };
-  return function () {
-    isDark = !isDark;
+  return function (init = false) {
+    if (!init) {
+      isDark = !isDark;
+    }
     const currTheme = theme[isDark ? "dark" : "light"];
     for (const prop in currTheme) {
-      document.body.style.setProperty(`--${prop}`, currTheme[prop]);
+      if (prop === "bg-color") {
+        $("#theme-color").setAttribute("content", `rgb(${currTheme[prop]})`);
+      }
+      $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
     }
   };
 }

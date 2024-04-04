@@ -4,14 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather</title>
+    <meta id="theme-color" name="theme-color" content="rgb(238,238,238)" />
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="manifest" href="manifest.json" />
   </head>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://rsms.me/" />
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-  <link rel="stylesheet" href="./style.css" />
   <!-- <input type="text" value="杭州" />
     <button id="submit">搜索</button> -->
-  <body>
+  <body class="loading">
     <div class="app">
       <div class="header">
         <div class="icon_main"></div>
@@ -46,7 +47,7 @@
         </div>
       </div>
       <div class="footer">
-        <span class="version">[ver: 0.0.9]</span>
+        <span class="version">[ver: 0.0.10]</span>
         数据来源于
         <a
           target="_blank"
