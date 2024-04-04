@@ -4,10 +4,6 @@
 	"lang": "zh-CN",
 	"start_url": "../w/index.html",
 	"display": "standalone",
-	"display_override": [
-		"fullscreen",
-		"minimal-ui"
-	],
 	"background_color": "#eeeeee",
 	"icons": [
 		{
