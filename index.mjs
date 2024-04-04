@@ -40,11 +40,6 @@ const proxy = new Proxy(
         updateIcon(key, value);
         return true;
       }
-      if (key.startsWith("list_")) {
-        const list = renderList(value);
-        $(`.${key}`).appendChild(list);
-        return true;
-      }
       if (key.startsWith("deg_")) {
         $(`.${key}`).style.setProperty("--deg", `${value}deg`);
         return true;
@@ -57,8 +52,9 @@ const proxy = new Proxy(
   }
 );
 
-function renderList(list) {
+async function renderList(list) {
   const frag = document.createDocumentFragment();
+  const imgLoaders = new Map();
   for (const item of list) {
     const { dt, weather, main } = item;
     const div = document.createElement("div");
@@ -68,6 +64,14 @@ function renderList(list) {
     time.textContent = `${h}:${m}`;
     const icon = document.createElement("img");
     icon.src = _getIconPath(weather?.[0]?.icon);
+    if (!imgLoaders.has(icon.src)) {
+      imgLoaders.set(
+        icon.src,
+        new Promise((resolve) => {
+          icon.onload = resolve;
+        })
+      );
+    }
     icon.alt = weather?.[0]?.description;
     const temp = document.createElement("p");
     temp.textContent = tempRander(main?.temp);
@@ -77,6 +81,8 @@ function renderList(list) {
     div.appendChild(temp);
     frag.appendChild(div);
   }
+  // console.log(imgLoaders);
+  await Promise.all([...imgLoaders.values()]);
   return frag;
 }
 
@@ -166,10 +172,14 @@ async function init() {
     };
   }
   updateData(data);
+  const list = await renderList(data.forecast);
+  $(`.list_forecast`).innerHTML = "";
+  $(`.list_forecast`).appendChild(list);
+  console.log("over");
   loading(false);
 }
 
-function updateData({ main, wind, sys, weather, dt, clouds, aqi, forecast }) {
+function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
   const data = {
     temp_cur: main?.temp,
     // temp_min: main?.temp_min,
@@ -187,7 +197,6 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, forecast }) {
     desc: weather?.[0]?.description,
     icon_main: weather?.[0]?.icon,
     num_aqi: AQIcalculation(aqi?.components),
-    list_forecast: forecast,
   };
 
   for (const key in data) {
