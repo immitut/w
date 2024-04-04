@@ -158,7 +158,8 @@ async function init() {
   let data = {};
 
   if (isDevEnv()) {
-    ({ data } = await import("./data.js"));
+    import("./dev.mjs");
+    ({ data } = await import("./data.mjs"));
   } else {
     const [curr, forecast, aqi] = await Promise.all([
       getCurrWeather(geoData),
@@ -175,7 +176,7 @@ async function init() {
   const list = await renderList(data.forecast);
   $(`.list_forecast`).innerHTML = "";
   $(`.list_forecast`).appendChild(list);
-  console.log("over");
+  // console.log("over");
   loading(false);
 }
 
