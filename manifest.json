@@ -4,8 +4,8 @@
 	"lang": "zh-CN",
 	"start_url": "/w/index.html",
 	"display": "standalone",
-	"background_color": "rgb(238, 238, 238)",
-	"theme_color": "rgb(238, 238, 238)",
+	"background_color": "rgb(238 238 238)",
+	"theme_color": "rgb(238 238 238)",
 	"icons": [
 		{
 			"src": "assets/icons/light/clear-day.png",

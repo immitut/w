@@ -116,14 +116,14 @@ function switchTheme() {
   let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = {
     dark: {
-      "bg-color": "19, 19, 24",
-      "font-color": "255, 255, 255",
-      "card-bg-color": "33, 33, 33",
+      "bg-color": "19 19 24",
+      "font-color": "196 199 197",
+      "card-bg-color": "33 33 33",
     },
     light: {
-      "bg-color": "238, 238, 238",
-      "font-color": "51, 51, 51",
-      "card-bg-color": "246, 246, 246",
+      "bg-color": "238 238 238",
+      "font-color": "51 51 51",
+      "card-bg-color": "246 246 246",
     },
   };
   return function (init = false) {

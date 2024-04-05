@@ -4,16 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather</title>
-    <!-- <meta id="theme-color" name="theme-color" content="rgb(19, 19, 24)" /> -->
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link rel="stylesheet" href="./style.css" />
-    <!-- <link rel="manifest" href="manifest.json" crossorigin="use-credentials" /> -->
   </head>
   <script>
     (function loadManifest() {
       const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      console.log("loadManifest", isDark);
       const url = isDark ? "manifest_dark.json" : "manifest.json";
       const link = document.createElement("link");
       link.rel = "manifest";

@@ -32,9 +32,11 @@ self.addEventListener("fetch", function (ev) {
       }
       try {
         const resp = await fetch(request);
-        cache.put(request, resp.clone()).catch((err) => {
-          console.log(request, err);
-        });
+        if (["http:", "https:"].includes(new URL(request.url).protocol)) {
+          cache.put(request, resp.clone()).catch((err) => {
+            console.log(request, err);
+          });
+        }
         console.log("[online]", request.url);
         return resp;
       } catch (err) {

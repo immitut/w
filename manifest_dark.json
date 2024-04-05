@@ -3,9 +3,9 @@
 	"short_name": "天气",
 	"lang": "zh-CN",
 	"start_url": "/w/index.html",
-	"display": "standalone",
-	"background_color": "rgb(19, 19, 24)",
-	"theme_color": "rgb(19, 19, 24)",
+	"display": "fullscreen",
+	"background_color": "rgb(19 19 24)",
+	"theme_color": "rgb(19 19 24)",
 	"icons": [
 		{
 			"src": "assets/icons/dark/clear-day.png",
