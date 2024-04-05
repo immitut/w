@@ -134,7 +134,7 @@ function switchTheme() {
     for (const prop in currTheme) {
       if (prop === "bg-color") {
         changeThemeColor(`rgb(${currTheme[prop]})`);
-        console.log("changeThemeColor");
+        // console.log("changeThemeColor");
       }
       $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
     }

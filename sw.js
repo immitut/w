@@ -17,6 +17,19 @@ self.addEventListener("fetch", function (ev) {
   ev.respondWith(
     (async (request) => {
       const cache = await caches.open(VERSION);
+
+      const queryCache = async () => {
+        const res = await cache.match(request);
+        if (res) {
+          console.log(`[cache: ${request.destination}]`, request.url);
+        }
+        return res;
+      };
+
+      if (request.destination) {
+        const cacheRes = await queryCache();
+        if (cacheRes) return cacheRes;
+      }
       try {
         const resp = await fetch(request);
         cache.put(request, resp.clone()).catch((err) => {
@@ -25,11 +38,8 @@ self.addEventListener("fetch", function (ev) {
         console.log("[online]", request.url);
         return resp;
       } catch (err) {
-        const cacheRes = await cache.match(request);
-        if (cacheRes) {
-          console.log("[cache]", request.url);
-          return cacheRes;
-        }
+        const cacheRes = await queryCache();
+        if (cacheRes) return cacheRes;
         console.log("[offline & no cache]", err);
       }
     })(ev.request)
