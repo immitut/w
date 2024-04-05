@@ -27,10 +27,10 @@ self.addEventListener("fetch", function (ev) {
       } catch (err) {
         const cacheRes = await cache.match(request);
         if (cacheRes) {
-          console.log("[cache]", request.url, cacheRes);
+          console.log("[cache]", request.url);
           return cacheRes;
         }
-        console.log("[既无网络,也无缓存]", err);
+        console.log("[offline & no cache]", err);
       }
     })(ev.request)
   );

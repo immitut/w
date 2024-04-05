@@ -88,6 +88,10 @@ async function renderList(list) {
 const _switchTheme = switchTheme();
 
 window.onload = () => {
+  const next = () => {
+    _switchTheme(true);
+    init();
+  };
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .register("./sw.js")
@@ -97,13 +101,10 @@ window.onload = () => {
       .catch((err) => {
         console.log("[err]:", err);
       })
-      .finally(() => {
-        _switchTheme(true);
-        init();
-      });
+      .finally(next);
+  } else {
+    next();
   }
-  // _switchTheme(true);
-  // init();
 };
 
 $(".icon_main").onclick = init;
@@ -173,7 +174,6 @@ function getForecastWeather(p) {
 }
 
 async function init() {
-  console.log("init");
   loading(true);
   const geoData = await initGeo();
   // const searchBtn = document.querySelector("#submit");
