@@ -2,7 +2,7 @@
 	"name": "天气",
 	"short_name": "天气",
 	"lang": "zh-CN",
-	"start_url": "./w/index.html",
+	"start_url": "/w/index.html",
 	"display": "standalone",
 	"background_color": "rgb(19, 19, 24)",
 	"theme_color": "rgb(19, 19, 24)",
