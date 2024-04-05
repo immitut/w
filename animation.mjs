@@ -1,7 +1,7 @@
 import { $ } from "./common.mjs";
 const _1REM = parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
-const SCROLLSTART = 5 * _1REM;
-const SCROLLEND = 38 * _1REM;
+const SCROLLSTART = 15 * _1REM;
+const SCROLLEND = 114 * _1REM;
 
 function creatAnimation(
   scrollStart = SCROLLSTART,
@@ -52,15 +52,15 @@ function opacityAnimation(
 function updateStyles() {
   const { scrollTop: scroll } = document.body;
   // console.log("updateStyles:", scroll);
-  header.classList.toggle("shadow", scroll >= 39 * _1REM);
+  header.classList.toggle("shadow", scroll >= 117 * _1REM);
   header.style.transform = translateAnimation(scroll, {
     scrollStart: 0,
-    endValue: -39,
+    endValue: -117,
   });
-  temp_cur.style.transform = transformAnimation(scroll, { endValue: 6 });
+  temp_cur.style.transform = transformAnimation(scroll, { endValue: 18 });
   icon_main.style.transform = transformAnimation(scroll, {
-    scrollStart: 2 * _1REM,
-    endValue: 35,
+    scrollStart: 6 * _1REM,
+    endValue: 102,
   });
   temp_secondary.style.opacity = opacityAnimation(scroll, {
     scrollEnd: SCROLLEND * 0.4,

@@ -28,13 +28,13 @@ html {
 }
 
 :root {
-  --rem: 12;
+  --rem: 4;
   font-size: calc(var(--rem) * 1px);
-  --max-font-size: 5rem;
-  --middle-font-size: 2.5rem;
-  --normal-font-size: 1.5rem;
+  --max-font-size: 15rem;
+  --middle-font-size: 7.5rem;
+  --normal-font-size: 4.5rem;
   --small-font-size: 12px;
-  --radius: 3rem;
+  --radius: 12rem;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -63,7 +63,7 @@ body {
   overflow-y: auto;
   filter: blur(0px);
   transition: all 0.4s ease-out;
-  max-width: 58rem;
+  max-width: 174rem;
   margin: 0 auto;
   /* margin: 2rem auto; */
   /* height: calc(100% - 4rem); */
@@ -84,7 +84,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  height: 45rem;
+  height: 135rem;
   background: linear-gradient(
     rgb(var(--bg-color)) 88%,
     rgb(var(--bg-color) / 0.7) 100%
@@ -94,21 +94,21 @@ body {
 
   .temp_cur {
     position: absolute;
-    left: 1rem;
-    bottom: 6rem;
+    left: 4rem;
+    bottom: 18rem;
     font-size: var(--max-font-size);
   }
   .temp_secondary {
     position: absolute;
-    left: 1rem;
-    bottom: 3rem;
+    left: 4rem;
+    bottom: 9rem;
     font-size: var(--middle-font-size);
   }
   .icon_main {
     position: absolute;
-    top: 3rem;
-    right: 2rem;
-    width: 8rem;
+    top: 12rem;
+    right: 6rem;
+    width: 24rem;
     aspect-ratio: 1/1;
     background-size: cover;
     background-image: var(--icon-url, url("./assets/icons/dark/unknown.png"));
@@ -117,17 +117,17 @@ body {
 }
 
 .content {
-  margin: 0 1rem;
+  margin: 0 4rem;
   .items {
     position: relative;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
     /*     scroll-snap-align: end; */
-    line-height: 3rem;
+    line-height: 9rem;
     background-color: rgb(var(--card-bg-color));
     transition: all 0.4s ease-out;
     &:not(:first-child) {
-      margin-top: 1rem;
+      margin-top: 4rem;
     }
     &.forecast {
       font-size: var(--small-font-size);
@@ -137,7 +137,7 @@ body {
       scrollbar-width: none;
       .list_forecast {
         display: flex;
-        height: 6rem;
+        height: 18rem;
         flex-wrap: nowrap;
         .item_forecast {
           display: flex;
@@ -146,16 +146,16 @@ body {
           align-items: center;
           scroll-snap-align: start;
           border-radius: 1rem;
-          height: 6rem;
-          padding: 0 1.5rem;
+          /* height: 18rem; */
+          padding: 0 4.5rem;
           text-align: center;
           P {
-            line-height: 1rem;
+            line-height: 3rem;
           }
           img {
             pointer-events: none;
             user-select: none;
-            width: 3.5rem;
+            width: 10.5rem;
           }
         }
       }
@@ -176,7 +176,7 @@ body {
   display: block;
   width: 96%;
   aspect-ratio: 3;
-  margin: 2rem auto;
+  margin: 6rem auto;
   border-radius: 50%/100% 100% 0 0;
   border: 1px solid rgb(var(--font-color));
   font-size: var(--small-font-size);
@@ -191,7 +191,7 @@ body {
   );
   & :is(.time_sunrise, .time_sunset) {
     position: absolute;
-    bottom: -3rem;
+    bottom: -9rem;
     transform: translateX(-50%);
   }
 
@@ -213,7 +213,7 @@ body {
   position: relative;
   text-align: center;
   border-radius: 100%;
-  width: 3rem;
+  width: 9rem;
   aspect-ratio: 1/1;
   color: rgb(var(--font-color));
   border: 1px solid rgb(var(--font-color));
@@ -221,26 +221,26 @@ body {
 
   &::before {
     display: block;
-    font-size: 12px;
+    font-size: var(--small-font-size);
     content: "N";
     transform: translate(-54%, -36%) scale(0.6);
     position: absolute;
     top: 0;
-    left: 1.5rem;
+    left: 4.5rem;
   }
   &::after {
     display: block;
     /* content: "↓"; */
     /* content: "⇂"; */
     content: "➤";
-    transform: rotate(calc(var(--deg) + 90deg)) scaleY(0.8) translateX(2px);
+    transform: rotate(calc(var(--deg) + 90deg)) scaleY(0.8) translateX(0.5rem);
     /* transform: rotate(var(--deg)) scaleY(1.5); */
   }
 }
 
 .footer {
-  padding: 30rem 0 1rem;
-  line-height: 2rem;
+  padding: 90rem 0 2rem;
+  line-height: 6rem;
   /*     scroll-snap-align: end; */
   font-size: var(--small-font-size);
   text-align: center;
