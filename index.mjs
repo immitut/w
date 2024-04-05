@@ -81,7 +81,6 @@ async function renderList(list) {
     div.appendChild(temp);
     frag.appendChild(div);
   }
-  // console.log(imgLoaders);
   await Promise.all([...imgLoaders.values()]);
   return frag;
 }
@@ -89,8 +88,22 @@ async function renderList(list) {
 const _switchTheme = switchTheme();
 
 window.onload = () => {
-  _switchTheme(true);
-  init();
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("./sw.js")
+      .then((ev) => {
+        console.log("register done", ev);
+      })
+      .catch((err) => {
+        console.log("[err]:", err);
+      })
+      .finally(() => {
+        _switchTheme(true);
+        init();
+      });
+  }
+  // _switchTheme(true);
+  // init();
 };
 
 $(".icon_main").onclick = init;
@@ -160,6 +173,7 @@ function getForecastWeather(p) {
 }
 
 async function init() {
+  console.log("init");
   loading(true);
   const geoData = await initGeo();
   // const searchBtn = document.querySelector("#submit");
@@ -168,7 +182,6 @@ async function init() {
   //   const data = await fetchGeo(input.value);
   //   console.log(data);
   // };
-  // console.log(geoData);
   if (!geoData) return;
   let data = {};
 
@@ -192,7 +205,6 @@ async function init() {
   const list = await renderList(data.forecast);
   $(`.list_forecast`).innerHTML = "";
   $(`.list_forecast`).appendChild(list);
-  // console.log("over");
   loading(false);
 }
 
