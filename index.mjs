@@ -119,11 +119,26 @@ function switchTheme() {
     const currTheme = theme[isDark ? "dark" : "light"];
     for (const prop in currTheme) {
       if (prop === "bg-color") {
-        $("#theme-color").setAttribute("content", `rgb(${currTheme[prop]})`);
+        changeThemeColor(`rgb(${currTheme[prop]})`);
+        console.log("changeThemeColor");
       }
       $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
     }
   };
+}
+
+function changeThemeColor(color) {
+  const id = "theme-color";
+  const elm = $(`#${id}`);
+  if (elm) {
+    elm.setAttribute("content", color);
+  } else {
+    const meta = document.createElement("meta");
+    meta.id = id;
+    meta.name = id;
+    meta.content = color;
+    document.head.appendChild(meta);
+  }
 }
 
 function loading(isLoading) {

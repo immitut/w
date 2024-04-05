@@ -4,12 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather</title>
-    <meta id="theme-color" name="theme-color" content="rgb(19, 19, 24)" />
+    <!-- <meta id="theme-color" name="theme-color" content="rgb(19, 19, 24)" /> -->
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link rel="stylesheet" href="./style.css" />
-    <link rel="manifest" href="manifest.json" crossorigin="use-credentials" />
+    <!-- <link rel="manifest" href="manifest.json" crossorigin="use-credentials" /> -->
   </head>
+  <script>
+    (function loadManifest() {
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      console.log("loadManifest", isDark);
+      const url = isDark ? "manifest_dark.json" : "manifest.json";
+      const link = document.createElement("link");
+      link.rel = "manifest";
+      link.href = url;
+      link.crossOrigin = "use-credentials";
+      document.head.appendChild(link);
+    })();
+  </script>
   <!-- <input type="text" value="杭州" />
     <button id="submit">搜索</button> -->
   <body class="loading">
@@ -48,7 +60,7 @@
       </div>
     </div>
     <div class="footer">
-      <p class="version">[ver: 0.0.19]</p>
+      <p class="version">[ver: 0.0.20]</p>
       <p>
         数据来源于
         <a

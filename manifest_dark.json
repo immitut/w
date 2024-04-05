@@ -4,11 +4,11 @@
 	"lang": "zh-CN",
 	"start_url": "./w/index.html",
 	"display": "standalone",
-	"background_color": "rgb(238, 238, 238)",
-	"theme_color": "rgb(238, 238, 238)",
+	"background_color": "rgb(19, 19, 24)",
+	"theme_color": "rgb(19, 19, 24)",
 	"icons": [
 		{
-			"src": "assets/icons/light/clear-day.png",
+			"src": "assets/icons/dark/clear-day.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}
