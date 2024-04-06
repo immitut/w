@@ -33,7 +33,9 @@ const proxy = new Proxy(
       }
       if (key.startsWith("time_")) {
         const { h, m } = timeRander(value);
-        $(":root").style.setProperty(`--${key}`, (+h + m / 60).toFixed(2));
+        if (key !== "time_dt") {
+          $(":root").style.setProperty(`--${key}`, (+h + m / 60).toFixed(2));
+        }
         value = `${h}:${m}`;
       }
       if (key.startsWith("icon_")) {
