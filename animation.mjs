@@ -1,6 +1,6 @@
 import { $ } from "./common.mjs";
 const _1REM = parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
-const SCROLLSTART = 15 * _1REM;
+const SCROLLSTART = 16 * _1REM;
 const SCROLLEND = 114 * _1REM;
 
 function creatAnimation(
@@ -16,56 +16,42 @@ function creatAnimation(
     if (scroll >= scrollEnd) {
       return endValue;
     }
-    return (
-      ((endValue - startValue) * (scroll - scrollStart)) /
-        (scrollEnd - scrollStart) +
-      startValue
+    const x = Math.sin(
+      (Math.PI * (scroll - scrollStart)) / (scrollEnd - scrollStart) / 2
     );
+    return startValue + (endValue - startValue) * x;
   };
 }
 
-function translateAnimation(
-  scroll,
-  { scrollStart, scrollEnd, startValue, endValue }
-) {
-  const v = creatAnimation(scrollStart, scrollEnd, startValue, endValue);
-  return `translateY(${v(scroll)}rem)`;
-}
-
-function transformAnimation(
-  scroll,
-  { scrollStart, scrollEnd, startValue, endValue }
-) {
-  const v = creatAnimation(scrollStart, scrollEnd, startValue, endValue);
-  const f = creatAnimation(scrollStart, scrollEnd, 1, 0.5);
-  return `translateY(${v(scroll)}rem) scale(${f(scroll)})`;
-}
-
-function opacityAnimation(
-  scroll,
-  { scrollStart, scrollEnd, startValue, endValue }
-) {
-  const v = creatAnimation(scrollStart, scrollEnd, startValue, endValue);
-  return v(scroll);
+function _ani(scroll, { scrollStart, scrollEnd, startValue, endValue }) {
+  const fn = creatAnimation(scrollStart, scrollEnd, startValue, endValue);
+  return fn(scroll);
 }
 
 function updateStyles() {
   const { scrollTop: scroll } = document.body;
-  // console.log("updateStyles:", scroll);
-  header.classList.toggle("shadow", scroll >= 117 * _1REM);
-  header.style.transform = translateAnimation(scroll, {
-    scrollStart: 0,
+  header.classList.toggle("shadow", scroll >= 126 * _1REM);
+
+  header.style.transform = `translate(0, ${_ani(scroll, {
+    scrollStart: SCROLLSTART * 0.5,
     endValue: -117,
-  });
-  temp_cur.style.transform = transformAnimation(scroll, { endValue: 18 });
-  icon_main.style.transform = transformAnimation(scroll, {
-    scrollStart: 6 * _1REM,
+  })}rem)`;
+
+  temp_cur.style.transform = `translate(0, ${_ani(scroll, {
+    scrollEnd: SCROLLEND * 0.8,
+    endValue: 9,
+  })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.6 })})`;
+
+  icon_main.style.transform = `translate(0, ${_ani(scroll, {
+    scrollStart: 0,
+    scrollEnd: SCROLLEND * 0.8,
     endValue: 102,
-  });
-  temp_secondary.style.opacity = opacityAnimation(scroll, {
-    scrollEnd: SCROLLEND * 0.4,
-    endValue: 0,
+  })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.5 })})`;
+
+  temp_secondary.style.opacity = _ani(scroll, {
+    scrollEnd: SCROLLEND * 0.3,
     startValue: 1,
+    endValue: 0,
   });
 }
 
@@ -74,7 +60,8 @@ const temp_cur = $(".temp_cur");
 const temp_secondary = $(".temp_secondary");
 const icon_main = $(".icon_main");
 
+updateStyles();
+
 document.body.addEventListener("scroll", updateStyles, {
   passive: true,
 });
-updateStyles();
