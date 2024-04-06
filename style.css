@@ -121,13 +121,12 @@ body {
     position: relative;
     border-radius: var(--radius);
     padding: calc(var(--radius) / 3 * 2);
-    scroll-snap-align: start none;
-    /* scroll-snap-align: end; */
     line-height: 9rem;
     background-color: rgb(var(--card-bg-color));
     transition: all 0.4s ease-out;
     &:not(:first-child) {
       margin-top: 4rem;
+      scroll-snap-align: start none;
     }
     &.forecast {
       font-size: var(--small-font-size);
