@@ -10,6 +10,7 @@ import {
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 const MODE = "m";
+const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
 
 const proxy = new Proxy(
@@ -93,15 +94,27 @@ window.onload = () => {
   HTMLElement.prototype.loading = function (isLoading) {
     this.classList.toggle("loading", isLoading);
   };
+
   const next = () => {
     renderTheme();
     init();
   };
+
   if ("serviceWorker" in navigator) {
+    const { port1, port2 } = new MessageChannel();
     navigator.serviceWorker
       .register("./sw.js")
       .then((ev) => {
         console.log("register done", ev);
+        navigator.serviceWorker.controller.postMessage(
+          {
+            type: "INIT_PORT",
+          },
+          [port2]
+        );
+        port1.onmessage = (ev) => {
+          console.log(ev.data);
+        };
       })
       .catch((err) => {
         console.log("[err]:", err);
@@ -113,9 +126,14 @@ window.onload = () => {
 };
 
 $(".icon_main").onclick = init;
-$(".switch-mode-btn").onclick = () => {
-  switchTheme();
-};
+$(".time_dt").onclick = switchAmoled;
+$(".switch-mode-btn").onclick = switchTheme;
+
+function switchAmoled() {
+  const isAmoled = getItem(AMOLED);
+  saveItem(AMOLED, isAmoled === "1" ? "0" : "1");
+  renderTheme();
+}
 
 function switchTheme() {
   let i = getItem(MODE) || 0;
@@ -126,8 +144,9 @@ function switchTheme() {
 }
 
 function renderTheme() {
-  const i = getItem(MODE) || 0;
-  $("body").className = modes[i];
+  const i = getItem(MODE) || "0";
+  const isAmoled = getItem(AMOLED) === "1";
+  $("body").className = isAmoled ? `${modes[i]} amoled` : modes[i];
   const bgColor = getComputedStyle($("body")).getPropertyValue("--bg-color");
   changeThemeColor(`rgb(${bgColor})`);
 }

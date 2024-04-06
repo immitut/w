@@ -34,27 +34,29 @@ body {
     --bg-color: 19 19 24;
     --font-color: 196 199 197;
     --card-bg-color: 33 33 33;
+    &.amoled {
+      --bg-color: 0 0 0;
+    }
   }
 }
 
 :root .light,
-body {
+body.auto {
   --bg-color: 238 238 238;
   --font-color: 51 51 51;
   --card-bg-color: 246 246 246;
 }
 
-@supports (font-variation-settings: normal) {
-  body {
-    font-family: "Inter var", sans-serif;
-  }
-}
-
 body {
-  @media (prefers-color-scheme: dark) {
-    --bg-color: 19 19 24;
-    --font-color: 196 199 197;
-    --card-bg-color: 33 33 33;
+  &.auto {
+    @media (prefers-color-scheme: dark) {
+      --bg-color: 19 19 24;
+      --font-color: 196 199 197;
+      --card-bg-color: 33 33 33;
+      &.amoled {
+        --bg-color: 0 0 0;
+      }
+    }
   }
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, Ubuntu,
     sans-serif;
@@ -63,6 +65,12 @@ body {
   color: rgb(var(--font-color));
   font-weight: 600;
   user-select: none;
+}
+
+@supports (font-variation-settings: normal) {
+  body {
+    font-family: "Inter var", sans-serif;
+  }
 }
 
 .app {

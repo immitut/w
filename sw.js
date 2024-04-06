@@ -1,4 +1,4 @@
-const VERSION = "1.5";
+const VERSION = "1.6";
 const cacheList = [
   "/w/",
   "/w/index.html",
@@ -10,14 +10,19 @@ const cacheList = [
   // "/w/manifest.json",
   // "/w/manifest_dark.json",
   "/w/style.css",
-  // "/w/assets/",
 ];
+
+self.addEventListener("message", function (ev) {
+  console.log("== message ==", ev);
+  if (ev?.data?.type === "INIT_PORT") {
+    self._port = ev.ports[0];
+  }
+});
 
 self.addEventListener("fetch", function (ev) {
   ev.respondWith(
     (async (request) => {
       const cache = await caches.open(VERSION);
-
       const queryCache = async () => {
         const res = await cache.match(request);
         if (res) {
@@ -29,6 +34,15 @@ self.addEventListener("fetch", function (ev) {
       if (request.destination) {
         const cacheRes = await queryCache();
         if (cacheRes) return cacheRes;
+      } else {
+        // 通过条件控制请求是否从缓存中获取数据
+        self._port?.postMessage({
+          type: "REQUEST",
+          data: {
+            ts: +new Date(),
+            url: request.url,
+          },
+        });
       }
       try {
         const resp = await fetch(request);
@@ -49,14 +63,26 @@ self.addEventListener("fetch", function (ev) {
 });
 
 self.addEventListener("install", async function (ev) {
-  console.log("install", ev);
+  console.log("== install ==", ev);
+  self._port?.postMessage({
+    type: "LOG",
+    data: {
+      msg: "== install ==",
+    },
+  });
   const cache = await caches.open(VERSION);
   cache.addAll(cacheList);
   self.skipWaiting();
 });
 
 self.addEventListener("activate", async function (ev) {
-  console.log("activate", ev);
+  console.log("== activate ==", ev);
+  self._port?.postMessage({
+    type: "LOG",
+    data: {
+      msg: "== activate ==",
+    },
+  });
   const cacheKeys = await caches.keys();
   console.log(cacheKeys);
   cacheKeys.forEach((key) => {
