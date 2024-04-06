@@ -21,53 +21,56 @@
   </script>
   <!-- <input type="text" value="杭州" />
     <button id="submit">搜索</button> -->
-  <body class="loading">
-    <div class="header">
-      <div class="icon_main"></div>
-      <span class="temp_cur">??</span>
-      <p class="temp_secondary">
-        <!-- <span class="temp_min">00</span>/<span class="temp_max">00</span> -->
-        体感温度 <span class="temp_feels_like">??</span>
-      </p>
-    </div>
-    <div class="content">
-      <div class="items forecast">
-        <div class="list_forecast"></div>
+  <body>
+    <div class="app loading">
+      <div class="header">
+        <div class="icon_main"></div>
+        <span class="temp_cur">??</span>
+        <p class="temp_secondary">
+          <!-- <span class="temp_min">00</span>/<span class="temp_max">00</span> -->
+          体感温度 <span class="temp_feels_like">??</span>
+        </p>
       </div>
-      <div class="items one-line">
-        <p class="desc">无</p>
-        <p>AQI <span class="num_aqi">?</span></p>
-      </div>
-      <div class="items one-line">
-        <p>湿度 <span class="per_humidity">??</span></p>
+      <div class="content">
+        <div class="items forecast">
+          <div class="list_forecast"></div>
+        </div>
+        <div class="items one-line">
+          <p class="desc">无</p>
+          <p>AQI <span class="num_aqi">?</span></p>
+        </div>
+        <div class="items one-line">
+          <p>湿度 <span class="per_humidity">??</span></p>
 
-        <p>气压 <span class="atm_pressure">?</span></p>
-        <!-- <p>云量 <span class="per_clouds">?</span></p> -->
-      </div>
+          <p>气压 <span class="atm_pressure">?</span></p>
+          <!-- <p>云量 <span class="per_clouds">?</span></p> -->
+        </div>
 
-      <div class="items one-line">
-        <p class="deg_wind"></p>
-        <p>风速 <span class="spe_wind">?</span></p>
-      </div>
-      <div class="items">
-        <div class="sun_info">
-          <span class="time_sunrise">??</span>
-          <span class="time_sunset">??</span>
+        <div class="items one-line">
+          <p class="deg_wind"></p>
+          <p>风速 <span class="spe_wind">?</span></p>
+        </div>
+        <div class="items">
+          <div class="sun_info">
+            <span class="time_sunrise">??</span>
+            <span class="time_sunset">??</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="footer">
-      <p class="version">[ver: 0.0.22]</p>
-      <p>
-        数据来源于
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://openweathermap.org/"
-          >OpenWeather</a
-        >
-        ，<span class="time_dt">00:00</span>更新
-      </p>
+      <div class="footer">
+        <div class="switch-mode-btn"></div>
+        <p class="version">[ver: 0.0.23]</p>
+        <p>
+          数据来源于
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://openweathermap.org/"
+            >OpenWeather</a
+          >
+          ，<span class="time_dt">00:00</span>更新
+        </p>
+      </div>
     </div>
     <script type="module" src="./animation.mjs"></script>
     <script type="module" src="./index.mjs"></script>

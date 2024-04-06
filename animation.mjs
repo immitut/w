@@ -29,7 +29,7 @@ function _ani(scroll, { scrollStart, scrollEnd, startValue, endValue }) {
 }
 
 function updateStyles() {
-  const { scrollTop: scroll } = document.body;
+  const { scrollTop: scroll } = app;
   header.classList.toggle("shadow", scroll >= 126 * _1REM);
 
   header.style.transform = `translate(0, ${_ani(scroll, {
@@ -55,6 +55,7 @@ function updateStyles() {
   });
 }
 
+const app = $(".app");
 const header = $(".header");
 const temp_cur = $(".temp_cur");
 const temp_secondary = $(".temp_secondary");
@@ -62,6 +63,6 @@ const icon_main = $(".icon_main");
 
 updateStyles();
 
-document.body.addEventListener("scroll", updateStyles, {
+app.addEventListener("scroll", updateStyles, {
   passive: true,
 });

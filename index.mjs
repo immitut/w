@@ -10,7 +10,7 @@ import {
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 const MODE = "m";
-const [DARK, LIGHT] = ["0", "1"];
+const modes = ["auto", "light", "dark"];
 
 const proxy = new Proxy(
   {},
@@ -90,6 +90,9 @@ async function renderList(list) {
 }
 
 window.onload = () => {
+  HTMLElement.prototype.loading = function (isLoading) {
+    this.classList.toggle("loading", isLoading);
+  };
   const next = () => {
     renderTheme();
     init();
@@ -110,45 +113,23 @@ window.onload = () => {
 };
 
 $(".icon_main").onclick = init;
-$(".version").onclick = () => {
+$(".switch-mode-btn").onclick = () => {
   switchTheme();
 };
 
 function switchTheme() {
-  let mode = getItem(MODE);
-  if (!mode) {
-    mode = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? DARK
-      : LIGHT;
-  }
-  saveItem(MODE, mode === DARK ? LIGHT : DARK);
+  let i = getItem(MODE) || 0;
+  i++;
+  if (i === modes.length) i = 0;
+  saveItem(MODE, i);
   renderTheme();
 }
 
 function renderTheme() {
-  const theme = {
-    [DARK]: {
-      "bg-color": "19 19 24",
-      "font-color": "196 199 197",
-      "card-bg-color": "33 33 33",
-    },
-    [LIGHT]: {
-      "bg-color": "238 238 238",
-      "font-color": "51 51 51",
-      "card-bg-color": "246 246 246",
-    },
-  };
-  const mode =
-    getItem(MODE) ||
-    (window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT);
-
-  const currTheme = theme[mode];
-  for (const prop in currTheme) {
-    if (prop === "bg-color") {
-      changeThemeColor(`rgb(${currTheme[prop]})`);
-    }
-    $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
-  }
+  const i = getItem(MODE) || 0;
+  $("body").className = modes[i];
+  const bgColor = getComputedStyle($("body")).getPropertyValue("--bg-color");
+  changeThemeColor(`rgb(${bgColor})`);
 }
 
 function changeThemeColor(color) {
@@ -165,11 +146,6 @@ function changeThemeColor(color) {
   }
 }
 
-function loading(isLoading) {
-  const action = isLoading ? "add" : "remove";
-  $("body").classList[action]("loading");
-}
-
 function updateIcon(key, value) {
   const iconpath = _getIconPath(value);
   $(`.${key}`).style.setProperty("--icon-url", `url("${iconpath}")`);
@@ -184,7 +160,7 @@ function getForecastWeather(p) {
 }
 
 async function init() {
-  loading(true);
+  $(".app").loading(true);
   const geoData = await initGeo();
   // const searchBtn = document.querySelector("#submit");
   // searchBtn.onclick = async () => {
@@ -215,7 +191,7 @@ async function init() {
   const list = await renderList(data.forecast);
   $(`.list_forecast`).innerHTML = "";
   $(`.list_forecast`).appendChild(list);
-  loading(false);
+  $(".app").loading(false);
 }
 
 function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
