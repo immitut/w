@@ -9,6 +9,8 @@ import {
   initGeo,
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
+const MODE = "m";
+const [DARK, LIGHT] = ["0", "1"];
 
 const proxy = new Proxy(
   {},
@@ -87,11 +89,9 @@ async function renderList(list) {
   return frag;
 }
 
-const _switchTheme = switchTheme();
-
 window.onload = () => {
   const next = () => {
-    _switchTheme(true);
+    renderTheme();
     init();
   };
   if ("serviceWorker" in navigator) {
@@ -111,36 +111,44 @@ window.onload = () => {
 
 $(".icon_main").onclick = init;
 $(".version").onclick = () => {
-  _switchTheme();
+  switchTheme();
 };
 
 function switchTheme() {
-  let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  let mode = getItem(MODE);
+  if (!mode) {
+    mode = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? DARK
+      : LIGHT;
+  }
+  saveItem(MODE, mode === DARK ? LIGHT : DARK);
+  renderTheme();
+}
+
+function renderTheme() {
   const theme = {
-    dark: {
+    [DARK]: {
       "bg-color": "19 19 24",
       "font-color": "196 199 197",
       "card-bg-color": "33 33 33",
     },
-    light: {
+    [LIGHT]: {
       "bg-color": "238 238 238",
       "font-color": "51 51 51",
       "card-bg-color": "246 246 246",
     },
   };
-  return function (init = false) {
-    if (!init) {
-      isDark = !isDark;
+  const mode =
+    getItem(MODE) ||
+    (window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT);
+
+  const currTheme = theme[mode];
+  for (const prop in currTheme) {
+    if (prop === "bg-color") {
+      changeThemeColor(`rgb(${currTheme[prop]})`);
     }
-    const currTheme = theme[isDark ? "dark" : "light"];
-    for (const prop in currTheme) {
-      if (prop === "bg-color") {
-        changeThemeColor(`rgb(${currTheme[prop]})`);
-        // console.log("changeThemeColor");
-      }
-      $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
-    }
-  };
+    $(":root").style.setProperty(`--${prop}`, currTheme[prop]);
+  }
 }
 
 function changeThemeColor(color) {
@@ -233,4 +241,12 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
   for (const key in data) {
     proxy[key] = data[key];
   }
+}
+
+function saveItem(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function getItem(key) {
+  return localStorage.getItem(key);
 }
