@@ -110,7 +110,7 @@ window.onload = () => {
       CACHEINFO: "cacheInfo",
     };
     navigator.serviceWorker.ready.then(async (res) => {
-      console.log("serviceWorker ready", res);
+      console.log("serviceWorker ready");
       const _controlledPromise = new Promise(function (resolve) {
         const resolveWithRegistration = function () {
           navigator.serviceWorker
@@ -162,7 +162,7 @@ window.onload = () => {
     navigator.serviceWorker
       .register("./sw.js")
       .then((ev) => {
-        console.log("register done", ev);
+        console.log("register done");
       })
       .catch((err) => {
         console.log("[err]:", err);
