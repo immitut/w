@@ -7,10 +7,26 @@ export function tempRander(value) {
 }
 
 export function timeRander(t) {
-  const d = new Date(t * 1000);
+  const d = new Date(t);
   const h = _zeroPrefix(d.getHours());
   const m = _zeroPrefix(d.getMinutes());
-  return { h, m };
+  return `${h}:${m}`;
+}
+
+export function semanticTimeExpression(t) {
+  const d = +new Date(t);
+  const delta = new Date() - d;
+  const temp = [
+    { t: 1, s: "刚刚" },
+    { t: 5, s: "不久前" },
+    { t: 10, s: "10分钟前" },
+    { t: 20, s: "20分钟前" },
+    { t: 30, s: "半小时前" },
+    { t: 60, s: "一小时内" },
+  ];
+  const x = temp.find(({ t }) => delta <= t * 60e3);
+  if (x) return x.s;
+  return timeRander(t);
 }
 
 // export function dateRander(t) {
@@ -128,7 +144,7 @@ export function AQIcalculation(data) {
     }
     // console.log(res, k);
   }
-  console.log(max, x);
+  // console.log(max, x);
   const finalRange = [0, 50, 100, 150, 200, 300, Infinity];
   const fin = finalRange.findIndex((y) => y >= max);
   return fin;

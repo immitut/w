@@ -2,6 +2,7 @@ import {
   _zeroPrefix,
   tempRander,
   timeRander,
+  semanticTimeExpression,
   AQIcalculation,
   isDevEnv,
   _getIconPath,
@@ -16,7 +17,6 @@ const modes = ["auto", "light", "dark"];
 const proxy = new Proxy(
   {},
   {
-    // console.log("set", key, value);
     set: function (target, key, value, receiver) {
       if (!$(`.${key}`)) {
         console.warn(`[update error]: ${key} 不存在`);
@@ -35,11 +35,13 @@ const proxy = new Proxy(
         value = `${value}hPa`;
       }
       if (key.startsWith("time_")) {
-        const { h, m } = timeRander(value);
-        if (key !== "time_dt") {
+        if (key === "time_dt") {
+          value = semanticTimeExpression(value * 1e3);
+        } else {
+          value = timeRander(value * 1e3);
+          const [h, m] = value.split(":");
           $(":root").style.setProperty(`--${key}`, (+h + m / 60).toFixed(2));
         }
-        value = `${h}:${m}`;
       }
       if (key.startsWith("icon_")) {
         updateIcon(key, value);
@@ -65,8 +67,7 @@ async function renderList(list) {
     const div = document.createElement("div");
     div.classList.add("item_forecast");
     const time = document.createElement("p");
-    const { h, m } = timeRander(dt);
-    time.textContent = `${h}:${m}`;
+    time.textContent = timeRander(dt * 1e3);
     const icon = document.createElement("img");
     icon.src = _getIconPath(weather?.[0]?.icon);
     if (!imgLoaders.has(icon.src)) {
