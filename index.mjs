@@ -52,7 +52,9 @@ const proxy = new Proxy(
         return true;
       }
 
-      $(`.${key}`).textContent = value;
+      $(`.${key}`).dataset[key] = value;
+      const renderElm = $(`.${key}`).firstElementChild || $(`.${key}`);
+      renderElm.textContent = value;
       Reflect.set(target, key, value, receiver);
       return true;
     },
