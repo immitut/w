@@ -240,7 +240,7 @@ body {
     display: block;
     font-size: var(--small-font-size);
     content: "N";
-    transform: translate(-54%, -39%) scale(0.6);
+    transform: translate(-54%, -38%) scale(0.6);
     position: absolute;
     top: 0;
     left: 4.5rem;
