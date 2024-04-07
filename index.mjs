@@ -102,19 +102,66 @@ window.onload = () => {
 
   if ("serviceWorker" in navigator) {
     const { port1, port2 } = new MessageChannel();
+    const msgTypes = {
+      REQUEST: "request",
+      LOG: "log",
+      CACHE: "cache",
+      CACHEINFO: "cacheInfo",
+    };
+    navigator.serviceWorker.ready.then(async (res) => {
+      console.log("serviceWorker ready", res);
+      const _controlledPromise = new Promise(function (resolve) {
+        const resolveWithRegistration = function () {
+          navigator.serviceWorker
+            .getRegistration()
+            .then(function (registration) {
+              resolve(registration);
+            });
+        };
+
+        if (navigator.serviceWorker.controller) {
+          resolveWithRegistration();
+        } else {
+          navigator.serviceWorker.addEventListener(
+            "controllerchange",
+            resolveWithRegistration
+          );
+        }
+      });
+      await _controlledPromise;
+      console.log("serviceWorker.controller ready");
+      navigator.serviceWorker.controller.postMessage(
+        {
+          type: "INIT_PORT",
+          data: msgTypes,
+        },
+        [port2]
+      );
+      port1.onmessage = (ev) => {
+        const { type, data } = ev.data;
+        if (type === msgTypes.CACHE) {
+          const { url, ...rest } = data;
+          saveItem(url, rest);
+          return;
+        }
+        if (type === msgTypes.REQUEST) {
+          // console.log(`[${type}]`, data);
+          const res = getItem(data.url);
+          port1.postMessage({
+            type: msgTypes.CACHEINFO,
+            data: res ? { url: data.url, ...res } : null,
+          });
+          return;
+        }
+        if (type === msgTypes.LOG) {
+          console.log(data);
+        }
+      };
+    });
     navigator.serviceWorker
       .register("./sw.js")
       .then((ev) => {
         console.log("register done", ev);
-        navigator.serviceWorker.controller.postMessage(
-          {
-            type: "INIT_PORT",
-          },
-          [port2]
-        );
-        port1.onmessage = (ev) => {
-          console.log(ev.data);
-        };
       })
       .catch((err) => {
         console.log("[err]:", err);
@@ -130,8 +177,8 @@ $(".time_dt").onclick = switchAmoled;
 $(".switch-mode-btn").onclick = switchTheme;
 
 function switchAmoled() {
-  const isAmoled = getItem(AMOLED);
-  saveItem(AMOLED, isAmoled === "1" ? "0" : "1");
+  const isAmoled = !!getItem(AMOLED);
+  saveItem(AMOLED, !isAmoled);
   renderTheme();
 }
 
@@ -145,7 +192,7 @@ function switchTheme() {
 
 function renderTheme() {
   const i = getItem(MODE) || "0";
-  const isAmoled = getItem(AMOLED) === "1";
+  const isAmoled = !!getItem(AMOLED);
   $("body").className = isAmoled ? `${modes[i]} amoled` : modes[i];
   const bgColor = getComputedStyle($("body")).getPropertyValue("--bg-color");
   changeThemeColor(`rgb(${bgColor})`);
@@ -239,9 +286,9 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
 }
 
 function saveItem(key, value) {
-  localStorage.setItem(key, value);
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 function getItem(key) {
-  return localStorage.getItem(key);
+  return JSON.parse(localStorage.getItem(key));
 }
