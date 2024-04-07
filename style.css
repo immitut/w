@@ -18,9 +18,8 @@ a {
 html,
 body {
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   /* scroll-behavior: smooth; */
-  /* overscroll-behavior-y: none; */
 }
 
 :root {
@@ -78,6 +77,7 @@ body {
   height: 100%;
   scrollbar-width: none;
   overflow-y: auto;
+  overscroll-behavior: contain;
   /* scroll-snap-type: y proximity; */
   scroll-padding-top: 18rem;
   filter: blur(0px);
@@ -136,11 +136,15 @@ body {
         /* scroll-snap-align: start none; */
       }
       &.forecast {
+        @media screen and (max-width: 480px) {
+          & {
+            scrollbar-width: none;
+          }
+        }
         font-size: var(--small-font-size);
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scroll-padding-left: 3rem;
-        scrollbar-width: none;
         .list_forecast {
           display: flex;
           height: 18rem;
