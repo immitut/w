@@ -48,8 +48,13 @@ function updateStyles() {
     endValue: 102,
   })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.5 })})`;
 
+  temp_secondary.style.transform = `translate(0, ${_ani(scroll, {
+    scrollEnd: SCROLLEND * 0.8,
+    endValue: 9,
+  })}rem)`;
+
   temp_secondary.style.opacity = _ani(scroll, {
-    scrollEnd: SCROLLEND * 0.3,
+    scrollEnd: SCROLLEND * 0.8,
     startValue: 1,
     endValue: 0,
   });
