@@ -10,6 +10,8 @@ import {
   initGeo,
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
+import("./dev.mjs");
+
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -227,7 +229,6 @@ async function init() {
   let data = {};
 
   if (isDevEnv()) {
-    import("./dev.mjs");
     const { _mockData } = await import("./data.mjs");
     data = await _mockData();
   } else {
