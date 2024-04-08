@@ -104,7 +104,6 @@ window.onload = () => {
     renderTheme();
     init();
   };
-
   if ("serviceWorker" in navigator) {
     // const { port1, port2 } = new MessageChannel();
     // const msgTypes = {
@@ -166,6 +165,47 @@ window.onload = () => {
 $(".icon_main").onclick = init;
 $(".time_dt").onclick = switchAmoled;
 $(".switch-mode-btn").onclick = switchTheme;
+$(".num_aqi").ondblclick = () => {
+  if (!"serviceWorker" in navigator) {
+    alert("not support serviceWorker");
+    return;
+  }
+  const port1 = initMsgChannel(navigator.serviceWorker.controller);
+  if (!port1) {
+    alert("fail to init message channel.");
+    return;
+  }
+  port1.onmessage = (ev) => {
+    const { type, data } = ev.data;
+    // console.log("page msgChannel receive:", type, data);
+    if (type.startsWith("reset")) {
+      if (data) alert("缓存已强制清除");
+      port1.close();
+    }
+  };
+  port1.postMessage({
+    type: "reset",
+  });
+};
+
+function initMsgChannel(controller) {
+  if (!controller) return null;
+  const { port1, port2 } = new MessageChannel();
+  const msgTypes = {
+    REQUEST: "request",
+    LOG: "log",
+    CACHE: "cache",
+    CACHEINFO: "cacheInfo",
+  };
+  controller.postMessage(
+    {
+      type: "INIT_PORT",
+      data: msgTypes,
+    },
+    [port2]
+  );
+  return port1;
+}
 
 function switchAmoled() {
   const isAmoled = !!getItem(AMOLED);

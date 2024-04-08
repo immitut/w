@@ -1,4 +1,4 @@
-const VERSION = "1.9";
+const CACHEVERSION = "1.11";
 const DBINFO = {
   name: "Nexus",
   version: 1,
@@ -122,12 +122,23 @@ function findDataByKey(key, db, storeName = DBINFO.storeName) {
 }
 
 self.addEventListener("message", (ev) => {
-  console.log("== message ==", ev);
+  // console.log("sw msg receive:", ev);
   if (ev.data?.type === "INIT_PORT") {
-    self._port = ev.ports[0];
-    self._portMsgType = ev.data.data;
-    self._port.onmessage = (ev) => {
-      // const { type, data } = ev.data;
+    const port = ev.ports[0];
+    // self._portMsgType = ev.data.data;
+    port.onmessage = async (ev) => {
+      const { type, data } = ev.data;
+      // console.log("sw msgChannel receive:", type, data);
+      let resp;
+      if (type === "reset") {
+        //清理缓存
+        resp = await caches.delete(CACHEVERSION);
+        port.postMessage({
+          type: `${type}_response`,
+          data: resp,
+        });
+        port.close();
+      }
     };
   }
 });
@@ -137,7 +148,7 @@ self.addEventListener("fetch", (ev) => {
     ev.respondWith(
       (async (request) => {
         const { url, destination } = request;
-        const cache = await caches.open(VERSION);
+        const cache = await caches.open(CACHEVERSION);
         const cacheRes = await cache.match(request);
         if (cacheRes) {
           // 通过条件控制请求是否从缓存中获取数据
@@ -169,7 +180,7 @@ self.addEventListener("fetch", (ev) => {
 
 self.addEventListener("install", async (ev) => {
   console.log("== install ==", ev);
-  const cache = await caches.open(VERSION);
+  const cache = await caches.open(CACHEVERSION);
   cache.addAll(cacheList);
   self.skipWaiting();
 });
@@ -178,7 +189,7 @@ self.addEventListener("activate", async (ev) => {
   console.log("== activate ==", ev);
   const cacheKeys = await caches.keys();
   cacheKeys.forEach((key) => {
-    if (key !== VERSION) {
+    if (key !== CACHEVERSION) {
       caches.delete(key);
     }
   });

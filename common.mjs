@@ -73,6 +73,10 @@ export function _toQueryString(o) {
     .join("&");
 }
 
+/**
+ * @param {string} cssSelector
+ * @returns {HTMLElement | null}
+ */
 export function $(cssSelector) {
   return document.querySelector(cssSelector);
 }
