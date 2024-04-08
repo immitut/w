@@ -104,63 +104,49 @@ window.onload = () => {
   };
 
   if ("serviceWorker" in navigator) {
-    const { port1, port2 } = new MessageChannel();
-    const msgTypes = {
-      REQUEST: "request",
-      LOG: "log",
-      CACHE: "cache",
-      CACHEINFO: "cacheInfo",
-    };
-    navigator.serviceWorker.ready.then(async (res) => {
-      console.log("serviceWorker ready");
-      const _controlledPromise = new Promise(function (resolve) {
-        const resolveWithRegistration = function () {
-          navigator.serviceWorker
-            .getRegistration()
-            .then(function (registration) {
-              resolve(registration);
-            });
-        };
+    // const { port1, port2 } = new MessageChannel();
+    // const msgTypes = {
+    //   REQUEST: "request",
+    //   LOG: "log",
+    //   CACHE: "cache",
+    //   CACHEINFO: "cacheInfo",
+    // };
+    // navigator.serviceWorker.ready.then(async (res) => {
+    //   console.log("serviceWorker ready");
+    //   const _controlledPromise = new Promise(function (resolve) {
+    //     const resolveWithRegistration = function () {
+    //       navigator.serviceWorker
+    //         .getRegistration()
+    //         .then(function (registration) {
+    //           resolve(registration);
+    //         });
+    //     };
 
-        if (navigator.serviceWorker.controller) {
-          resolveWithRegistration();
-        } else {
-          navigator.serviceWorker.addEventListener(
-            "controllerchange",
-            resolveWithRegistration
-          );
-        }
-      });
-      await _controlledPromise;
-      console.log("serviceWorker.controller ready");
-      navigator.serviceWorker.controller.postMessage(
-        {
-          type: "INIT_PORT",
-          data: msgTypes,
-        },
-        [port2]
-      );
-      port1.onmessage = (ev) => {
-        const { type, data } = ev.data;
-        if (type === msgTypes.CACHE) {
-          const { url, ...rest } = data;
-          saveItem(url, rest);
-          return;
-        }
-        if (type === msgTypes.REQUEST) {
-          // console.log(`[${type}]`, data);
-          const res = getItem(data.url);
-          port1.postMessage({
-            type: msgTypes.CACHEINFO,
-            data: res ? { url: data.url, ...res } : null,
-          });
-          return;
-        }
-        if (type === msgTypes.LOG) {
-          console.log(data);
-        }
-      };
-    });
+    //     if (navigator.serviceWorker.controller) {
+    //       resolveWithRegistration();
+    //     } else {
+    //       navigator.serviceWorker.addEventListener(
+    //         "controllerchange",
+    //         resolveWithRegistration
+    //       );
+    //     }
+    //   });
+    //   await _controlledPromise;
+    //   console.log("serviceWorker.controller ready");
+    //   navigator.serviceWorker.controller.postMessage(
+    //     {
+    //       type: "INIT_PORT",
+    //       data: msgTypes,
+    //     },
+    //     [port2]
+    //   );
+    //   port1.onmessage = (ev) => {
+    //     const { type, data } = ev.data;
+    //     if (type === msgTypes.LOG) {
+    //       console.log(data);
+    //     }
+    //   };
+    // });
     navigator.serviceWorker
       .register("./sw.js")
       .then((ev) => {
