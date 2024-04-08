@@ -178,27 +178,26 @@ body {
   line-height: 9rem;
   transition: all 0.4s ease-out;
   background-color: rgb(var(--card-bg-color));
-}
-
-.num_aqi {
-  color: rgb(230 230 230);
-  &[data-num_aqi="1"] {
+  &:has(.num_aqi) {
+    color: rgb(230 230 230);
+  }
+  &:has([data-num_aqi="1"]) {
     background-color: rgb(0 153 102);
   }
-  &[data-num_aqi="2"] {
+  &:has([data-num_aqi="2"]) {
     color: rgb(51 51 51);
     background-color: rgb(255 222 51);
   }
-  &[data-num_aqi="3"] {
+  &:has([data-num_aqi="3"]) {
     background-color: rgb(255 153 51);
   }
-  &[data-num_aqi="4"] {
+  &:has([data-num_aqi="4"]) {
     background-color: rgb(204 0 51);
   }
-  &[data-num_aqi="5"] {
+  &:has([data-num_aqi="5"]) {
     background-color: rgb(102 0 153);
   }
-  &[data-num_aqi="6"] {
+  &:has([data-num_aqi="6"]) {
     background-color: rgb(126 0 35);
   }
 }
