@@ -6,8 +6,7 @@
 
 html,
 body,
-div,
-p {
+div {
   box-sizing: border-box;
 }
 
@@ -257,20 +256,19 @@ body {
   color: rgb(var(--font-color));
   border: 1px solid rgb(var(--font-color));
   transform: scale(1.6);
-
+  .cursor_icon {
+    width: 9rem;
+    height: 9rem;
+    transform: rotate(calc(var(--deg) - 180deg)) scale(0.5);
+  }
   &::before {
     display: block;
     font-size: var(--small-font-size);
     content: "N";
-    transform: translate(-54%, -38%) scale(0.6);
+    transform: translate(-50%, -38%) scale(0.6);
     position: absolute;
     top: 0;
     left: 4.5rem;
-  }
-  &::after {
-    display: block;
-    content: "➤";
-    transform: rotate(calc(var(--deg) + 90deg)) scaleY(0.8) translateX(0.5rem);
   }
 }
 
@@ -290,8 +288,8 @@ body {
   position: relative;
   .switch-mode-btn {
     position: absolute;
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 100%;
     bottom: 3rem;
     right: 0;
