@@ -179,7 +179,10 @@ $(".num_aqi").ondblclick = () => {
     const { type, data } = ev.data;
     // console.log("page msgChannel receive:", type, data);
     if (type.startsWith("reset")) {
-      if (data) alert("缓存已强制清除");
+      if (data) {
+        localStorage.clear();
+        alert("缓存已强制清除");
+      }
       port1.close();
     }
   };
