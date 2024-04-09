@@ -5,7 +5,6 @@ export function pullToRefresh(
   let _startY = 0;
   let _deltaY = 0;
   let cacheStyle = null;
-  let triggle = false;
   const _distThreshold = Math.min(distMax, distThreshold);
   const _distMax = Math.max(distMax, distThreshold);
 
@@ -17,8 +16,7 @@ export function pullToRefresh(
       cacheStyle = elm.style.cssText;
       const { pageY } = ev.touches[0];
       _startY = pageY;
-      elm.style.transition = "transform 0s";
-      elm.style.overflowY = "hidden";
+      this.style.transition = "transform 0s";
     },
     {
       passive: true,
@@ -32,10 +30,8 @@ export function pullToRefresh(
       const { pageY } = ev.touches[0];
       _deltaY = pageY - _startY;
       // console.log("_deltaY", _deltaY);
-      if (_deltaY > 0 && _deltaY <= _distMax) {
-        if (_deltaY >= _distThreshold) {
-          triggle = true;
-        }
+      if (_deltaY >= 0 && _deltaY <= _distMax) {
+        this.style.overflowY = "hidden";
         if (typeof onMove === "function") {
           onMove(this, _deltaY / _distMax);
         }
@@ -51,9 +47,8 @@ export function pullToRefresh(
     "touchend",
     async () => {
       if (_startY || _deltaY) {
-        if (triggle && typeof onPullEnd == "function") {
-          console.log("touchend callback");
-          triggle = false;
+        if (_deltaY >= _distThreshold && typeof onPullEnd == "function") {
+          // console.log("touchend callback");
           await onPullEnd();
         }
         _startY = 0;
