@@ -81,6 +81,11 @@ export function $(cssSelector) {
   return document.querySelector(cssSelector);
 }
 
+export function vibrate(pattern = 1, callback) {
+  if ("vibrate" in navigator) navigator.vibrate(pattern);
+  if (typeof callback === "function") callback();
+}
+
 export function get1rem() {
   return parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
 }

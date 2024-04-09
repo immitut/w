@@ -49,7 +49,6 @@ function checkCacheInfo(url) {
         style: 432e5,
       };
       const expiredTime = expiredTimeMap[destination] ?? 864e5;
-
       resolve({
         msg: `checkCacheInfo: ${url}`,
         isExpired: deltaTs >= expiredTime,
@@ -78,8 +77,7 @@ function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DBINFO.name, DBINFO.version);
     request.onsuccess = (ev) => {
-      const db = ev.target.result;
-      resolve(db);
+      resolve(ev.target.result);
     };
     request.onerror = reject;
     // 初始化/升级时调用

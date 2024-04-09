@@ -11,12 +11,13 @@ import {
   saveItem,
   getItem,
   initGeo,
+  vibrate,
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.1.5";
+const VERSION = "0.1.6";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -108,6 +109,9 @@ window.onload = () => {
     distThreshold: 40 * get1rem(),
     distMax: 50 * get1rem(),
     onMove: (elm, p) => {
+      if (p >= 0.99) {
+        vibrate(1);
+      }
       const x = p * p;
       elm.style.filter = `blur(${10 * x}px) grayscale(${x})`;
     },
@@ -177,8 +181,10 @@ window.onload = () => {
 };
 
 $(".icon_main").onclick = init;
-$(".time_dt").onclick = switchAmoled;
-$(".switch-mode-btn").onclick = switchTheme;
+$(".time_dt").onclick = () => {
+  vibrate(1, switchAmoled);
+};
+$(".switch-mode-btn").onclick = vibrate.bind(null, 1, switchTheme);
 $(".num_aqi").ondblclick = () => {
   if (!"serviceWorker" in navigator) {
     alert("not support serviceWorker");
