@@ -59,7 +59,8 @@ body {
       }
     }
   }
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Ubuntu, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, Arial,
+    sans-serif;
   background: rgb(var(--bg-color));
   font-size: var(--normal-font-size);
   color: rgb(var(--font-color));
