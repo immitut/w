@@ -59,8 +59,7 @@ body {
       }
     }
   }
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, Ubuntu,
-    sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Ubuntu, sans-serif;
   background: rgb(var(--bg-color));
   font-size: var(--normal-font-size);
   color: rgb(var(--font-color));
@@ -70,11 +69,11 @@ body {
   flex-direction: column;
 }
 
-@supports (font-variation-settings: normal) {
+/* @supports (font-variation-settings: normal) {
   body {
     font-family: "Inter var", sans-serif;
   }
-}
+} */
 .banner {
   z-index: 10;
   background-color: rgb(215 114 89);
