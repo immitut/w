@@ -67,7 +67,7 @@ export function pullToRefresh(
   elm.addEventListener(
     "touchend",
     async () => {
-      if (_startY || _deltaY) {
+      if (_startY && _deltaY > 0) {
         _saveDeltaData(_deltaY);
         if (_deltaY >= _distThreshold && typeof onPullEnd == "function") {
           // console.log("touchend callback");
