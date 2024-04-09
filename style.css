@@ -113,8 +113,9 @@ body {
     z-index: 10;
     height: 135rem;
     background: linear-gradient(
-      rgb(var(--bg-color)) 94%,
-      rgb(var(--bg-color) / 0.7) 100%
+      rgb(var(--bg-color)) 90%,
+      rgb(var(--bg-color) / 0.9) 95%,
+      rgb(var(--bg-color) / 0.8) 100%
     );
     transition: background 0.4s ease-out;
     backdrop-filter: blur(10px);

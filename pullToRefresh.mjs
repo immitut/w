@@ -4,7 +4,7 @@ export function pullToRefresh(
 ) {
   let _startY = 0;
   let _deltaY = 0;
-  let cacheStyle = null;
+  // let cacheStyle = null;
   const _distThreshold = Math.min(distMax, distThreshold);
   const _distMax = Math.max(distMax, distThreshold);
 
@@ -13,7 +13,7 @@ export function pullToRefresh(
     function (ev) {
       if (this.scrollTop !== 0) return;
       // console.log(this.scrollTop, ev);
-      cacheStyle = elm.style.cssText;
+      // cacheStyle = elm.style.cssText;
       const { pageY } = ev.touches[0];
       _startY = pageY;
       this.style.transition = "transform 0s";
@@ -53,10 +53,11 @@ export function pullToRefresh(
         }
         _startY = 0;
         _deltaY = 0;
-        if (cacheStyle !== null) {
-          elm.style = cacheStyle;
-          cacheStyle = null;
-        }
+        elm.style = "";
+        // if (cacheStyle !== null) {
+        //   elm.style = cacheStyle;
+        //   cacheStyle = null;
+        // }
       }
     },
     {
