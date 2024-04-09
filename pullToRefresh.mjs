@@ -2,6 +2,7 @@ export function pullToRefresh(
   elm,
   { distThreshold, distMax, onMove, onPullEnd }
 ) {
+  const _threshold = 40;
   let _startY = 0;
   let _deltaY = 0;
   // let cacheStyle = null;
@@ -28,7 +29,7 @@ export function pullToRefresh(
     function (ev) {
       if (this.scrollTop !== 0) return;
       const { pageY } = ev.touches[0];
-      _deltaY = pageY - _startY;
+      _deltaY = pageY - _startY - _threshold;
       // console.log("_deltaY", _deltaY);
       if (_deltaY >= 0 && _deltaY <= _distMax) {
         this.style.overflowY = "hidden";
