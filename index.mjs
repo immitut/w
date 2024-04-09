@@ -7,9 +7,13 @@ import {
   isDevEnv,
   _getIconPath,
   $,
+  get1rem,
+  saveItem,
+  getItem,
   initGeo,
 } from "./common.mjs";
 import { getWeather, getAQI, fetchGeo } from "./api.mjs";
+import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
 const MODE = "m";
@@ -99,6 +103,15 @@ window.onload = () => {
   HTMLElement.prototype.loading = function (isLoading) {
     this.classList.toggle("loading", isLoading);
   };
+
+  pullToRefresh($(".app"), {
+    distThreshold: 25 * get1rem(),
+    distMax: 30 * get1rem(),
+    onMove: (elm, p) => {
+      elm.style.filter = `blur(${20 * p * p}px)`;
+    },
+    onPullEnd: init,
+  });
 
   const next = () => {
     renderTheme();
@@ -264,40 +277,45 @@ function checkOnline() {
   }
   return navigator.onLine;
 }
-async function init() {
-  const isOnline = checkOnline();
-  $(".banner").classList.toggle("show", !isOnline);
-  $(".app").loading(true);
-  const geoData = await initGeo();
-  // const searchBtn = document.querySelector("#submit");
-  // searchBtn.onclick = async () => {
-  //   const input = document.querySelector("input");
-  //   const data = await fetchGeo(input.value);
-  //   console.log(data);
-  // };
-  if (!geoData) return;
-  let data = {};
 
-  if (isDevEnv()) {
-    const { _mockData } = await import("./data.mjs");
-    data = await _mockData();
-  } else {
-    const [curr, forecast, aqi] = await Promise.all([
-      getCurrWeather(geoData),
-      getForecastWeather({ cnt: 8, ...geoData }),
-      getAQI(geoData),
-    ]);
-    data = {
-      ...curr,
-      forecast: forecast.list,
-      aqi: aqi.list[0],
-    };
-  }
-  updateData(data);
-  const list = await renderList(data.forecast);
-  $(`.list_forecast`).innerHTML = "";
-  $(`.list_forecast`).appendChild(list);
-  $(".app").loading(false);
+// const searchBtn = document.querySelector("#submit");
+// searchBtn.onclick = async () => {
+//   const input = document.querySelector("input");
+//   const data = await fetchGeo(input.value);
+//   console.log(data);
+// };
+
+function init() {
+  return new Promise(async (resolve) => {
+    // const isOnline = checkOnline();
+    // $(".banner").classList.toggle("show", !isOnline);
+    $(".app").loading(true);
+    const geoData = await initGeo();
+    if (!geoData) return;
+    let data = {};
+
+    if (isDevEnv()) {
+      const { _mockData } = await import("./data.mjs");
+      data = await _mockData();
+    } else {
+      const [curr, forecast, aqi] = await Promise.all([
+        getCurrWeather(geoData),
+        getForecastWeather({ cnt: 8, ...geoData }),
+        getAQI(geoData),
+      ]);
+      data = {
+        ...curr,
+        forecast: forecast.list,
+        aqi: aqi.list[0],
+      };
+    }
+    updateData(data);
+    const list = await renderList(data.forecast);
+    $(`.list_forecast`).innerHTML = "";
+    $(`.list_forecast`).appendChild(list);
+    $(".app").loading(false);
+    resolve();
+  });
 }
 
 function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
@@ -323,12 +341,4 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
   for (const key in data) {
     proxy[key] = data[key];
   }
-}
-
-function saveItem(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function getItem(key) {
-  return JSON.parse(localStorage.getItem(key));
 }

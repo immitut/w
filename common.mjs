@@ -81,6 +81,18 @@ export function $(cssSelector) {
   return document.querySelector(cssSelector);
 }
 
+export function get1rem() {
+  return parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
+}
+
+export function saveItem(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+export function getItem(key) {
+  return JSON.parse(localStorage.getItem(key));
+}
+
 export function initGeo() {
   return new Promise((resolve) => {
     const defaultPos = {

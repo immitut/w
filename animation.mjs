@@ -1,5 +1,5 @@
-import { $ } from "./common.mjs";
-const _1REM = parseInt(getComputedStyle($(":root")).getPropertyValue("--rem"));
+import { $, get1rem } from "./common.mjs";
+const _1REM = get1rem();
 const SCROLLSTART = 16 * _1REM;
 const SCROLLEND = 114 * _1REM;
 
