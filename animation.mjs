@@ -43,7 +43,7 @@ function updateStyles() {
   })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.6 })})`;
 
   icon_main.style.transform = `translate(0, ${_ani(scroll, {
-    scrollStart: 0,
+    scrollStart: SCROLLSTART * 0.5,
     scrollEnd: SCROLLEND * 0.8,
     endValue: 102,
   })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.5 })})`;

@@ -16,6 +16,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
+const VERSION = "0.1.0";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -89,7 +90,6 @@ async function renderList(list) {
     icon.alt = weather?.[0]?.description;
     const temp = document.createElement("p");
     temp.textContent = tempRander(main?.temp);
-
     div.appendChild(time);
     div.appendChild(icon);
     div.appendChild(temp);
@@ -103,12 +103,12 @@ window.onload = () => {
   HTMLElement.prototype.loading = function (isLoading) {
     this.classList.toggle("loading", isLoading);
   };
-
+  updateData({ version: VERSION });
   pullToRefresh($(".app"), {
     distThreshold: 25 * get1rem(),
     distMax: 30 * get1rem(),
     onMove: (elm, p) => {
-      elm.style.filter = `blur(${20 * p * p}px)`;
+      elm.style.filter = `blur(${10 * p * p}px)`;
     },
     onPullEnd: init,
   });
@@ -310,6 +310,7 @@ function init() {
       };
     }
     updateData(data);
+
     const list = await renderList(data.forecast);
     $(`.list_forecast`).innerHTML = "";
     $(`.list_forecast`).appendChild(list);
@@ -318,8 +319,9 @@ function init() {
   });
 }
 
-function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
+function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
   const data = {
+    version,
     temp_cur: main?.temp,
     // temp_min: main?.temp_min,
     // temp_max: main?.temp_max,
@@ -339,6 +341,8 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi }) {
   };
 
   for (const key in data) {
-    proxy[key] = data[key];
+    if (data[key] !== undefined) {
+      proxy[key] = data[key];
+    }
   }
 }

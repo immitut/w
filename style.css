@@ -17,8 +17,8 @@ a {
 html,
 body {
   height: 100%;
-  scrollbar-width: none;
   overscroll-behavior: none;
+  overflow-y: hidden;
   /* scroll-behavior: smooth; */
 }
 
@@ -346,7 +346,7 @@ body {
 }
 
 .loading {
-  filter: blur(20px);
+  filter: blur(12px);
   overflow: hidden;
   pointer-events: none;
 }
