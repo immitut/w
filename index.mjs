@@ -16,7 +16,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.1.2";
+const VERSION = "0.1.3";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
