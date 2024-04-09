@@ -25,7 +25,8 @@ export function pullToRefresh(
   const _threshold = 40;
   let _startY = 0;
   let _deltaY = 0;
-  // let cacheStyle = null;
+  let triggle = false;
+  let cacheStyle = null;
   const _distThreshold = Math.min(distMax, distThreshold);
   const _distMax = Math.max(distMax, distThreshold);
 
@@ -34,10 +35,9 @@ export function pullToRefresh(
     function (ev) {
       if (this.scrollTop !== 0) return;
       // console.log(this.scrollTop, ev);
-      // cacheStyle = elm.style.cssText;
+      cacheStyle = elm.style.cssText;
       const { pageY } = ev.touches[0];
       _startY = pageY;
-      this.style.transition = "transform 0s";
     },
     {
       passive: true,
@@ -52,7 +52,12 @@ export function pullToRefresh(
       _deltaY = pageY - _startY - _threshold;
       // console.log("_deltaY", _deltaY);
       if (_deltaY >= 0 && _deltaY <= _distMax) {
-        this.style.overflowY = "hidden";
+        if (!triggle) {
+          triggle = true;
+          this.style.transition = "transform 0s";
+          this.style.overflowY = "hidden";
+        }
+
         if (typeof onMove === "function") {
           onMove(this, _deltaY / _distMax);
         }
@@ -67,19 +72,19 @@ export function pullToRefresh(
   elm.addEventListener(
     "touchend",
     async () => {
-      if (_startY && _deltaY > 0) {
+      if (triggle) {
         _saveDeltaData(_deltaY);
         if (_deltaY >= _distThreshold && typeof onPullEnd == "function") {
           // console.log("touchend callback");
           await onPullEnd();
         }
+        triggle = false;
         _startY = 0;
         _deltaY = 0;
-        elm.style = "";
-        // if (cacheStyle !== null) {
-        //   elm.style = cacheStyle;
-        //   cacheStyle = null;
-        // }
+        if (cacheStyle !== null) {
+          elm.style = cacheStyle;
+          cacheStyle = null;
+        }
       }
     },
     {

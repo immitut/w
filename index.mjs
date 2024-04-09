@@ -16,7 +16,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.1.4";
+const VERSION = "0.1.5";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -108,7 +108,8 @@ window.onload = () => {
     distThreshold: 40 * get1rem(),
     distMax: 50 * get1rem(),
     onMove: (elm, p) => {
-      elm.style.filter = `blur(${10 * p * p}px)`;
+      const x = p * p;
+      elm.style.filter = `blur(${10 * x}px) grayscale(${x})`;
     },
     onPullEnd: init,
   });
@@ -302,6 +303,8 @@ function init() {
         getCurrWeather(geoData),
         getForecastWeather({ cnt: 8, ...geoData }),
         getAQI(geoData),
+        // emmm slow down... :p
+        new Promise((r) => setTimeout(r, 5e2)),
       ]);
       data = {
         ...curr,
