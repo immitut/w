@@ -258,8 +258,15 @@ function getCurrWeather(p) {
 function getForecastWeather(p) {
   return getWeather("forecast", p);
 }
-
+function checkOnline() {
+  if (!"online" in navigator) {
+    return true;
+  }
+  return navigator.onLine;
+}
 async function init() {
+  const isOnline = checkOnline();
+  $(".banner").classList.toggle("show", !isOnline);
   $(".app").loading(true);
   const geoData = await initGeo();
   // const searchBtn = document.querySelector("#submit");
