@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.2.0";
+const VERSION = "0.2.1";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -289,7 +289,7 @@ function init() {
           getForecastWeather({ cnt: 8, ...geoData }),
           getAQI(geoData),
           // emmm slow down... :p
-          new Promise((r) => setTimeout(r, 5e2)),
+          new Promise((r) => setTimeout(r, 8e2)),
         ]);
         data = {
           ...curr,
