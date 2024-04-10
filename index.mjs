@@ -127,7 +127,7 @@ window.onload = () => {
       const loading_ani = $(".loading_ani");
       loading_ani.style.opacity = x;
       loading_ani.style.transform = `translateY(${20 * x}rem)`;
-      $(".bg_ani").style.setProperty("--ani-delay", `${-3.6 * x}s`);
+      $(".bg_ani").style.setProperty("--ani-delay", `${-2.4 * x}s`);
     },
     onPullEnd: init,
   });
