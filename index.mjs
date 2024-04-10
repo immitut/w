@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.1.6";
+const VERSION = "0.1.7";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -106,14 +106,14 @@ window.onload = () => {
   };
   updateData({ version: VERSION });
   pullToRefresh($(".app"), {
-    distThreshold: 40 * get1rem(),
-    distMax: 50 * get1rem(),
+    distThreshold: 30 * get1rem(),
+    distMax: 40 * get1rem(),
+    onReachThreshold: () => {
+      vibrate(1);
+    },
     onMove: (elm, p) => {
-      if (p >= 0.99) {
-        vibrate(1);
-      }
       const x = p * p;
-      elm.style.filter = `blur(${10 * x}px) grayscale(${x})`;
+      elm.style.filter = `blur(${16 * x}px) grayscale(${x})`;
     },
     onPullEnd: init,
   });

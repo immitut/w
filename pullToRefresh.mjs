@@ -1,7 +1,7 @@
 import { getItem, saveItem } from "./common.mjs";
 const Delta = "_d";
 const Average = "_a";
-
+const noop = () => {};
 // 统计最合适的长度
 function _saveDeltaData(v) {
   const list = getItem(Delta) || [];
@@ -20,15 +20,19 @@ function _saveDeltaData(v) {
 
 export function pullToRefresh(
   elm,
-  { distThreshold, distMax, onMove, onPullEnd }
+  { distThreshold, distMax, onMove, onPullEnd, onReachThreshold }
 ) {
   const _threshold = 40;
   let _startY = 0;
   let _deltaY = 0;
   let triggle = false;
+  let reachThreshold = false;
   let cacheStyle = null;
   const _distThreshold = Math.min(distMax, distThreshold);
   const _distMax = Math.max(distMax, distThreshold);
+  if (typeof onMove !== "function") onMove = noop;
+  if (typeof onPullEnd !== "function") onPullEnd = noop;
+  if (typeof onReachThreshold !== "function") onReachThreshold = noop;
 
   elm.addEventListener(
     "touchstart",
@@ -57,11 +61,12 @@ export function pullToRefresh(
           this.style.transition = "transform 0s";
           this.style.overflowY = "hidden";
         }
-
-        if (typeof onMove === "function") {
-          onMove(this, _deltaY / _distMax);
-        }
+        onMove(this, _deltaY / _distMax);
         elm.style.transform = `translateY(${_deltaY}px)`;
+        if (_deltaY >= _distThreshold && !reachThreshold) {
+          reachThreshold = true;
+          onReachThreshold();
+        }
       }
     },
     {
@@ -74,8 +79,9 @@ export function pullToRefresh(
     async () => {
       if (triggle) {
         _saveDeltaData(_deltaY);
-        if (_deltaY >= _distThreshold && typeof onPullEnd == "function") {
+        if (reachThreshold) {
           // console.log("touchend callback");
+          reachThreshold = false;
           await onPullEnd();
         }
         triggle = false;

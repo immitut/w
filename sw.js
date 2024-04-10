@@ -22,10 +22,10 @@ const cacheList = [
 const _ts = (t) => (t === undefined ? +new Date() : +new Date(t));
 
 /**
- * 检查历史记录中当前请求对应的保存信息
- * 如果没有，则返回结果，立刻去拉取最新数据
- * 如果有，且时间存储过期(过期时间可由 destination 决定)，同上
- * 反之，则告知使用缓存即可
+ * Check the history for saved information corresponding to the current request
+ * If not, return the result, immediately go to pull the latest data
+ * If there is, and the time store expires (the expiration time can be determined by the destination), ditto
+ * Instead, just tell to use cache
  * @param {string} url
  * @returns {Promise}
  */
@@ -40,18 +40,18 @@ function checkCacheInfo(url) {
       resolve({ msg: `${url}: no cache`, isExpired: true });
     } else {
       const { ts, destination } = result;
-      const deltaTs = _ts() - _ts(ts);
       const expiredTimeMap = {
         image: 2592e6, // 30 days
         "": 18e5, // 30 mins
-        document: 432e5, // half day
-        script: 432e5,
-        style: 432e5,
+        // TODO: remove for better dev
+        // document: 432e5, // half day
+        // script: 432e5,
+        // style: 432e5,
       };
-      const expiredTime = expiredTimeMap[destination] ?? 864e5;
+      const expiredTime = expiredTimeMap[destination] ?? 6e5; // 10mins
       resolve({
         msg: `checkCacheInfo: ${url}`,
-        isExpired: deltaTs >= expiredTime,
+        isExpired: _ts() - _ts(ts) >= expiredTime,
       });
     }
   });
@@ -80,7 +80,7 @@ function openDB() {
       resolve(ev.target.result);
     };
     request.onerror = reject;
-    // 初始化/升级时调用
+    // Callback on initialization/upgrade
     request.onupgradeneeded = (ev) => {
       const db = ev.target.result;
       const obStore = db.createObjectStore(DBINFO.storeName, {
@@ -199,11 +199,11 @@ self.addEventListener("install", async (ev) => {
 
 self.addEventListener("activate", async (ev) => {
   console.log("== activate ==", ev);
-  await deleteDB();
   const cacheKeys = await caches.keys();
-  cacheKeys.forEach((key) => {
+  cacheKeys.forEach(async (key) => {
     if (key !== CACHEVERSION) {
       caches.delete(key);
+      await deleteDB();
     }
   });
   await clients.claim();
