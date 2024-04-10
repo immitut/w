@@ -17,10 +17,30 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.2.1";
+const VERSION = "0.2.2";
 const MODE = "m";
 const AMOLED = "a";
-const modes = ["auto", "light", "dark"];
+const modes = [
+  { value: "auto", text: "自动" },
+  { value: "light", text: "浅色" },
+  { value: "dark", text: "深色" },
+];
+const themeColorMetaId = "theme-color";
+const NOTI = {
+  info: "0",
+  success: "1",
+  warn: "2",
+  error: "3",
+};
+const colors = {
+  [NOTI.info]: "",
+  // [NOTI.info]: "245 245 245",
+  [NOTI.success]: "139 195 74",
+  [NOTI.warn]: "255 152 0",
+  [NOTI.error]: "244 67 54",
+};
+const showNotif = _createNotifList();
+window.showNotif = showNotif;
 
 const proxy = new Proxy(
   {},
@@ -230,7 +250,6 @@ function initMsgChannel(controller) {
   const { port1, port2 } = new MessageChannel();
   const msgTypes = {
     REQUEST: "request",
-    LOG: "log",
     CACHE: "cache",
     CACHEINFO: "cacheInfo",
   };
@@ -274,8 +293,15 @@ function checkOnline() {
 function init() {
   const fn = () =>
     new Promise(async (resolve) => {
-      // const isOnline = checkOnline();
-      // $(".banner").classList.toggle("show", !isOnline);
+      const isOnline = checkOnline();
+      if (!isOnline) {
+        showNotif({
+          type: NOTI.error,
+          content: "无网络",
+        });
+        resolve();
+        return;
+      }
       const geoData = await initGeo();
       if (!geoData) return;
       let data = {};
@@ -301,6 +327,10 @@ function init() {
       const list = await renderList(data.forecast);
       $(`.list_forecast`).innerHTML = "";
       $(`.list_forecast`).appendChild(list);
+      showNotif({
+        type: NOTI.success,
+        content: "已更新",
+      });
       resolve();
     });
   return loading($(".app"), fn);
@@ -336,6 +366,10 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
 
 function switchAmoled() {
   const isAmoled = !!getItem(AMOLED);
+  showNotif({
+    content: `纯黑模式：${isAmoled ? "关" : "开"}`,
+    duration: 1,
+  });
   saveItem(AMOLED, !isAmoled);
   renderTheme();
 }
@@ -344,6 +378,10 @@ function switchTheme() {
   let i = getItem(MODE) || 0;
   i++;
   if (i === modes.length) i = 0;
+  showNotif({
+    content: `${modes[i].text}模式`,
+    duration: 1,
+  });
   saveItem(MODE, i);
   renderTheme();
 }
@@ -351,21 +389,76 @@ function switchTheme() {
 function renderTheme() {
   const i = getItem(MODE) || "0";
   const isAmoled = !!getItem(AMOLED);
-  $("body").className = isAmoled ? `${modes[i]} amoled` : modes[i];
+  $("body").className = isAmoled ? `${modes[i].value} amoled` : modes[i].value;
   const bgColor = getComputedStyle($("body")).getPropertyValue("--bg-color");
-  changeThemeColor(`rgb(${bgColor})`);
+  setThemeColor(`rgb(${bgColor})`);
 }
 
-function changeThemeColor(color) {
-  const id = "theme-color";
-  const elm = $(`#${id}`);
+function setThemeColor(color) {
+  if (!color) return;
+  const elm = $(`#${themeColorMetaId}`);
   if (elm) {
     elm.setAttribute("content", color);
   } else {
     const meta = document.createElement("meta");
-    meta.id = id;
-    meta.name = id;
+    meta.id = themeColorMetaId;
+    meta.name = "theme-color";
     meta.content = color;
     document.head.appendChild(meta);
   }
+}
+
+function getThemeColor() {
+  return $(`#${themeColorMetaId}`)?.getAttribute("content");
+}
+
+function _createNotifList() {
+  const notifList = [];
+  let _isBusy = false;
+
+  const run = async () => {
+    if (_isBusy) return;
+    while (notifList.length) {
+      _isBusy = true;
+      const notifTask = notifList.shift();
+      await notifTask();
+    }
+    _isBusy = false;
+  };
+  return async function ({ type = NOTI.info, content, duration = 3 }) {
+    notifList.push(
+      () =>
+        new Promise(async (resolve) => {
+          const notif = $(".notif");
+          notif.textContent = content;
+          const color = colors[type];
+          notif.style.setProperty("--notif-bg", color);
+          let _color;
+          if (color) {
+            _color = getThemeColor();
+            setThemeColor(`rgb(${color})`);
+          }
+          $(".notif").classList.add("show");
+          const cb = () => {
+            $(".notif").classList.remove("show");
+            setTimeout(() => {
+              setThemeColor(_color);
+              resolve();
+            }, 2e2);
+          };
+          switch (typeof duration) {
+            case "function": {
+              await duration();
+              cb();
+              break;
+            }
+            default: {
+              duration = Number.isFinite(duration) ? duration : 3;
+              setTimeout(cb, duration * 1e3);
+            }
+          }
+        })
+    );
+    run();
+  };
 }
