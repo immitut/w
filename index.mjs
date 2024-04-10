@@ -116,8 +116,8 @@ window.onload = () => {
   updateData({ version: VERSION });
 
   pullToRefresh($(".app"), {
-    distThreshold: 30 * get1rem(),
-    distMax: 40 * get1rem(),
+    distThreshold: 50 * get1rem(),
+    distMax: 80 * get1rem(),
     onReachThreshold: () => {
       vibrate(1);
     },
@@ -126,8 +126,8 @@ window.onload = () => {
       elm.style.filter = `blur(${16 * x}px) grayscale(${x})`;
       const loading_ani = $(".loading_ani");
       loading_ani.style.opacity = x;
-      loading_ani.style.transform = `translateY(${10 * x}rem)`;
-      $(".bg_ani").style.setProperty("--ani-delay", `${-x}s`);
+      loading_ani.style.transform = `translateY(${20 * x}rem)`;
+      $(".bg_ani").style.setProperty("--ani-delay", `${-3.6 * x}s`);
     },
     onPullEnd: init,
   });
@@ -289,7 +289,7 @@ function init() {
           getForecastWeather({ cnt: 8, ...geoData }),
           getAQI(geoData),
           // emmm slow down... :p
-          new Promise((r) => setTimeout(r, 8e2)),
+          new Promise((r) => setTimeout(r, 1e3)),
         ]);
         data = {
           ...curr,

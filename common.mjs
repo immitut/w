@@ -83,7 +83,7 @@ export function $(cssSelector) {
 
 export function vibrate(pattern = 1, callback) {
   if ("vibrate" in navigator) navigator.vibrate(pattern);
-  if (typeof callback === "function") callback();
+  typeof callback === "function" && callback();
 }
 
 export function get1rem() {

@@ -359,7 +359,7 @@ body {
   pointer-events: none;
   &.show {
     opacity: 1;
-    transform: translateY(10rem);
+    transform: translateY(20rem);
     .bg_ani {
       --ani-play-state: running;
     }
@@ -379,7 +379,6 @@ body {
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
     animation-play-state: var(--ani-play-state);
-    animation-fill-mode: forwards;
     &::before {
       width: 8rem;
       height: 8rem;
@@ -392,7 +391,7 @@ body {
       animation-iteration-count: infinite;
       /* animation-direction: normal; */
       animation-delay: var(--ani-delay);
-      animation-fill-mode: forwards;
+      /* animation-fill-mode: forwards; */
       animation-play-state: var(--ani-play-state);
     }
   }
