@@ -35,7 +35,8 @@ body {
   --normalLayer: 1;
   .dark {
     --bg-color: 19 19 24;
-    --font-color: 196 199 197;
+    /* --font-color: 196 199 197; */
+    --font-color: 236 228 228;
     --card-bg-color: 33 33 33;
     &.amoled {
       --bg-color: 0 0 0;
@@ -58,7 +59,8 @@ body {
     /* TODO: Duplicate css code */
     @media (prefers-color-scheme: dark) {
       --bg-color: 19 19 24;
-      --font-color: 196 199 197;
+      /* --font-color: 196 199 197; */
+      --font-color: 236 228 228;
       --card-bg-color: 33 33 33;
       &.amoled {
         --bg-color: 0 0 0;
