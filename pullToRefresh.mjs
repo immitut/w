@@ -62,7 +62,7 @@ export function pullToRefresh(
           this.style.overflowY = "hidden";
         }
         onMove(this, _deltaY / _distMax);
-        elm.style.transform = `translateY(${_deltaY}px)`;
+        elm.style.transform = `translateY(${_deltaY * 0.8}px)`;
         if (_deltaY >= _distThreshold && !reachThreshold) {
           reachThreshold = true;
           onReachThreshold();

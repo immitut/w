@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from "./api.mjs";
 import { pullToRefresh } from "./pullToRefresh.mjs";
 import("./dev.mjs");
 
-const VERSION = "0.1.7";
+const VERSION = "0.2.0";
 const MODE = "m";
 const AMOLED = "a";
 const modes = ["auto", "light", "dark"];
@@ -100,11 +100,21 @@ async function renderList(list) {
   return frag;
 }
 
+function loading(elm, fn) {
+  return new Promise(async (resolve) => {
+    elm.classList.add("loading");
+    $(".loading_ani").style = "";
+    $(".loading_ani").classList.add("show");
+    await fn();
+    elm.classList.remove("loading");
+    $(".loading_ani").classList.remove("show");
+    resolve();
+  });
+}
+
 window.onload = () => {
-  HTMLElement.prototype.loading = function (isLoading) {
-    this.classList.toggle("loading", isLoading);
-  };
   updateData({ version: VERSION });
+
   pullToRefresh($(".app"), {
     distThreshold: 30 * get1rem(),
     distMax: 40 * get1rem(),
@@ -114,6 +124,10 @@ window.onload = () => {
     onMove: (elm, p) => {
       const x = p * p;
       elm.style.filter = `blur(${16 * x}px) grayscale(${x})`;
+      const loading_ani = $(".loading_ani");
+      loading_ani.style.opacity = x;
+      loading_ani.style.transform = `translateY(${10 * x}rem)`;
+      $(".bg_ani").style.setProperty("--ani-delay", `${-x}s`);
     },
     onPullEnd: init,
   });
@@ -230,6 +244,96 @@ function initMsgChannel(controller) {
   return port1;
 }
 
+function updateIcon(key, value) {
+  const iconpath = _getIconPath(value);
+  $(`.${key}`).style.setProperty("--icon-url", `url("${iconpath}")`);
+}
+
+function getCurrWeather(p) {
+  return getWeather("weather", p);
+}
+
+function getForecastWeather(p) {
+  return getWeather("forecast", p);
+}
+
+function checkOnline() {
+  if (!"online" in navigator) {
+    return true;
+  }
+  return navigator.onLine;
+}
+
+// const searchBtn = document.querySelector("#submit");
+// searchBtn.onclick = async () => {
+//   const input = document.querySelector("input");
+//   const data = await fetchGeo(input.value);
+//   console.log(data);
+// };
+
+function init() {
+  const fn = () =>
+    new Promise(async (resolve) => {
+      // const isOnline = checkOnline();
+      // $(".banner").classList.toggle("show", !isOnline);
+      const geoData = await initGeo();
+      if (!geoData) return;
+      let data = {};
+
+      if (isDevEnv()) {
+        const { _mockData } = await import("./data.mjs");
+        data = await _mockData();
+      } else {
+        const [curr, forecast, aqi] = await Promise.all([
+          getCurrWeather(geoData),
+          getForecastWeather({ cnt: 8, ...geoData }),
+          getAQI(geoData),
+          // emmm slow down... :p
+          new Promise((r) => setTimeout(r, 5e2)),
+        ]);
+        data = {
+          ...curr,
+          forecast: forecast.list,
+          aqi: aqi.list[0],
+        };
+      }
+      updateData(data);
+      const list = await renderList(data.forecast);
+      $(`.list_forecast`).innerHTML = "";
+      $(`.list_forecast`).appendChild(list);
+      resolve();
+    });
+  return loading($(".app"), fn);
+}
+
+function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
+  const data = {
+    version,
+    temp_cur: main?.temp,
+    // temp_min: main?.temp_min,
+    // temp_max: main?.temp_max,
+    atm_pressure: main?.pressure,
+    per_humidity: main?.humidity,
+    // per_clouds: clouds?.all,
+    spe_wind: wind?.speed,
+    deg_wind: wind?.deg,
+    time_sunrise: sys?.sunrise,
+    time_sunset: sys?.sunset,
+    time_dt: dt,
+    // spe_wind:wind?.gust,
+    temp_feels_like: main?.feels_like,
+    desc: weather?.[0]?.description,
+    icon_main: weather?.[0]?.icon,
+    num_aqi: AQIcalculation(aqi?.components),
+  };
+
+  for (const key in data) {
+    if (data[key] !== undefined) {
+      proxy[key] = data[key];
+    }
+  }
+}
+
 function switchAmoled() {
   const isAmoled = !!getItem(AMOLED);
   saveItem(AMOLED, !isAmoled);
@@ -263,95 +367,5 @@ function changeThemeColor(color) {
     meta.name = id;
     meta.content = color;
     document.head.appendChild(meta);
-  }
-}
-
-function updateIcon(key, value) {
-  const iconpath = _getIconPath(value);
-  $(`.${key}`).style.setProperty("--icon-url", `url("${iconpath}")`);
-}
-
-function getCurrWeather(p) {
-  return getWeather("weather", p);
-}
-
-function getForecastWeather(p) {
-  return getWeather("forecast", p);
-}
-function checkOnline() {
-  if (!"online" in navigator) {
-    return true;
-  }
-  return navigator.onLine;
-}
-
-// const searchBtn = document.querySelector("#submit");
-// searchBtn.onclick = async () => {
-//   const input = document.querySelector("input");
-//   const data = await fetchGeo(input.value);
-//   console.log(data);
-// };
-
-function init() {
-  return new Promise(async (resolve) => {
-    // const isOnline = checkOnline();
-    // $(".banner").classList.toggle("show", !isOnline);
-    $(".app").loading(true);
-    const geoData = await initGeo();
-    if (!geoData) return;
-    let data = {};
-
-    if (isDevEnv()) {
-      const { _mockData } = await import("./data.mjs");
-      data = await _mockData();
-    } else {
-      const [curr, forecast, aqi] = await Promise.all([
-        getCurrWeather(geoData),
-        getForecastWeather({ cnt: 8, ...geoData }),
-        getAQI(geoData),
-        // emmm slow down... :p
-        new Promise((r) => setTimeout(r, 5e2)),
-      ]);
-      data = {
-        ...curr,
-        forecast: forecast.list,
-        aqi: aqi.list[0],
-      };
-    }
-    updateData(data);
-
-    const list = await renderList(data.forecast);
-    $(`.list_forecast`).innerHTML = "";
-    $(`.list_forecast`).appendChild(list);
-    $(".app").loading(false);
-    resolve();
-  });
-}
-
-function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
-  const data = {
-    version,
-    temp_cur: main?.temp,
-    // temp_min: main?.temp_min,
-    // temp_max: main?.temp_max,
-    atm_pressure: main?.pressure,
-    per_humidity: main?.humidity,
-    // per_clouds: clouds?.all,
-    spe_wind: wind?.speed,
-    deg_wind: wind?.deg,
-    time_sunrise: sys?.sunrise,
-    time_sunset: sys?.sunset,
-    time_dt: dt,
-    // spe_wind:wind?.gust,
-    temp_feels_like: main?.feels_like,
-    desc: weather?.[0]?.description,
-    icon_main: weather?.[0]?.icon,
-    num_aqi: AQIcalculation(aqi?.components),
-  };
-
-  for (const key in data) {
-    if (data[key] !== undefined) {
-      proxy[key] = data[key];
-    }
   }
 }
