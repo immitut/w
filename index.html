@@ -11,15 +11,15 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <script>
-    (function loadManifest() {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const url = isDark ? "manifest_dark.json" : "manifest.json";
-      const link = document.createElement("link");
-      link.rel = "manifest";
-      link.href = url;
-      link.crossOrigin = "use-credentials";
-      document.head.appendChild(link);
-    })();
+    ;(function loadManifest() {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const url = isDark ? 'manifest_dark.json' : 'manifest.json'
+      const link = document.createElement('link')
+      link.rel = 'manifest'
+      link.href = url
+      link.crossOrigin = 'use-credentials'
+      document.head.appendChild(link)
+    })()
   </script>
   <!-- <input type="text" value="杭州" />
     <button id="submit">搜索</button> -->
@@ -55,11 +55,7 @@
         <div class="items">
           <div class="block">
             <p class="deg_wind">
-              <svg
-                class="cursor_icon"
-                viewBox="0 0 1000 1000"
-                xml:space="preserve"
-              >
+              <svg class="cursor_icon" viewBox="0 0 1000 1000" xml:space="preserve">
                 <g data-v-47880d39="" fill="currentColor">
                   <path
                     data-v-47880d39=""
@@ -87,10 +83,7 @@
         <p class="version">[ver: <span>?.?.?</span>]</p>
         <p>
           数据来源于
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://openweathermap.org/"
+          <a target="_blank" rel="noopener noreferrer" href="https://openweathermap.org/"
             >OpenWeather</a
           >
           ，<span class="time_dt">00:00</span>更新

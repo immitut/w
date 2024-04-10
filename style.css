@@ -35,9 +35,8 @@ body {
   --normalLayer: 1;
   .dark {
     --bg-color: 19 19 24;
-    /* --font-color: 196 199 197; */
     --font-color: 236 228 228;
-    --card-bg-color: 33 33 33;
+    --primary-bg-color: 33 33 33;
     &.amoled {
       --bg-color: 0 0 0;
     }
@@ -46,9 +45,12 @@ body {
 
 :root .light,
 body.auto {
-  --bg-color: 238 238 238;
+  /* --bg-color: 238 238 238; */
+  /* --bg-color: var(--light-color-background); */
+  --bg-color: 255, 251, 255;
   --font-color: 51 51 51;
-  --card-bg-color: 246 246 246;
+  --primary-bg-color: 246 246 246;
+  /* --primary-bg-color: var(--light-color-primary-container); */
   .app .header {
     background-color: rgb(var(--bg-color));
   }
@@ -59,16 +61,14 @@ body {
     /* TODO: Duplicate css code */
     @media (prefers-color-scheme: dark) {
       --bg-color: 19 19 24;
-      /* --font-color: 196 199 197; */
       --font-color: 236 228 228;
-      --card-bg-color: 33 33 33;
+      --primary-bg-color: 33 33 33;
       &.amoled {
         --bg-color: 0 0 0;
       }
     }
   }
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, Arial,
-    sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   background: rgb(var(--bg-color));
   font-size: var(--normal-font-size);
   color: rgb(var(--font-color));
@@ -93,10 +93,12 @@ body {
   width: 100%;
   font-size: var(--normal-font-size);
   text-align: center;
-  transform-origin: top;
   transition-property: height transform;
   transition-duration: 0.4s;
   transition-timing-function: ease-in-out;
+  --radius: 1rem;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
   &.show {
     height: 12rem;
     line-height: 12rem;
@@ -209,27 +211,27 @@ body {
   padding: calc(var(--radius) / 3 * 2);
   line-height: 9rem;
   transition: all 0.4s ease-out;
-  background-color: rgb(var(--card-bg-color));
+  background-color: rgb(var(--primary-bg-color));
   &:has(.num_aqi) {
     color: rgb(230 230 230);
   }
-  &:has([data-num_aqi="1"]) {
+  &:has([data-num_aqi='1']) {
     background-color: rgb(0 153 102);
   }
-  &:has([data-num_aqi="2"]) {
+  &:has([data-num_aqi='2']) {
     color: rgb(51 51 51);
     background-color: rgb(255 222 51);
   }
-  &:has([data-num_aqi="3"]) {
+  &:has([data-num_aqi='3']) {
     background-color: rgb(255 153 51);
   }
-  &:has([data-num_aqi="4"]) {
+  &:has([data-num_aqi='4']) {
     background-color: rgb(204 0 51);
   }
-  &:has([data-num_aqi="5"]) {
+  &:has([data-num_aqi='5']) {
     background-color: rgb(102 0 153);
   }
-  &:has([data-num_aqi="6"]) {
+  &:has([data-num_aqi='6']) {
     background-color: rgb(126 0 35);
   }
 }
@@ -269,13 +271,13 @@ body {
   .time_sunrise {
     left: calc(var(--sunrisePer));
     &::before {
-      content: "日出 ";
+      content: '日出 ';
     }
   }
   .time_sunset {
     left: calc(var(--sunsetPer));
     &::before {
-      content: "日落 ";
+      content: '日落 ';
     }
   }
 }
@@ -297,7 +299,7 @@ body {
   &::before {
     display: block;
     font-size: var(--small-font-size);
-    content: "N";
+    content: 'N';
     transform: translate(-50%, -38%) scale(0.6);
     position: absolute;
     top: 0;
@@ -333,7 +335,7 @@ body {
     transition: all 0.4s ease-out;
     &::before {
       border-radius: 100%;
-      content: "";
+      content: '';
       display: block;
       width: 200%;
       height: 200%;
@@ -390,7 +392,7 @@ body {
       height: 8rem;
       border-radius: 100%;
       display: block;
-      content: "";
+      content: '';
       animation-name: move, colorChange;
       animation-duration: 1.4s, 2.8s;
       animation-timing-function: ease, steps(1, start);
