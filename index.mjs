@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.2.9'
+const VERSION = '0.3.0'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -29,14 +29,7 @@ const themeColorMetaId = 'theme-color'
 const NOTI = {
   info: '0',
   success: '1',
-  warn: '2',
-  error: '3',
-}
-const colors = {
-  [NOTI.info]: '',
-  [NOTI.success]: '139 195 74',
-  [NOTI.warn]: '255 152 0',
-  [NOTI.error]: '244 67 54',
+  error: '2',
 }
 
 let isHolded = false
@@ -102,6 +95,7 @@ function loading(elm, fn) {
 }
 
 window.onload = () => {
+  // showNotif({ type: NOTI.info, content: 'just for test', duration: 600 })
   updateData({ version: VERSION })
   const loading_ani = $('.loading_ani')
   pullToRefresh($('.app'), {
@@ -292,7 +286,7 @@ function init() {
         const resp = await Promise.race([requestList, overtime])
         if (!resp) {
           showNotif({
-            type: NOTI.warn,
+            type: NOTI.error,
             content: '请求超时',
             duration: () =>
               new Promise(resolve => {
@@ -359,24 +353,24 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
 
 function switchAmoled() {
   const isAmoled = !!getItem(AMOLED)
+  saveItem(AMOLED, !isAmoled)
+  renderTheme()
   showNotif({
     content: `纯黑模式：${isAmoled ? '关' : '开'}`,
     duration: 1,
   })
-  saveItem(AMOLED, !isAmoled)
-  renderTheme()
 }
 
 function switchTheme() {
   let i = getItem(MODE) || 0
   i++
   if (i === modes.length) i = 0
+  saveItem(MODE, i)
+  renderTheme()
   showNotif({
     content: `${modes[i].text}模式`,
     duration: 1,
   })
-  saveItem(MODE, i)
-  renderTheme()
 }
 
 function renderTheme() {
@@ -432,14 +426,14 @@ function _createNotifList() {
         new Promise(async resolve => {
           const notif = $('.notif')
           notif.textContent = content
-          const color = colors[type]
-          notif.style.setProperty('--notif-bg', color)
+          notif.dataset.notif_type = type
+          const color = getComputedStyle(notif).backgroundColor
           notif.classList.add('show')
-          color && setThemeColor(`rgb(${color})`)
+          setThemeColor(color)
           const cb = () => {
             notif.classList.remove('show')
             setTimeout(() => {
-              color && resetThemeColor()
+              resetThemeColor()
               resolve()
             }, 1e2)
           }

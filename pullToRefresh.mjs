@@ -1,22 +1,4 @@
-import { getItem, saveItem } from './common.mjs'
-const Delta = '_d'
-const Average = '_a'
 const noop = () => {}
-// 统计最合适的长度
-function _saveDeltaData(v) {
-  const list = getItem(Delta) || []
-  if (list.length === 50) list.shift()
-  list.push(~~v)
-  const average = list.reduce((res, curr, i) => {
-    res += curr
-    if (i === list.length - 1) {
-      res = res / list.length
-    }
-    return res
-  }, 0)
-  saveItem(Delta, list)
-  saveItem(Average, ~~average)
-}
 
 export function pullToRefresh(
   elm,
@@ -80,8 +62,7 @@ export function pullToRefresh(
         // console.log("touchend callback");
         await onPullEnd(reachThreshold)
         triggle = false
-        _startY = 0
-        _deltaY = 0
+        _startY = _deltaY = 0
         elm.style = ''
       }
     },
