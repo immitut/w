@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.2.7'
+const VERSION = '0.2.8'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -261,7 +261,14 @@ function init() {
   const fn = () =>
     new Promise(async resolve => {
       const geoData = await initGeo()
-      if (!geoData) return
+      if (!geoData) {
+        showNotif({
+          type: NOTI.error,
+          content: '无有效定位信息',
+        })
+        resolve()
+        return
+      }
       let data = {}
 
       if (isDevEnv()) {
