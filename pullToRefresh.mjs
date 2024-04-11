@@ -26,8 +26,7 @@ export function pullToRefresh(
   let _startY = 0
   let _deltaY = 0
   let triggle = false
-  let reachThreshold = false
-  let cacheStyle = null
+  let reachThreshold
   const _distThreshold = Math.min(distMax, distThreshold)
   const _distMax = Math.max(distMax, distThreshold)
   if (typeof onMove !== 'function') onMove = noop
@@ -39,8 +38,8 @@ export function pullToRefresh(
     function (ev) {
       if (this.scrollTop !== 0) return
       // console.log(this.scrollTop, ev);
-      cacheStyle = elm.style.cssText
       const { pageY } = ev.touches[0]
+      reachThreshold = false
       _startY = pageY
     },
     {
@@ -78,19 +77,12 @@ export function pullToRefresh(
     'touchend',
     async () => {
       if (triggle) {
-        _saveDeltaData(_deltaY)
-        if (reachThreshold) {
-          // console.log("touchend callback");
-          reachThreshold = false
-          await onPullEnd()
-        }
+        // console.log("touchend callback");
+        await onPullEnd(reachThreshold)
         triggle = false
         _startY = 0
         _deltaY = 0
-        if (cacheStyle !== null) {
-          elm.style = cacheStyle
-          cacheStyle = null
-        }
+        elm.style = ''
       }
     },
     {

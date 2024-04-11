@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.2.6'
+const VERSION = '0.2.7'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -90,41 +90,9 @@ const proxy = new Proxy(
   },
 )
 
-async function renderList(list) {
-  const frag = document.createDocumentFragment()
-  const imgLoaders = new Map()
-  for (const item of list) {
-    const { dt, weather, main } = item
-    const div = document.createElement('div')
-    div.classList.add('item_forecast')
-    const time = document.createElement('p')
-    time.textContent = timeRander(dt * 1e3)
-    const icon = document.createElement('img')
-    icon.src = _getIconPath(weather?.[0]?.icon)
-    if (!imgLoaders.has(icon.src)) {
-      imgLoaders.set(
-        icon.src,
-        new Promise(resolve => {
-          icon.onload = resolve
-        }),
-      )
-    }
-    icon.alt = weather?.[0]?.description
-    const temp = document.createElement('p')
-    temp.textContent = tempRander(main?.temp)
-    div.appendChild(time)
-    div.appendChild(icon)
-    div.appendChild(temp)
-    frag.appendChild(div)
-  }
-  await Promise.all([...imgLoaders.values()])
-  return frag
-}
-
 function loading(elm, fn) {
   return new Promise(async resolve => {
     elm.classList.add('loading')
-    $('.loading_ani').style = ''
     $('.loading_ani').classList.add('show')
     await fn()
     elm.classList.remove('loading')
@@ -135,21 +103,26 @@ function loading(elm, fn) {
 
 window.onload = () => {
   updateData({ version: VERSION })
+  const loading_ani = $('.loading_ani')
   pullToRefresh($('.app'), {
     distThreshold: 50 * get1rem(),
-    distMax: 80 * get1rem(),
+    distMax: 60 * get1rem(),
     onReachThreshold: () => {
       vibrate(1)
     },
     onMove: (elm, p) => {
       const x = p * p
       elm.style.filter = `blur(${16 * x}px) grayscale(${x})`
-      const loading_ani = $('.loading_ani')
       loading_ani.style.opacity = x
       loading_ani.style.transform = `translateY(${20 * x}rem)`
       $('.bg_ani').style.setProperty('--ani-delay', `${-2.4 * x}s`)
     },
-    onPullEnd: init,
+    onPullEnd: reachThreshold => {
+      loading_ani.style = ''
+      if (reachThreshold) {
+        return init()
+      }
+    },
   })
 
   const next = () => {
@@ -425,8 +398,8 @@ function _createNotifList() {
           const notif = $('.notif')
           notif.textContent = content
           const color = colors[type]
-          notif.style.setProperty('--notif-bg', color)
           color && setThemeColor(`rgb(${color})`)
+          notif.style.setProperty('--notif-bg', color)
           notif.classList.add('show')
           const cb = () => {
             notif.classList.remove('show')
@@ -480,4 +453,35 @@ function offLineCheck() {
   if (!navigator.onLine) {
     offLineCallback()
   }
+}
+
+async function renderList(list) {
+  const frag = document.createDocumentFragment()
+  const imgLoaders = new Map()
+  for (const item of list) {
+    const { dt, weather, main } = item
+    const div = document.createElement('div')
+    div.classList.add('item_forecast')
+    const time = document.createElement('p')
+    time.textContent = timeRander(dt * 1e3)
+    const icon = document.createElement('img')
+    icon.src = _getIconPath(weather?.[0]?.icon)
+    if (!imgLoaders.has(icon.src)) {
+      imgLoaders.set(
+        icon.src,
+        new Promise(resolve => {
+          icon.onload = resolve
+        }),
+      )
+    }
+    icon.alt = weather?.[0]?.description
+    const temp = document.createElement('p')
+    temp.textContent = tempRander(main?.temp)
+    div.appendChild(time)
+    div.appendChild(icon)
+    div.appendChild(temp)
+    frag.appendChild(div)
+  }
+  await Promise.all([...imgLoaders.values()])
+  return frag
 }

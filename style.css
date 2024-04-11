@@ -96,7 +96,7 @@ body {
   transition-property: height transform;
   transition-duration: 0.4s;
   transition-timing-function: ease-in-out;
-  --radius: 1rem;
+  --radius: 2rem;
   border-bottom-left-radius: var(--radius);
   border-bottom-right-radius: var(--radius);
   &.show {
@@ -362,7 +362,7 @@ body {
   width: 100%;
   position: absolute;
   opacity: 0;
-  z-index: var(--midLayer);
+  z-index: var(--topLayer);
   transition: 0.2s;
   pointer-events: none;
   &.show {
