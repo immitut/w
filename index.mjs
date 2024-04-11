@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.3.1'
+const VERSION = '0.3.2'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -282,12 +282,20 @@ function init() {
           // emmm slow down... :p
           timeoutPromise(1e3),
         ])
-        const overtime = timeoutPromise(1e4)
-        const resp = await Promise.race([requestList, overtime])
-        if (!resp) {
-          showNotif({
+        try {
+          const [curr, forecast, aqi] = await requestList
+          data = {
+            ...curr,
+            forecast: forecast.list,
+            aqi: aqi.list[0],
+          }
+        } catch (err) {
+          // console.dir(err)
+          const { name, code } = err
+          const content = `[code: ${code}] ${name === 'AbortError' ? '请求超时' : name}`
+          return showNotif({
             type: NOTI.error,
-            content: '请求超时',
+            content,
             duration: () =>
               new Promise(resolve => {
                 $('.notif').addEventListener(
@@ -301,13 +309,6 @@ function init() {
                 )
               }),
           })
-          return
-        }
-        const [curr, forecast, aqi] = resp
-        data = {
-          ...curr,
-          forecast: forecast.list,
-          aqi: aqi.list[0],
         }
       }
       updateData(data)

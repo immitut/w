@@ -16,7 +16,7 @@ const getInfo = async (api, { cached = false } = {}) => {
     _cache.delete(api)
   }
   try {
-    return await fetch(api)
+    return await fetch(api, { signal: AbortSignal.timeout(1e4) }) // 10s timeout for single request
       .then(res => res.json())
       .then(data => {
         if (cached) {
@@ -25,8 +25,7 @@ const getInfo = async (api, { cached = false } = {}) => {
         return data
       })
   } catch (err) {
-    console.log(err)
-    return {}
+    throw err
   }
 }
 
