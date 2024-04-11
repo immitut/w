@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.2.8'
+const VERSION = '0.2.9'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -250,6 +250,12 @@ function getForecastWeather(p) {
   return getWeather('forecast', p)
 }
 
+function timeoutPromise(time) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}
+
 // const searchBtn = document.querySelector("#submit");
 // searchBtn.onclick = async () => {
 //   const input = document.querySelector("input");
@@ -275,13 +281,35 @@ function init() {
         const { _mockData } = await import('./data.mjs')
         data = await _mockData()
       } else {
-        const [curr, forecast, aqi] = await Promise.all([
+        const requestList = Promise.all([
           getCurrWeather(geoData),
           getForecastWeather({ cnt: 8, ...geoData }),
           getAQI(geoData),
           // emmm slow down... :p
-          new Promise(r => setTimeout(r, 1e3)),
+          timeoutPromise(1e3),
         ])
+        const overtime = timeoutPromise(1e4)
+        const resp = await Promise.race([requestList, overtime])
+        if (!resp) {
+          showNotif({
+            type: NOTI.warn,
+            content: '请求超时',
+            duration: () =>
+              new Promise(resolve => {
+                $('.notif').addEventListener(
+                  'click',
+                  () => {
+                    clearNotifList()
+                    resolve()
+                    init()
+                  },
+                  { once: true },
+                )
+              }),
+          })
+          return
+        }
+        const [curr, forecast, aqi] = resp
         data = {
           ...curr,
           forecast: forecast.list,
