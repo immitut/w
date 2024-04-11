@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.3.0'
+const VERSION = '0.3.1'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [

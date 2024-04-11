@@ -36,8 +36,12 @@ body {
   .dark {
     --bg-color: var(--dark-color-background);
     --on-bg-color: var(--dark-color-on-background);
+    --primary-color: var(--dark-color-primary);
+    --on-primary-color: var(--dark-color-on-primary);
     --primary-bg-color: var(--dark-color-primary-container);
     --on-primary-bg-color: var(--dark-color-on-primary-container);
+    --secondary-color: var(--dark-color-secondary);
+    --on-secondary-color: var(--dark-color-on-secondary);
     --secondary-bg-color: var(--dark-color-secondary-container);
     --on-secondary-bg-color: var(--dark-color-on-secondary-container);
     --error-bg-color: var(--dark-color-error);
@@ -55,8 +59,12 @@ body {
 body.auto {
   --bg-color: var(--light-color-background);
   --on-bg-color: var(--light-color-on-background);
+  --primary-color: var(--light-color-primary);
+  --on-primary-color: var(--light-color-on-primary);
   --primary-bg-color: var(--light-color-primary-container);
   --on-primary-bg-color: var(--light-color-on-primary-container);
+  --secondary-color: var(--light-color-secondary);
+  --on-secondary-color: var(--light-color-on-secondary);
   --secondary-bg-color: var(--light-color-secondary-container);
   --on-secondary-bg-color: var(--light-color-on-secondary-container);
   --error-bg-color: var(--light-color-error);
@@ -75,8 +83,12 @@ body {
     @media (prefers-color-scheme: dark) {
       --bg-color: var(--dark-color-background);
       --on-bg-color: var(--dark-color-on-background);
+      --primary-color: var(--dark-color-primary);
+      --on-primary-color: var(--dark-color-on-primary);
       --primary-bg-color: var(--dark-color-primary-container);
       --on-primary-bg-color: var(--dark-color-on-primary-container);
+      --secondary-color: var(--dark-color-secondary);
+      --on-secondary-color: var(--dark-color-on-secondary);
       --secondary-bg-color: var(--dark-color-secondary-container);
       --on-secondary-bg-color: var(--dark-color-on-secondary-container);
       --error-bg-color: var(--dark-color-error);
@@ -172,6 +184,7 @@ body {
     .temp_cur {
       position: absolute;
       bottom: 8rem;
+      color: rgb(var(--primary-color));
       font-size: var(--max-font-size);
     }
     .temp_secondary {
@@ -323,19 +336,19 @@ body {
   border-radius: 100%;
   width: 9rem;
   height: 9rem;
-  color: rgb(var(--on-bg-color));
-  border: 1px solid rgb(var(--outline-color));
+  color: rgb(var(--on-secondary-color));
+  background-color: rgb(var(--secondary-color));
   transform: scale(1.6);
   .cursor_icon {
     width: 9rem;
     height: 9rem;
-    transform: rotate(calc(var(--deg) - 180deg)) scale(0.5);
+    transform: rotate(calc(var(--deg) - 180deg)) scale(0.4);
   }
   &::before {
     display: block;
     font-size: var(--small-font-size);
     content: 'N';
-    transform: translate(-50%, -38%) scale(0.6);
+    transform: translate(-50%, -34%) scale(0.6);
     position: absolute;
     top: 0;
     left: 4.5rem;
@@ -364,8 +377,8 @@ body {
     bottom: 0;
     right: 0;
     cursor: pointer;
-    background-color: rgb(var(--bg-color));
-    border: 2px solid rgb(var(--on-bg-color));
+    background-color: rgb(var(--on-primary-color));
+    border: 2px solid rgb(var(--primary-color));
     overflow: hidden;
     transition: all 0.4s ease-out;
     &::before {
@@ -374,7 +387,7 @@ body {
       display: block;
       width: 200%;
       height: 200%;
-      background-color: rgb(var(--on-bg-color));
+      background-color: rgb(var(--primary-color));
       transition: all 0.8s ease-in-out;
     }
     :where(.auto) &::before {
@@ -415,7 +428,7 @@ body {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
-    border: 2px solid rgb(var(--on-bg-color));
+    border: 2px solid rgb(var(--primary-color));
     animation-name: colorChange;
     animation-delay: var(--ani-delay);
     animation-duration: 2.8s;
@@ -443,10 +456,10 @@ body {
 @keyframes colorChange {
   0%,
   100% {
-    background-color: rgb(var(--bg-color));
+    background-color: rgb(var(--primary-color));
   }
   50% {
-    background-color: rgb(var(--on-bg-color));
+    background-color: rgb(var(--on-primary-color));
   }
 }
 
@@ -470,5 +483,5 @@ body {
 }
 
 .shadow {
-  border-bottom: 1px solid rgb(var(--outline-color) / 0.2);
+  border-bottom: 1px solid rgb(var(--outline-color) / 0.5);
 }
