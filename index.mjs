@@ -17,7 +17,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.2.5'
+const VERSION = '0.2.6'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -38,7 +38,9 @@ const colors = {
   [NOTI.warn]: '255 152 0',
   [NOTI.error]: '244 67 54',
 }
-const showNotif = _createNotifList()
+
+let isHolded = false
+const { showNotif, clearNotifList } = _createNotifList()
 window.showNotif = showNotif
 
 const proxy = new Proxy(
@@ -133,7 +135,6 @@ function loading(elm, fn) {
 
 window.onload = () => {
   updateData({ version: VERSION })
-
   pullToRefresh($('.app'), {
     distThreshold: 50 * get1rem(),
     distMax: 80 * get1rem(),
@@ -153,6 +154,7 @@ window.onload = () => {
 
   const next = () => {
     renderTheme()
+    offLineCheck()
     init()
   }
   if ('serviceWorker' in navigator) {
@@ -213,7 +215,7 @@ window.onload = () => {
   }
 }
 
-$('.icon_main').onclick = init
+$('.icon_main').onclick = vibrate.bind(null, 1, init)
 $('.time_dt').onclick = () => {
   vibrate(1, switchAmoled)
 }
@@ -275,13 +277,6 @@ function getForecastWeather(p) {
   return getWeather('forecast', p)
 }
 
-function checkOnline() {
-  if (!'online' in navigator) {
-    return true
-  }
-  return navigator.onLine
-}
-
 // const searchBtn = document.querySelector("#submit");
 // searchBtn.onclick = async () => {
 //   const input = document.querySelector("input");
@@ -292,25 +287,6 @@ function checkOnline() {
 function init() {
   const fn = () =>
     new Promise(async resolve => {
-      const isOnline = checkOnline()
-      if (!isOnline) {
-        showNotif({
-          type: NOTI.error,
-          content: '无网络',
-          duration: () =>
-            new Promise(resolve => {
-              $('.notif').addEventListener(
-                'click',
-                () => {
-                  resolve(init())
-                },
-                { once: true },
-              )
-            }),
-        })
-        resolve()
-        return
-      }
       const geoData = await initGeo()
       if (!geoData) return
       let data = {}
@@ -399,6 +375,10 @@ function renderTheme() {
   const i = getItem(MODE) || '0'
   const isAmoled = !!getItem(AMOLED)
   $('body').className = isAmoled ? `${modes[i].value} amoled` : modes[i].value
+  resetThemeColor()
+}
+
+function resetThemeColor() {
   const bgColor = getComputedStyle($('body')).getPropertyValue('--bg-color')
   setThemeColor(`rgb(${bgColor})`)
 }
@@ -406,7 +386,7 @@ function renderTheme() {
 function setThemeColor(color) {
   if (!color) return
   const elm = $(`#${themeColorMetaId}`)
-  if (elm) {
+  if (elm && !isHolded) {
     elm.setAttribute('content', color)
   } else {
     const meta = document.createElement('meta')
@@ -434,7 +414,11 @@ function _createNotifList() {
     }
     _isBusy = false
   }
-  return async function ({ type = NOTI.info, content, duration = 3 }) {
+
+  const clearNotifList = () => {
+    notifList.length = 0
+  }
+  const showNotif = async ({ type = NOTI.info, content, duration = 1 }) => {
     notifList.push(
       () =>
         new Promise(async resolve => {
@@ -442,32 +426,58 @@ function _createNotifList() {
           notif.textContent = content
           const color = colors[type]
           notif.style.setProperty('--notif-bg', color)
-          let _color
-          if (color) {
-            _color = getThemeColor()
-            setThemeColor(`rgb(${color})`)
-          }
+          color && setThemeColor(`rgb(${color})`)
           notif.classList.add('show')
           const cb = () => {
             notif.classList.remove('show')
             setTimeout(() => {
-              setThemeColor(_color)
+              color && resetThemeColor()
               resolve()
             }, 2e2)
           }
           switch (typeof duration) {
             case 'function': {
+              isHolded = true
               await duration()
+              isHolded = false
               cb()
               break
             }
             default: {
-              duration = Number.isFinite(duration) ? duration : 3
+              duration = Number.isFinite(duration) ? duration : 1
               setTimeout(cb, duration * 1e3)
             }
           }
         }),
     )
     run()
+  }
+  return {
+    clearNotifList,
+    showNotif,
+  }
+}
+
+function offLineCheck() {
+  const offLineCallback = () => {
+    showNotif({
+      type: NOTI.error,
+      content: '无网络',
+      duration: () =>
+        new Promise(resolve => {
+          window.addEventListener(
+            'online',
+            () => {
+              clearNotifList()
+              resolve()
+            },
+            { once: true },
+          )
+        }),
+    })
+  }
+  window.addEventListener('offline', offLineCallback)
+  if (!navigator.onLine) {
+    offLineCallback()
   }
 }
