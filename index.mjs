@@ -405,15 +405,15 @@ function _createNotifList() {
           const notif = $('.notif')
           notif.textContent = content
           const color = colors[type]
-          color && setThemeColor(`rgb(${color})`)
           notif.style.setProperty('--notif-bg', color)
           notif.classList.add('show')
+          color && setThemeColor(`rgb(${color})`)
           const cb = () => {
             notif.classList.remove('show')
             setTimeout(() => {
               color && resetThemeColor()
               resolve()
-            }, 2e2)
+            }, 1e2)
           }
           switch (typeof duration) {
             case 'function': {

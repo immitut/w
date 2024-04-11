@@ -63,16 +63,6 @@ async function saveCacheInfo({ url, destination }) {
   closeDB(db)
 }
 
-// function sendLogMsg(data) {
-//   self._port?.postMessage({
-//     type: self._portMsgType.LOG,
-//     data: {
-//       ts: new Date(),
-//       ...data,
-//     },
-//   });
-// }
-
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DBINFO.name, DBINFO.version)
@@ -169,10 +159,14 @@ self.addEventListener('fetch', ev => {
         }
         try {
           const resp = await fetch(request)
-          saveCacheInfo({ url, destination })
-          cache.put(request, resp.clone()).catch(err => {
-            console.warn(request, err)
-          })
+          cache
+            .put(request, resp.clone())
+            .then(() => {
+              saveCacheInfo({ url, destination })
+            })
+            .catch(err => {
+              console.warn(request, err)
+            })
           console.log('[online]', url)
           return resp
         } catch (err) {
@@ -189,6 +183,7 @@ self.addEventListener('fetch', ev => {
 
 self.addEventListener('install', async ev => {
   console.log('== install ==', ev)
+  await deleteDB()
   const cache = await caches.open(CACHEVERSION)
   cache.addAll(cacheList)
   self.skipWaiting()
@@ -200,7 +195,6 @@ self.addEventListener('activate', async ev => {
   cacheKeys.forEach(async key => {
     if (key !== CACHEVERSION) {
       caches.delete(key)
-      await deleteDB()
     }
   })
   await clients.claim()

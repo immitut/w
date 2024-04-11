@@ -90,13 +90,15 @@ body {
   background-color: rgb(var(--notif-bg, --bg-color));
   transform: translateY(-24rem);
   height: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   font-size: var(--normal-font-size);
   text-align: center;
   transition-property: height transform;
-  transition-duration: 0.4s;
+  transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
-  --radius: 2rem;
+  --radius: 3rem;
   border-bottom-left-radius: var(--radius);
   border-bottom-right-radius: var(--radius);
   &.show {
@@ -112,7 +114,6 @@ body {
   scrollbar-width: none;
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* scroll-snap-type: y proximity; */
   scroll-padding-top: 18rem;
   transition: all 0.4s ease-out;
   max-width: 174rem;
@@ -167,7 +168,6 @@ body {
       align-items: center;
       &:not(:first-child) {
         margin-top: var(--spacing);
-        /* scroll-snap-align: start none; */
       }
       &.forecast {
         @media screen and (max-width: 480px) {
@@ -316,7 +316,7 @@ body {
 }
 
 .footer {
-  margin: 90rem var(--spacing) 2rem;
+  margin: 90rem var(--spacing) var(--spacing);
   line-height: 6rem;
   font-size: var(--small-font-size);
   /* text-align: center; */
@@ -326,7 +326,7 @@ body {
     width: 5rem;
     height: 5rem;
     border-radius: 100%;
-    bottom: 3rem;
+    bottom: 0;
     right: 0;
     cursor: pointer;
     background-color: rgb(var(--bg-color));
