@@ -101,8 +101,8 @@ window.onload = () => {
     offLineCheck()
     init()
     // setTimeout(() => {
-    // showNotif({ type: NOTI.error, content: 'just for test', duration: 10000 })
-    // })
+    //   showNotif({ type: NOTI.info, content: 'just for test', duration: 5 })
+    // }, 1e3)
   }
   if ('serviceWorker' in navigator) {
     // const { port1, port2 } = new MessageChannel();

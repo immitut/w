@@ -136,13 +136,14 @@ body {
     top: 0;
     left: 0;
     font-size: var(--normal-font-size);
-    border-radius: 3rem;
-    transition-property: transform, border-color;
+    border-radius: 2rem;
+    transition-property: transform, filter;
     transition-duration: 0.4s;
     transition-timing-function: ease-in-out;
     &:first-child {
       flex: 1;
       position: sticky;
+      filter: brightness(1);
     }
     &:not(:first-child) {
       height: 16rem;
@@ -151,9 +152,10 @@ body {
     }
     &.show {
       transition-delay: 0.2s;
-      transform: translateY(-3rem);
+      transform: translateY(-2rem);
       &:not(:first-child) {
-        transform: translateY(10rem) scale(0.95);
+        filter: brightness(0.9);
+        transform: translateY(5rem) scale(0.96);
       }
     }
 
