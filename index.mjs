@@ -415,7 +415,7 @@ function _createNotifList() {
       () =>
         new Promise(async resolve => {
           const isPriNotifGone = await isPromisesAllDone(_currNotifDurationTask)
-          let notif = document.createElement('div')
+          let notif = document.createElement('p')
           notif.className = 'notif'
           notif.textContent = content
           notif.dataset.notif_type = type
@@ -441,7 +441,7 @@ function _createNotifList() {
             notif = null
             resetThemeColor()
             resolve()
-          }, 1e2)
+          }, 2e2)
         }),
     )
     run()
