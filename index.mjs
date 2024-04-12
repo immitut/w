@@ -18,7 +18,7 @@ import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.3.5'
+const VERSION = '0.3.6'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -94,13 +94,15 @@ function loading(elm, fn) {
 }
 
 window.onload = () => {
-  // showNotif({ type: NOTI.info, content: 'just for test', duration: 10000 })
   updateData({ version: VERSION })
   addPullToRefresh()
   const next = () => {
     renderTheme()
     offLineCheck()
     init()
+    // setTimeout(() => {
+    // showNotif({ type: NOTI.error, content: 'just for test', duration: 10000 })
+    // })
   }
   if ('serviceWorker' in navigator) {
     // const { port1, port2 } = new MessageChannel();
@@ -268,6 +270,10 @@ function init() {
             forecast: forecast.list,
             aqi: aqi.list[0],
           }
+          updateData(data)
+          const list = await renderList(data.forecast)
+          $(`.list_forecast`).innerHTML = ''
+          $(`.list_forecast`).appendChild(list)
         } catch (err) {
           // console.dir(err)
           const { name, code } = err
@@ -289,10 +295,7 @@ function init() {
           })
         }
       }
-      updateData(data)
-      const list = await renderList(data.forecast)
-      $(`.list_forecast`).innerHTML = ''
-      $(`.list_forecast`).appendChild(list)
+
       showNotif({
         type: NOTI.success,
         content: '已更新',
@@ -336,7 +339,6 @@ function switchAmoled() {
   renderTheme()
   showNotif({
     content: `纯黑模式：${isAmoled ? '关' : '开'}`,
-    duration: 1,
   })
 }
 
@@ -348,7 +350,6 @@ function switchTheme() {
   renderTheme()
   showNotif({
     content: `${modes[i].text}模式`,
-    duration: 1,
   })
 }
 
@@ -376,10 +377,6 @@ async function setThemeColor(color) {
     meta.content = color
     document.head.appendChild(meta)
   }
-}
-
-function getThemeColor() {
-  return $(`#${themeColorMetaId}`)?.getAttribute('content')
 }
 
 function _createNotifList() {

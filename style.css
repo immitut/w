@@ -121,36 +121,42 @@ body {
   height: 0;
   flex-direction: column;
   transition: height 0.3s ease-out;
+  gap: 1rem;
   &:has(.notif) {
-    height: 20rem;
+    height: 16rem;
   }
   .notif {
-    flex: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: sticky;
     z-index: var(--topLayer);
     transform: translateY(-20rem);
-    height: 20rem;
+    height: 0rem;
+    position: fixed;
     top: 0;
     left: 0;
     font-size: var(--normal-font-size);
-    transition-property: transform;
+    border-radius: 3rem;
+    transition-property: transform, border-color;
     transition-duration: 0.4s;
-    transition-delay: 0.2s;
     transition-timing-function: ease-in-out;
-    border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
-    &:last-child {
-      flex: 3;
-      --radius: 4rem;
-      border: none;
-      border-bottom-left-radius: var(--radius);
-      border-bottom-right-radius: var(--radius);
+    &:first-child {
+      flex: 1;
+      position: sticky;
+    }
+    &:not(:first-child) {
+      height: 16rem;
+      width: 100%;
+      text-align: center;
     }
     &.show {
-      transform: translateY(0);
+      transition-delay: 0.2s;
+      transform: translateY(-3rem);
+      &:not(:first-child) {
+        transform: translateY(10rem) scale(0.95);
+      }
     }
+
     /* error */
     &[data-notif_type='2'] {
       background-color: rgb(var(--error-bg-color));
