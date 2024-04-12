@@ -143,7 +143,8 @@ self.addEventListener('message', ev => {
 
 self.addEventListener('fetch', ev => {
   // console.log("fetch ev", ev);
-  if (['http:', 'https:'].includes(new URL(ev.request.url).protocol)) {
+  if (['https:'].includes(new URL(ev.request.url).protocol)) {
+    // if (['http:', 'https:'].includes(new URL(ev.request.url).protocol)) {
     ev.respondWith(
       (async request => {
         const { url, destination } = request

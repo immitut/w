@@ -116,49 +116,59 @@ body {
     font-family: "Inter var", sans-serif;
   }
 } */
-
-.notif {
-  position: sticky;
-  z-index: var(--topLayer);
-  transform: translateY(-24rem);
+.notif-box {
+  display: flex;
   height: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
-  font-size: var(--normal-font-size);
-  text-align: center;
-  transition-property: height, transform, border;
-  transition-duration: 0.4s;
-  transition-timing-function: ease-in-out;
-  border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
-  &:last-child {
-    --radius: 3rem;
-    border: none;
-    border-bottom-left-radius: var(--radius);
-    border-bottom-right-radius: var(--radius);
+  flex-direction: column;
+  transition: height 0.3s ease-out;
+  &:has(.notif) {
+    height: 20rem;
   }
-
-  &.show {
-    height: 12rem;
-    line-height: 12rem;
-    transform: translateY(0);
-  }
-  /* error */
-  &[data-notif_type='2'] {
-    background-color: rgb(var(--error-bg-color));
-    color: rgb(var(--on-error-bg-color));
-  }
-  /* success */
-  &[data-notif_type='1'] {
-    background-color: rgb(var(--primary-bg-color));
-    color: rgb(var(--on-primary-bg-color));
-  }
-  /* info */
-  &[data-notif_type='0'] {
-    background-color: rgb(var(--surface-color));
-    color: rgb(var(--on-surface-color));
+  .notif {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    z-index: var(--topLayer);
+    transform: translateY(-20rem);
+    height: 20rem;
+    top: 0;
+    left: 0;
+    font-size: var(--normal-font-size);
+    transition-property: transform;
+    transition-duration: 0.4s;
+    transition-delay: 0.2s;
+    transition-timing-function: ease-in-out;
+    border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
+    &:last-child {
+      flex: 3;
+      --radius: 3rem;
+      border: none;
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+    }
+    &.show {
+      transform: translateY(0);
+    }
+    /* error */
+    &[data-notif_type='2'] {
+      background-color: rgb(var(--error-bg-color));
+      color: rgb(var(--on-error-bg-color));
+    }
+    /* success */
+    &[data-notif_type='1'] {
+      background-color: rgb(var(--primary-bg-color));
+      color: rgb(var(--on-primary-bg-color));
+    }
+    /* info */
+    &[data-notif_type='0'] {
+      background-color: rgb(var(--surface-color));
+      color: rgb(var(--on-surface-color));
+    }
   }
 }
+
 .app {
   flex: 1;
   width: 100%;

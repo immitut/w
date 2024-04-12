@@ -168,12 +168,11 @@ export function AQIcalculation(data) {
   return fin
 }
 
-async function checkPromisesState(promises) {
-  if (!Array.isArray(promises)) promises = [promises]
+async function checkPromiseState(promise) {
   const _t = {}
   let s
   try {
-    const res = await Promise.race([...promises, _t])
+    const res = await Promise.race([promise, _t])
     s = res === _t ? 'pending' : 'fulfilled'
   } catch (err) {
     s = 'rejected'
@@ -181,7 +180,7 @@ async function checkPromisesState(promises) {
   return s
 }
 
-export async function isPromisesAllDone(promises) {
-  const res = await checkPromisesState(promises)
+export async function isPromiseDone(promise) {
+  const res = await checkPromiseState(promise)
   return res !== 'pending'
 }

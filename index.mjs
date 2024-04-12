@@ -12,13 +12,13 @@ import {
   getItem,
   initGeo,
   vibrate,
-  isPromisesAllDone,
+  // isPromisesAllDone,
 } from './common.mjs'
 import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.3.3'
+const VERSION = '0.3.5'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -33,9 +33,7 @@ const NOTI = {
   error: '2',
 }
 // In order to detect if a notification has disappeared
-let _currNotifDurationTask
 const showNotif = _createNotifList()
-window.showNotif = showNotif
 
 const proxy = new Proxy(
   {},
@@ -95,16 +93,6 @@ function loading(elm, fn) {
   })
 }
 
-window.s = function () {
-  showNotif({
-    type: NOTI.success,
-    content: `code: ${Math.random() * 100}`,
-    duration: () =>
-      new Promise(r => {
-        window.c = r
-      }),
-  })
-}
 window.onload = () => {
   // showNotif({ type: NOTI.info, content: 'just for test', duration: 10000 })
   updateData({ version: VERSION })
@@ -176,6 +164,7 @@ $('.icon_main').onclick = vibrate.bind(null, 1, init)
 $('.time_dt').onclick = () => {
   vibrate(1, switchAmoled)
 }
+
 $('.switch-mode-btn').onclick = vibrate.bind(null, 1, switchTheme)
 $('.num_aqi').ondblclick = () => {
   if (!'serviceWorker' in navigator) {
@@ -376,11 +365,9 @@ function resetThemeColor() {
 }
 
 async function setThemeColor(color) {
-  if (!color) return
   const elm = $(`#${themeColorMetaId}`)
   if (elm) {
-    const isPriNotifGone = await isPromisesAllDone(_currNotifDurationTask)
-    const _color = isPriNotifGone ? color : getComputedStyle($('.notif')).backgroundColor
+    const _color = $('.notif') ? getComputedStyle($('.notif')).backgroundColor : color
     elm.setAttribute('content', _color)
   } else {
     const meta = document.createElement('meta')
@@ -414,27 +401,20 @@ function _createNotifList() {
     notifList.push(
       () =>
         new Promise(async resolve => {
-          const isPriNotifGone = await isPromisesAllDone(_currNotifDurationTask)
-          let notif = document.createElement('p')
-          notif.className = 'notif'
-          notif.textContent = content
-          notif.dataset.notif_type = type
-          notifBox.appendChild(notif)
-          const color = getComputedStyle(notif).backgroundColor
-          notif.classList.add('show')
-          setThemeColor(color)
           let fn = duration
           if (typeof duration !== 'function') {
             duration = Number.isFinite(duration) ? duration : 1
             fn = () => timeoutPromise(duration * 1e3)
           }
-          if (isPriNotifGone) {
-            await (_currNotifDurationTask = fn())
-            _currNotifDurationTask = null
-          } else {
-            await fn()
-            fn = null
-          }
+          let notif = document.createElement('p')
+          notif.className = 'notif'
+          notif.textContent = content
+          notif.dataset.notif_type = type
+          notifBox.appendChild(notif)
+          setThemeColor()
+          notif.classList.add('show')
+          await fn()
+          fn = null
           notif.classList.remove('show')
           setTimeout(() => {
             notifBox.removeChild(notif)
