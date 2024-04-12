@@ -143,7 +143,7 @@ body {
     border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
     &:last-child {
       flex: 3;
-      --radius: 3rem;
+      --radius: 4rem;
       border: none;
       border-bottom-left-radius: var(--radius);
       border-bottom-right-radius: var(--radius);
