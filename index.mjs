@@ -12,12 +12,13 @@ import {
   getItem,
   initGeo,
   vibrate,
+  isPromisesAllDone,
 } from './common.mjs'
 import { getWeather, getAQI, fetchGeo } from './api.mjs'
 import { pullToRefresh } from './pullToRefresh.mjs'
 import('./dev.mjs')
 
-const VERSION = '0.3.2'
+const VERSION = '0.3.3'
 const MODE = 'm'
 const AMOLED = 'a'
 const modes = [
@@ -31,9 +32,9 @@ const NOTI = {
   success: '1',
   error: '2',
 }
-
-let isHolded = false
-const { showNotif, clearNotifList } = _createNotifList()
+// In order to detect if a notification has disappeared
+let _currNotifDurationTask
+const showNotif = _createNotifList()
 window.showNotif = showNotif
 
 const proxy = new Proxy(
@@ -94,31 +95,20 @@ function loading(elm, fn) {
   })
 }
 
-window.onload = () => {
-  // showNotif({ type: NOTI.info, content: 'just for test', duration: 600 })
-  updateData({ version: VERSION })
-  const loading_ani = $('.loading_ani')
-  pullToRefresh($('.app'), {
-    distThreshold: 50 * get1rem(),
-    distMax: 60 * get1rem(),
-    onReachThreshold: () => {
-      vibrate(1)
-    },
-    onMove: (elm, p) => {
-      const x = p * p
-      elm.style.filter = `blur(${16 * x}px) grayscale(${x})`
-      loading_ani.style.opacity = x
-      loading_ani.style.transform = `translateY(${20 * x}rem)`
-      $('.bg_ani').style.setProperty('--ani-delay', `${-2.4 * x}s`)
-    },
-    onPullEnd: reachThreshold => {
-      loading_ani.style = ''
-      if (reachThreshold) {
-        return init()
-      }
-    },
+window.s = function () {
+  showNotif({
+    type: NOTI.success,
+    content: `code: ${Math.random() * 100}`,
+    duration: () =>
+      new Promise(r => {
+        window.c = r
+      }),
   })
-
+}
+window.onload = () => {
+  // showNotif({ type: NOTI.info, content: 'just for test', duration: 10000 })
+  updateData({ version: VERSION })
+  addPullToRefresh()
   const next = () => {
     renderTheme()
     offLineCheck()
@@ -301,7 +291,6 @@ function init() {
                 $('.notif').addEventListener(
                   'click',
                   () => {
-                    clearNotifList()
                     resolve()
                     init()
                   },
@@ -386,11 +375,13 @@ function resetThemeColor() {
   setThemeColor(`rgb(${bgColor})`)
 }
 
-function setThemeColor(color) {
+async function setThemeColor(color) {
   if (!color) return
   const elm = $(`#${themeColorMetaId}`)
-  if (elm && !isHolded) {
-    elm.setAttribute('content', color)
+  if (elm) {
+    const isPriNotifGone = await isPromisesAllDone(_currNotifDurationTask)
+    const _color = isPriNotifGone ? color : getComputedStyle($('.notif')).backgroundColor
+    elm.setAttribute('content', _color)
   } else {
     const meta = document.createElement('meta')
     meta.id = themeColorMetaId
@@ -406,59 +397,56 @@ function getThemeColor() {
 
 function _createNotifList() {
   const notifList = []
-  let _isBusy = false
+  const notifBox = $('.notif-box')
+  let _n = 0
 
   const run = async () => {
-    if (_isBusy) return
+    _n++
+    if (_n > 2) return
     while (notifList.length) {
-      _isBusy = true
       const notifTask = notifList.shift()
       await notifTask()
+      _n--
     }
-    _isBusy = false
   }
 
-  const clearNotifList = () => {
-    notifList.length = 0
-  }
-  const showNotif = async ({ type = NOTI.info, content, duration = 1 }) => {
+  const showNotif = ({ type = NOTI.info, content, duration = 2 }) => {
     notifList.push(
       () =>
         new Promise(async resolve => {
-          const notif = $('.notif')
+          const isPriNotifGone = await isPromisesAllDone(_currNotifDurationTask)
+          let notif = document.createElement('div')
+          notif.className = 'notif'
           notif.textContent = content
           notif.dataset.notif_type = type
+          notifBox.appendChild(notif)
           const color = getComputedStyle(notif).backgroundColor
           notif.classList.add('show')
           setThemeColor(color)
-          const cb = () => {
-            notif.classList.remove('show')
-            setTimeout(() => {
-              resetThemeColor()
-              resolve()
-            }, 1e2)
+          let fn = duration
+          if (typeof duration !== 'function') {
+            duration = Number.isFinite(duration) ? duration : 1
+            fn = () => timeoutPromise(duration * 1e3)
           }
-          switch (typeof duration) {
-            case 'function': {
-              isHolded = true
-              await duration()
-              isHolded = false
-              cb()
-              break
-            }
-            default: {
-              duration = Number.isFinite(duration) ? duration : 1
-              setTimeout(cb, duration * 1e3)
-            }
+          if (isPriNotifGone) {
+            await (_currNotifDurationTask = fn())
+            _currNotifDurationTask = null
+          } else {
+            await fn()
+            fn = null
           }
+          notif.classList.remove('show')
+          setTimeout(() => {
+            notifBox.removeChild(notif)
+            notif = null
+            resetThemeColor()
+            resolve()
+          }, 1e2)
         }),
     )
     run()
   }
-  return {
-    clearNotifList,
-    showNotif,
-  }
+  return showNotif
 }
 
 function offLineCheck() {
@@ -468,14 +456,7 @@ function offLineCheck() {
       content: '无网络',
       duration: () =>
         new Promise(resolve => {
-          window.addEventListener(
-            'online',
-            () => {
-              clearNotifList()
-              resolve()
-            },
-            { once: true },
-          )
+          window.addEventListener('online', resolve, { once: true })
         }),
     })
   }
@@ -514,4 +495,28 @@ async function renderList(list) {
   }
   await Promise.all([...imgLoaders.values()])
   return frag
+}
+
+function addPullToRefresh() {
+  const loading_ani = $('.loading_ani')
+  pullToRefresh($('.app'), {
+    distThreshold: 50 * get1rem(),
+    distMax: 60 * get1rem(),
+    onReachThreshold: () => {
+      vibrate(1)
+    },
+    onMove: (elm, p) => {
+      const x = p * p
+      elm.style.filter = `blur(${16 * x}px) grayscale(${x})`
+      loading_ani.style.opacity = x
+      loading_ani.style.transform = `translateY(${20 * x}rem)`
+      $('.bg_ani').style.setProperty('--ani-delay', `${-2.4 * x}s`)
+    },
+    onPullEnd: reachThreshold => {
+      loading_ani.style = ''
+      if (reachThreshold) {
+        return init()
+      }
+    },
+  })
 }

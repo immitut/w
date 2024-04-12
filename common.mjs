@@ -167,3 +167,21 @@ export function AQIcalculation(data) {
   const fin = finalRange.findIndex(y => y >= max)
   return fin
 }
+
+async function checkPromisesState(promises) {
+  if (!Array.isArray(promises)) promises = [promises]
+  const _t = {}
+  let s
+  try {
+    const res = await Promise.race([...promises, _t])
+    s = res === _t ? 'pending' : 'fulfilled'
+  } catch (err) {
+    s = 'rejected'
+  }
+  return s
+}
+
+export async function isPromisesAllDone(promises) {
+  const res = await checkPromisesState(promises)
+  return res !== 'pending'
+}
