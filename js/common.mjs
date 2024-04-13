@@ -184,3 +184,9 @@ export async function isPromiseDone(promise) {
   const res = await checkPromiseState(promise)
   return res !== 'pending'
 }
+
+export function timeoutPromise(time) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}

@@ -8,32 +8,20 @@ import {
   _getIconPath,
   $,
   get1rem,
-  saveItem,
-  getItem,
   initGeo,
   vibrate,
-  // isPromisesAllDone,
-} from './common.mjs'
-import { getWeather, getAQI, fetchGeo } from './api.mjs'
-import { pullToRefresh } from './pullToRefresh.mjs'
-import('./dev.mjs')
+  timeoutPromise,
+} from './js/common.mjs'
+import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
+import { createNotifList, NOTI } from './js/notif.mjs'
+import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
+import { pullToRefresh } from './js/pullToRefresh.mjs'
+import('./js/dev.mjs')
 
-const VERSION = '0.3.6'
-const MODE = 'm'
-const AMOLED = 'a'
-const modes = [
-  { value: 'auto', text: '自动' },
-  { value: 'light', text: '浅色' },
-  { value: 'dark', text: '深色' },
-]
-const themeColorMetaId = 'theme-color'
-const NOTI = {
-  info: '0',
-  success: '1',
-  error: '2',
-}
+const VERSION = '0.3.8'
+
 // In order to detect if a notification has disappeared
-const showNotif = _createNotifList()
+const showNotif = createNotifList()
 
 const proxy = new Proxy(
   {},
@@ -163,11 +151,23 @@ window.onload = () => {
 }
 
 $('.icon_main').onclick = vibrate.bind(null, 1, init)
+
 $('.time_dt').onclick = () => {
-  vibrate(1, switchAmoled)
+  vibrate()
+  const isAmoled = switchAmoled()
+  showNotif({
+    content: `纯黑模式：${isAmoled ? '关' : '开'}`,
+  })
 }
 
-$('.switch-mode-btn').onclick = vibrate.bind(null, 1, switchTheme)
+$('.switch-mode-btn').onclick = () => {
+  vibrate()
+  const i = switchTheme()
+  showNotif({
+    content: `${modes[i].text}模式`,
+  })
+}
+
 $('.num_aqi').ondblclick = () => {
   if (!'serviceWorker' in navigator) {
     alert('not support serviceWorker')
@@ -225,12 +225,6 @@ function getForecastWeather(p) {
   return getWeather('forecast', p)
 }
 
-function timeoutPromise(time) {
-  return new Promise(resolve => {
-    setTimeout(resolve, time)
-  })
-}
-
 // const searchBtn = document.querySelector("#submit");
 // searchBtn.onclick = async () => {
 //   const input = document.querySelector("input");
@@ -253,7 +247,7 @@ function init() {
       let data = {}
 
       if (isDevEnv()) {
-        const { _mockData } = await import('./data.mjs')
+        const { _mockData } = await import('./js/data.mjs')
         data = await _mockData()
       } else {
         const requestList = Promise.all([
@@ -295,7 +289,6 @@ function init() {
           })
         }
       }
-
       showNotif({
         type: NOTI.success,
         content: '已更新',
@@ -305,9 +298,10 @@ function init() {
   return loading($('.app'), fn)
 }
 
-function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
+function updateData({ main, wind, sys, weather, dt, clouds, aqi, version, name }) {
   const data = {
     version,
+    name_city: name,
     temp_cur: main?.temp,
     // temp_min: main?.temp_min,
     // temp_max: main?.temp_max,
@@ -331,99 +325,6 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, version }) {
       proxy[key] = data[key]
     }
   }
-}
-
-function switchAmoled() {
-  const isAmoled = !!getItem(AMOLED)
-  saveItem(AMOLED, !isAmoled)
-  renderTheme()
-  showNotif({
-    content: `纯黑模式：${isAmoled ? '关' : '开'}`,
-  })
-}
-
-function switchTheme() {
-  let i = getItem(MODE) || 0
-  i++
-  if (i === modes.length) i = 0
-  saveItem(MODE, i)
-  renderTheme()
-  showNotif({
-    content: `${modes[i].text}模式`,
-  })
-}
-
-function renderTheme() {
-  const i = getItem(MODE) || '0'
-  const isAmoled = !!getItem(AMOLED)
-  $('body').className = isAmoled ? `${modes[i].value} amoled` : modes[i].value
-  resetThemeColor()
-}
-
-function resetThemeColor() {
-  const bgColor = getComputedStyle($('body')).getPropertyValue('--bg-color')
-  setThemeColor(`rgb(${bgColor})`)
-}
-
-async function setThemeColor(color) {
-  const elm = $(`#${themeColorMetaId}`)
-  if (elm) {
-    const _color = $('.notif') ? getComputedStyle($('.notif')).backgroundColor : color
-    elm.setAttribute('content', _color)
-  } else {
-    const meta = document.createElement('meta')
-    meta.id = themeColorMetaId
-    meta.name = 'theme-color'
-    meta.content = color
-    document.head.appendChild(meta)
-  }
-}
-
-function _createNotifList() {
-  const notifList = []
-  const notifBox = $('.notif-box')
-  let _n = 0
-
-  const run = async () => {
-    _n++
-    if (_n > 2) return
-    while (notifList.length) {
-      const notifTask = notifList.shift()
-      await notifTask()
-      _n--
-    }
-  }
-
-  const showNotif = ({ type = NOTI.info, content, duration = 2 }) => {
-    notifList.push(
-      () =>
-        new Promise(async resolve => {
-          let fn = duration
-          if (typeof duration !== 'function') {
-            duration = Number.isFinite(duration) ? duration : 1
-            fn = () => timeoutPromise(duration * 1e3)
-          }
-          let notif = document.createElement('p')
-          notif.className = 'notif'
-          notif.textContent = content
-          notif.dataset.notif_type = type
-          notifBox.appendChild(notif)
-          setThemeColor()
-          notif.classList.add('show')
-          await fn()
-          fn = null
-          notif.classList.remove('show')
-          setTimeout(() => {
-            notifBox.removeChild(notif)
-            notif = null
-            resetThemeColor()
-            resolve()
-          }, 2e2)
-        }),
-    )
-    run()
-  }
-  return showNotif
 }
 
 function offLineCheck() {
@@ -480,7 +381,7 @@ function addPullToRefresh() {
     distThreshold: 50 * get1rem(),
     distMax: 60 * get1rem(),
     onReachThreshold: () => {
-      vibrate(1)
+      vibrate()
     },
     onMove: (elm, p) => {
       const x = p * p
