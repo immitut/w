@@ -473,6 +473,29 @@ body {
   border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
 }
 
+.settings {
+  pointer-events: none;
+  position: absolute;
+  bottom: var(--spacing);
+  left: var(--spacing);
+  right: var(--spacing);
+  z-index: var(--topLayer);
+  height: 80%;
+  border-radius: var(--radius);
+  padding: calc(var(--radius) / 3 * 2);
+  background-color: rgb(var(--secondary-bg-color) / 0.8);
+  backdrop-filter: blur(4px);
+  transform: translateY(120%);
+  transition: 0.6s ease-in-out;
+  &.show {
+    pointer-events: all;
+    transform: translateY(0);
+  }
+  p {
+    width: 100%;
+  }
+}
+
 @keyframes colorChange {
   0%,
   100% {

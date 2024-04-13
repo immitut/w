@@ -190,3 +190,24 @@ export function timeoutPromise(time) {
     setTimeout(resolve, time)
   })
 }
+
+/**
+ *
+ * @param {HTMLElement} elm
+ * @param {keyof HTMLElementEventMap} event
+ * @param {function | null} callback
+ * @returns Promise
+ */
+export function eventListenerPromise(elm, event, callback) {
+  const defaultOpts = { once: true }
+  return new Promise(resolve => {
+    const _callback =
+      typeof callback === 'function'
+        ? ev => {
+            callback(ev)
+            resolve()
+          }
+        : resolve
+    elm.addEventListener(event, _callback, defaultOpts)
+  })
+}

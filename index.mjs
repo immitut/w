@@ -11,6 +11,7 @@ import {
   initGeo,
   vibrate,
   timeoutPromise,
+  eventListenerPromise,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
@@ -18,7 +19,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.10'
+const VERSION = '0.3.12'
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -106,6 +107,16 @@ window.onload = () => {
   } else {
     next()
   }
+}
+
+$('.name_city').onclick = () => {
+  loading($('.app'), () => {
+    const settings = $('.settings')
+    settings.classList.add('show')
+    return eventListenerPromise($('.close'), 'click', () => {
+      settings.classList.remove('show')
+    })
+  })
 }
 
 $('.icon_main').onclick = vibrate.bind(null, 1, init)
@@ -233,17 +244,7 @@ function init() {
         return showNotif({
           type: NOTI.error,
           content,
-          duration: () =>
-            new Promise(resolve => {
-              $('.notif').addEventListener(
-                'click',
-                () => {
-                  resolve()
-                  init()
-                },
-                { once: true },
-              )
-            }),
+          duration: eventListenerPromise($('.notif'), 'click', init),
         })
       }
       showNotif({
@@ -288,10 +289,7 @@ function offLineCheck() {
     showNotif({
       type: NOTI.error,
       content: '无网络',
-      duration: () =>
-        new Promise(resolve => {
-          window.addEventListener('online', resolve, { once: true })
-        }),
+      duration: eventListenerPromise(window, 'online'),
     })
   }
   window.addEventListener('offline', offLineCallback)
