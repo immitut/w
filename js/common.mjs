@@ -64,7 +64,7 @@ export function _getIconPath(value) {
   const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
   const style = isDarkMode ? 'dark' : 'light'
   if (icon.endsWith('-')) icon += types[t]
-  return `./assets/icons/${style}/${icon}.png` // ./assets/icons/dark/unknown.png
+  return `/w/assets/icons/${style}/${icon}.png` // ./assets/icons/dark/unknown.png
 }
 
 export function _toQueryString(o) {
