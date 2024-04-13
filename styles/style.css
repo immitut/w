@@ -447,8 +447,8 @@ body {
     animation: colorChange 2.8s ease-in-out var(--ani-delay) infinite;
     animation-play-state: var(--ani-play-state);
     &::before {
-      width: 8rem;
-      height: 8rem;
+      width: 100%;
+      height: 100%;
       border-radius: 100%;
       display: block;
       content: '';
@@ -481,6 +481,7 @@ body {
   right: var(--spacing);
   z-index: var(--topLayer);
   height: 80%;
+  --radius: 10rem;
   border-radius: var(--radius);
   padding: calc(var(--radius) / 3 * 2);
   background-color: rgb(var(--secondary-bg-color) / 0.8);
