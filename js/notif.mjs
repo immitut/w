@@ -1,9 +1,9 @@
 import { $, timeoutPromise } from './common.mjs'
 import { setThemeColor, resetThemeColor } from './theme.mjs'
 export const NOTI = {
-  info: '0',
-  success: '1',
-  error: '2',
+  info: 'info',
+  success: 'success',
+  error: 'error',
 }
 
 export function createNotifList() {
@@ -31,9 +31,8 @@ export function createNotifList() {
             fn = () => timeoutPromise(duration * 1e3)
           }
           let notif = document.createElement('p')
-          notif.className = 'notif'
+          notif.className = `notif ${type}`
           notif.textContent = content
-          notif.dataset.notif_type = type
           notifBox.appendChild(notif)
           setThemeColor()
           notif.classList.add('show')

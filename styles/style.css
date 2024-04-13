@@ -159,18 +159,15 @@ body {
       }
     }
 
-    /* error */
-    &[data-notif_type='2'] {
+    &.error {
       background-color: rgb(var(--error-bg-color));
       color: rgb(var(--on-error-bg-color));
     }
-    /* success */
-    &[data-notif_type='1'] {
+    &.success {
       background-color: rgb(var(--primary-bg-color));
       color: rgb(var(--on-primary-bg-color));
     }
-    /* info */
-    &[data-notif_type='0'] {
+    &.info {
       background-color: rgb(var(--surface-color));
       color: rgb(var(--on-surface-color));
     }
@@ -287,22 +284,22 @@ body {
   &:has(.num_aqi) {
     color: rgb(var(--light-color-on-background));
   }
-  &:has([data-num_aqi='1']) {
+  &:has(.rank_1) {
     background-color: rgb(0 153 102);
   }
-  &:has([data-num_aqi='2']) {
+  &:has(.rank_2) {
     background-color: rgb(255 222 51);
   }
-  &:has([data-num_aqi='3']) {
+  &:has(.rank_3) {
     background-color: rgb(255 153 51);
   }
-  &:has([data-num_aqi='4']) {
+  &:has(.rank_4) {
     background-color: rgb(204 0 51);
   }
-  &:has([data-num_aqi='5']) {
+  &:has(.rank_5) {
     background-color: rgb(102 0 153);
   }
-  &:has([data-num_aqi='6']) {
+  &:has(.rank_6) {
     background-color: rgb(126 0 35);
   }
 }

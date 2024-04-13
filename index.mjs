@@ -18,7 +18,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.8'
+const VERSION = '0.3.9'
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -60,8 +60,9 @@ const proxy = new Proxy(
         $(`.${key}`).style.setProperty('--deg', `${value}deg`)
         return true
       }
-
-      $(`.${key}`).dataset[key] = value
+      if (key === 'num_aqi') {
+        $(`.${key}`).className = `${key} rank_${value}`
+      }
       const renderElm = $(`.${key}`).firstElementChild || $(`.${key}`)
       renderElm.textContent = value
       Reflect.set(target, key, value, receiver)
@@ -93,49 +94,6 @@ window.onload = () => {
     // }, 1e3)
   }
   if ('serviceWorker' in navigator) {
-    // const { port1, port2 } = new MessageChannel();
-    // const msgTypes = {
-    //   REQUEST: "request",
-    //   LOG: "log",
-    //   CACHE: "cache",
-    //   CACHEINFO: "cacheInfo",
-    // };
-    // navigator.serviceWorker.ready.then(async (res) => {
-    //   console.log("serviceWorker ready");
-    //   const _controlledPromise = new Promise(function (resolve) {
-    //     const resolveWithRegistration = function () {
-    //       navigator.serviceWorker
-    //         .getRegistration()
-    //         .then(function (registration) {
-    //           resolve(registration);
-    //         });
-    //     };
-
-    //     if (navigator.serviceWorker.controller) {
-    //       resolveWithRegistration();
-    //     } else {
-    //       navigator.serviceWorker.addEventListener(
-    //         "controllerchange",
-    //         resolveWithRegistration
-    //       );
-    //     }
-    //   });
-    //   await _controlledPromise;
-    //   console.log("serviceWorker.controller ready");
-    //   navigator.serviceWorker.controller.postMessage(
-    //     {
-    //       type: "INIT_PORT",
-    //       data: msgTypes,
-    //     },
-    //     [port2]
-    //   );
-    //   port1.onmessage = (ev) => {
-    //     const { type, data } = ev.data;
-    //     if (type === msgTypes.LOG) {
-    //       console.log(data);
-    //     }
-    //   };
-    // });
     navigator.serviceWorker
       .register('./sw.js')
       .then(ev => {
@@ -298,7 +256,7 @@ function init() {
   return loading($('.app'), fn)
 }
 
-function updateData({ main, wind, sys, weather, dt, clouds, aqi, version, name }) {
+function updateData({ main, wind, sys, weather, dt, aqi, version, name }) {
   const data = {
     version,
     name_city: name,
@@ -307,7 +265,6 @@ function updateData({ main, wind, sys, weather, dt, clouds, aqi, version, name }
     // temp_max: main?.temp_max,
     atm_pressure: main?.pressure,
     per_humidity: main?.humidity,
-    // per_clouds: clouds?.all,
     spe_wind: wind?.speed,
     deg_wind: wind?.deg,
     time_sunrise: sys?.sunrise,
