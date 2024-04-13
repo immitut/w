@@ -37,7 +37,7 @@ function updateStyles() {
 
   temp_cur.style.transform = `translate(0, ${_ani(scroll, {
     scrollEnd: SCROLLEND * 0.8,
-    endValue: 9,
+    endValue: 8.5,
   })}rem) scale(${_ani(scroll, { startValue: 1, endValue: 0.6 })})`
 
   icon_main.style.transform = `translate(0, ${_ani(scroll, {

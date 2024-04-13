@@ -72,7 +72,7 @@ body.auto {
   --surface-color: var(--light-color-surface);
   --on-surface-color: var(--light-color-on-surface);
   --outline-color: var(--light-color-outline);
-  .app .header {
+  .header {
     background-color: rgb(var(--bg-color));
   }
 }
@@ -121,7 +121,6 @@ body {
   height: 0;
   flex-direction: column;
   transition: height 0.3s ease-out;
-  gap: 1rem;
   &:has(.notif) {
     height: 16rem;
   }
@@ -158,7 +157,6 @@ body {
         transform: translateY(5rem) scale(0.96);
       }
     }
-
     &.error {
       background-color: rgb(var(--error-bg-color));
       color: rgb(var(--on-error-bg-color));
@@ -185,88 +183,88 @@ body {
   transition: all 0.4s ease-out;
   max-width: 174rem;
   margin: 0 auto;
+}
 
-  .header {
-    /* -2px to cover the lower elements more precisely */
-    margin: 0 calc(var(--spacing) - 2px);
-    position: sticky;
-    top: 0;
-    z-index: var(--normalLayer);
-    height: 135rem;
-    background: linear-gradient(
-      rgb(var(--bg-color)) 90%,
-      rgb(var(--bg-color) / 0.9) 95%,
-      rgb(var(--bg-color) / 0.8) 100%
-    );
-    transition: background 0.4s ease-out;
-    backdrop-filter: blur(10px);
+.header {
+  /* -2px to cover the lower elements more precisely */
+  margin: 0 calc(var(--spacing) - 2px);
+  position: sticky;
+  top: 0;
+  z-index: var(--normalLayer);
+  height: 135rem;
+  background: linear-gradient(
+    rgb(var(--bg-color)) 90%,
+    rgb(var(--bg-color) / 0.9) 95%,
+    rgb(var(--bg-color) / 0.8) 100%
+  );
+  transition: background 0.4s ease-out;
+  backdrop-filter: blur(10px);
 
-    .temp_cur {
-      position: absolute;
-      bottom: 8rem;
-      color: rgb(var(--primary-color));
-      font-size: var(--max-font-size);
-    }
-    .temp_secondary {
-      position: absolute;
-      bottom: 0;
-      font-size: var(--middle-font-size);
-    }
-    .icon_main {
-      position: absolute;
-      top: 12rem;
-      right: 0;
-      width: 24rem;
-      height: 24rem;
-      cursor: pointer;
-      background-size: cover;
-      /* url("./assets/icons/dark/unknown.png") */
-      background-image: var(--icon-url);
-      filter: drop-shadow(1px 2px 2px rgb(0 0 0 / 0.6));
-    }
+  .temp_cur {
+    position: absolute;
+    bottom: 8rem;
+    color: rgb(var(--primary-color));
+    font-size: var(--max-font-size);
   }
+  .temp_secondary {
+    position: absolute;
+    bottom: 0;
+    font-size: var(--middle-font-size);
+  }
+  .icon_main {
+    position: absolute;
+    top: 12rem;
+    right: 0;
+    width: 24rem;
+    height: 24rem;
+    cursor: pointer;
+    background-size: cover;
+    /* url("./assets/icons/dark/unknown.png") */
+    background-image: var(--icon-url);
+    filter: drop-shadow(1px 2px 2px rgb(0 0 0 / 0.6));
+  }
+}
 
-  .content {
-    margin: 8rem var(--spacing) 0;
-    .items {
-      position: relative;
-      display: flex;
-      gap: var(--spacing);
-      justify-content: space-between;
-      align-items: center;
-      &:not(:first-child) {
-        margin-top: var(--spacing);
-      }
-      &.forecast {
-        @media screen and (max-width: 480px) {
-          & {
-            scrollbar-width: none;
-          }
+.content {
+  margin: 8rem var(--spacing) 0;
+  .items {
+    position: relative;
+    display: flex;
+    gap: var(--spacing);
+    justify-content: space-between;
+    align-items: center;
+    &:not(:first-child) {
+      margin-top: var(--spacing);
+    }
+    &.forecast {
+      @media screen and (max-width: 480px) {
+        & {
+          scrollbar-width: none;
         }
-        font-size: var(--small-font-size);
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scroll-padding-left: 3rem;
-        .list_forecast {
+      }
+      font-size: var(--small-font-size);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 3rem;
+      .list_forecast {
+        display: flex;
+        height: 20rem;
+        flex-wrap: nowrap;
+        .item_forecast {
           display: flex;
-          height: 20rem;
-          flex-wrap: nowrap;
-          .item_forecast {
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-            align-items: center;
-            scroll-snap-align: start;
-            padding: 0 4.5rem;
-            text-align: center;
-            P {
-              line-height: 3rem;
-            }
-            img {
-              pointer-events: none;
-              user-select: none;
-              width: 10.5rem;
-            }
+          justify-content: space-between;
+          flex-direction: column;
+          align-items: center;
+          scroll-snap-align: start;
+          padding: 0 4.5rem;
+          text-align: center;
+          P {
+            line-height: 3rem;
+          }
+          img {
+            pointer-events: none;
+            user-select: none;
+            width: 10.5rem;
           }
         }
       }
@@ -387,7 +385,6 @@ body {
   margin: 90rem var(--spacing) var(--spacing);
   line-height: 6rem;
   font-size: var(--small-font-size);
-  /* text-align: center; */
   position: relative;
   .switch-mode-btn {
     position: absolute;
@@ -433,27 +430,21 @@ body {
   z-index: var(--topLayer);
   transition: 0.2s;
   pointer-events: none;
+  --ani-play-state: paused;
   &.show {
     opacity: 1;
     transform: translateY(20rem);
-    .bg_ani {
-      --ani-play-state: running;
-    }
+    --ani-play-state: running;
   }
   .bg_ani {
     --ani-delay: 0s;
-    --ani-play-state: paused;
     margin: 0 auto;
     width: 10rem;
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
     border: 2px solid rgb(var(--primary-color));
-    animation-name: colorChange;
-    animation-delay: var(--ani-delay);
-    animation-duration: 2.8s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+    animation: colorChange 2.8s ease-in-out var(--ani-delay) infinite;
     animation-play-state: var(--ani-play-state);
     &::before {
       width: 8rem;
@@ -465,12 +456,21 @@ body {
       animation-duration: 1.4s, 2.8s;
       animation-timing-function: ease, steps(1, start);
       animation-iteration-count: infinite;
-      /* animation-direction: normal; */
       animation-delay: var(--ani-delay);
-      /* animation-fill-mode: forwards; */
       animation-play-state: var(--ani-play-state);
     }
   }
+}
+
+.loading {
+  filter: blur(16px) grayscale(1);
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(30rem);
+}
+
+.shadow {
+  border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
 }
 
 @keyframes colorChange {
@@ -493,15 +493,4 @@ body {
   100% {
     transform: translate(120%, 0);
   }
-}
-
-.loading {
-  filter: blur(16px) grayscale(1);
-  overflow: hidden;
-  pointer-events: none;
-  transform: translateY(30rem);
-}
-
-.shadow {
-  border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
 }

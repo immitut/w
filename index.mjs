@@ -18,7 +18,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.9'
+const VERSION = '0.3.10'
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -203,49 +203,48 @@ function init() {
         return
       }
       let data = {}
-
-      if (isDevEnv()) {
-        const { _mockData } = await import('./js/data.mjs')
-        data = await _mockData()
-      } else {
-        const requestList = Promise.all([
-          getCurrWeather(geoData),
-          getForecastWeather({ cnt: 8, ...geoData }),
-          getAQI(geoData),
-          // emmm slow down... :p
-          timeoutPromise(1e3),
-        ])
-        try {
+      try {
+        if (isDevEnv()) {
+          const { _mockData } = await import('./js/data.mjs')
+          data = await _mockData()
+        } else {
+          const requestList = Promise.all([
+            getCurrWeather(geoData),
+            getForecastWeather({ cnt: 8, ...geoData }),
+            getAQI(geoData),
+            // emmm slow down... :p
+            timeoutPromise(1e3),
+          ])
           const [curr, forecast, aqi] = await requestList
           data = {
             ...curr,
             forecast: forecast.list,
             aqi: aqi.list[0],
           }
-          updateData(data)
-          const list = await renderList(data.forecast)
-          $(`.list_forecast`).innerHTML = ''
-          $(`.list_forecast`).appendChild(list)
-        } catch (err) {
-          // console.dir(err)
-          const { name, code } = err
-          const content = `[code: ${code}] ${name === 'AbortError' ? '请求超时' : name}`
-          return showNotif({
-            type: NOTI.error,
-            content,
-            duration: () =>
-              new Promise(resolve => {
-                $('.notif').addEventListener(
-                  'click',
-                  () => {
-                    resolve()
-                    init()
-                  },
-                  { once: true },
-                )
-              }),
-          })
         }
+        updateData(data)
+        const list = await renderList(data.forecast)
+        $(`.list_forecast`).innerHTML = ''
+        $(`.list_forecast`).appendChild(list)
+      } catch (err) {
+        // console.dir(err)
+        const { name, code } = err
+        const content = `[code: ${code}] ${name === 'AbortError' ? '请求超时' : name}`
+        return showNotif({
+          type: NOTI.error,
+          content,
+          duration: () =>
+            new Promise(resolve => {
+              $('.notif').addEventListener(
+                'click',
+                () => {
+                  resolve()
+                  init()
+                },
+                { once: true },
+              )
+            }),
+        })
       }
       showNotif({
         type: NOTI.success,
