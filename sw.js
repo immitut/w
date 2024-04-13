@@ -1,4 +1,4 @@
-const CACHEVERSION = '1.12'
+const CACHEVERSION = '1.13'
 const DBINFO = {
   name: 'Nexus',
   version: 1,
@@ -10,9 +10,9 @@ const cacheList = [
   // "/w/",
   // "/w/index.html",
   // "/w/index.mjs",
-  '/w/animation.mjs',
-  '/w/api.mjs',
-  '/w/common.mjs',
+  '/w/js/animation.mjs',
+  '/w/js/api.mjs',
+  '/w/js/common.mjs',
   // "/w/dev.mjs",
   // "/w/manifest.json",
   // "/w/manifest_dark.json",

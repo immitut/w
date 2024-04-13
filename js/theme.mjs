@@ -38,7 +38,7 @@ export function resetThemeColor() {
   setThemeColor(`rgb(${bgColor})`)
 }
 
-export async function setThemeColor(color) {
+export function setThemeColor(color) {
   const elm = $(`#${themeColorMetaId}`)
   if (elm) {
     const _color = $('.notif') ? getComputedStyle($('.notif')).backgroundColor : color
