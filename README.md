@@ -1,4 +1,4 @@
-# [W](https://immitut.github.io/w/ "preview")
+# [W](https://immitut.github.io/w/ 'preview')
 
 ### To do
 
@@ -6,7 +6,7 @@
 
 - ~~优化缓存处理~~
 
-- 新增地点搜索添加操作
+- ~~新增地点搜索添加操作~~
 
 - 替换数据源 (数据范围更广，准确，免费，目前在 [AccuWeather](https://developer.accuweather.com/) 和 [和风天气](https://dev.qweather.com/) 中考虑)
 

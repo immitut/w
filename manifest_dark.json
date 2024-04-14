@@ -4,8 +4,8 @@
 	"lang": "zh-CN",
 	"start_url": "/w/index.html",
 	"display": "standalone",
-	"background_color": "rgb(19 19 24)",
-	"theme_color": "rgb(19 19 24)",
+	"background_color": "rgb(27 27 31)",
+	"theme_color": "rgb(27 27 31)",
 	"icons": [
 		{
 			"src": "assets/icons/dark/clear-day.png",
