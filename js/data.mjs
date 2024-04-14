@@ -1,11 +1,11 @@
 function randomNum(max, min = 0) {
-  return Math.round(Math.random() * (max - min) + min);
+  return Math.round(Math.random() * (max - min) + min)
 }
 const randomIcon = () => {
-  const n = ["01", "02", "03", "04", "09", 10, 11, 13, 50];
-  const t = ["d", "n"];
-  return `${n[randomNum(8)]}${t[randomNum(1)]}`;
-};
+  const n = ['01', '02', '03', '04', '09', 10, 11, 13, 50]
+  const t = ['d', 'n']
+  return `${n[randomNum(8)]}${t[randomNum(1)]}`
+}
 
 export function _mockData() {
   const data = {
@@ -16,15 +16,15 @@ export function _mockData() {
     weather: [
       {
         id: 803,
-        main: "Clouds",
-        description: "多云",
+        main: 'Clouds',
+        description: '风和日丽',
         icon: randomIcon(),
       },
     ],
-    base: "stations",
+    base: 'stations',
     main: {
-      temp: 17.19,
-      feels_like: 16.43,
+      temp: 401,
+      feels_like: 404,
       temp_min: 15.99,
       temp_max: 17.19,
       pressure: 1023,
@@ -45,13 +45,13 @@ export function _mockData() {
     sys: {
       type: 2,
       id: 145356,
-      country: "CN",
+      country: 'CN',
       sunrise: 1711403753,
       sunset: 1711448042,
     },
     timezone: 28800,
     id: 7735183,
-    name: "Puyan",
+    name: '应许之地',
     cod: 200,
     forecast: [
       {
@@ -70,8 +70,8 @@ export function _mockData() {
         weather: [
           {
             id: 803,
-            main: "Clouds",
-            description: "多云",
+            main: 'Clouds',
+            description: '多云',
             icon: randomIcon(),
           },
         ],
@@ -86,9 +86,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "d",
+          pod: 'd',
         },
-        dt_txt: "2024-03-26 09:00:00",
+        dt_txt: '2024-03-26 09:00:00',
       },
       {
         dt: 1711454400,
@@ -106,8 +106,8 @@ export function _mockData() {
         weather: [
           {
             id: 803,
-            main: "Clouds",
-            description: "多云",
+            main: 'Clouds',
+            description: '多云',
             icon: randomIcon(),
           },
         ],
@@ -122,9 +122,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "n",
+          pod: 'n',
         },
-        dt_txt: "2024-03-26 12:00:00",
+        dt_txt: '2024-03-26 12:00:00',
       },
       {
         dt: 1711465200,
@@ -142,8 +142,8 @@ export function _mockData() {
         weather: [
           {
             id: 802,
-            main: "Clouds",
-            description: "多云",
+            main: 'Clouds',
+            description: '多云',
             icon: randomIcon(),
           },
         ],
@@ -158,9 +158,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "n",
+          pod: 'n',
         },
-        dt_txt: "2024-03-26 15:00:00",
+        dt_txt: '2024-03-26 15:00:00',
       },
       {
         dt: 1711476000,
@@ -178,8 +178,8 @@ export function _mockData() {
         weather: [
           {
             id: 803,
-            main: "Clouds",
-            description: "多云",
+            main: 'Clouds',
+            description: '多云',
             icon: randomIcon(),
           },
         ],
@@ -194,9 +194,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "n",
+          pod: 'n',
         },
-        dt_txt: "2024-03-26 18:00:00",
+        dt_txt: '2024-03-26 18:00:00',
       },
       {
         dt: 1711486800,
@@ -214,8 +214,8 @@ export function _mockData() {
         weather: [
           {
             id: 804,
-            main: "Clouds",
-            description: "阴，多云",
+            main: 'Clouds',
+            description: '阴，多云',
             icon: randomIcon(),
           },
         ],
@@ -230,9 +230,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "n",
+          pod: 'n',
         },
-        dt_txt: "2024-03-26 21:00:00",
+        dt_txt: '2024-03-26 21:00:00',
       },
       {
         dt: 1711497600,
@@ -250,8 +250,8 @@ export function _mockData() {
         weather: [
           {
             id: 804,
-            main: "Clouds",
-            description: "阴，多云",
+            main: 'Clouds',
+            description: '阴，多云',
             icon: randomIcon(),
           },
         ],
@@ -266,9 +266,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "d",
+          pod: 'd',
         },
-        dt_txt: "2024-03-27 00:00:00",
+        dt_txt: '2024-03-27 00:00:00',
       },
       {
         dt: 1711508400,
@@ -286,8 +286,8 @@ export function _mockData() {
         weather: [
           {
             id: 804,
-            main: "Clouds",
-            description: "阴，多云",
+            main: 'Clouds',
+            description: '阴，多云',
             icon: randomIcon(),
           },
         ],
@@ -302,9 +302,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "d",
+          pod: 'd',
         },
-        dt_txt: "2024-03-27 03:00:00",
+        dt_txt: '2024-03-27 03:00:00',
       },
       {
         dt: 1711519200,
@@ -322,8 +322,8 @@ export function _mockData() {
         weather: [
           {
             id: 804,
-            main: "Clouds",
-            description: "阴，多云",
+            main: 'Clouds',
+            description: '阴，多云',
             icon: randomIcon(),
           },
         ],
@@ -338,9 +338,9 @@ export function _mockData() {
         visibility: 10000,
         pop: 0,
         sys: {
-          pod: "d",
+          pod: 'd',
         },
-        dt_txt: "2024-03-27 06:00:00",
+        dt_txt: '2024-03-27 06:00:00',
       },
     ],
     aqi: {
@@ -359,10 +359,10 @@ export function _mockData() {
       },
       dt: 1711442741,
     },
-  };
-  return new Promise((r) => {
+  }
+  return new Promise(r => {
     setTimeout(() => {
-      r(data);
-    }, 1e3);
-  });
+      r(data)
+    }, 1e3)
+  })
 }

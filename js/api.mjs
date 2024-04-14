@@ -1,9 +1,8 @@
 import { _toQueryString } from './common.mjs'
 
-const KY = '9af99dadc4c64f228eaa3e272d5e7891'
 const CACHEEXPIRATIONTIME = 5 * 60e3
 const _cache = new Map()
-
+let errNum = 0
 const getInfo = async (api, { cached = false } = {}) => {
   const cur = +new Date()
   if (_cache.has(api)) {
@@ -16,45 +15,57 @@ const getInfo = async (api, { cached = false } = {}) => {
     _cache.delete(api)
   }
   try {
-    return await fetch(api, { signal: AbortSignal.timeout(1e4) }) // 10s timeout for single request
+    return await fetch(api, { signal: AbortSignal.timeout(errNum * 2e3 + 1e4) }) // 10s timeout for single request
       .then(res => res.json())
       .then(data => {
         if (cached) {
           _cache.set(api, { ts: cur, data })
         }
+        // 401
+        if (data.cod === 401) {
+          throw {
+            code: data.cod,
+            name: 'API key 校验失败',
+          }
+        }
+        errNum = 0
         return data
       })
+      .catch(err => {
+        throw err
+      })
   } catch (err) {
+    errNum++
     throw err
   }
 }
 
-function fetchGeo(str) {
+function fetchGeo(str, key) {
   const href = '//api.openweathermap.org/geo/1.0/direct'
   const params = {
     q: str,
     limit: 5,
-    appid: KY,
+    appid: key,
   }
   return getInfo(`${href}?${_toQueryString(params)}`)
 }
 
-function getAQI(p) {
+function getAQI({ key, ...p }) {
   const href = `https://api.openweathermap.org/data/2.5/air_pollution`
-  return getInfo(`${href}?${_toQueryString({ appid: KY, ...p })}`)
+  return getInfo(`${href}?${_toQueryString({ appid: key, ...p })}`)
 }
 
-function getWeather(type, p) {
+function getWeather(type, { key, ...rest }) {
   const UNITS = ['standard', 'metric', 'imperial']
   const deafaultParams = {
-    appid: KY,
     units: UNITS[1], // optional, but default value is standard (Kelvin)
     lang: 'zh_cn', // optional,but default value is en(English)
   }
-  // const href = `https://api.openweathermap.org/data/2.5/forecast`;
   const href = `https://api.openweathermap.org/data/2.5/${type}`
-  const params = Object.assign({}, deafaultParams, p)
-  // console.log(params);
+  const params = Object.assign({}, deafaultParams, {
+    appid: key,
+    ...rest,
+  })
   return getInfo(`${href}?${_toQueryString(params)}`)
 }
 

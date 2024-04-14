@@ -8,6 +8,8 @@ import {
   _getIconPath,
   $,
   get1rem,
+  getItem,
+  saveItem,
   initGeo,
   vibrate,
   timeoutPromise,
@@ -19,8 +21,8 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.13'
-
+const VERSION = '0.3.14'
+const KEY = '_k'
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
 
@@ -110,11 +112,22 @@ window.onload = () => {
 }
 
 $('.name_city').onclick = () => {
+  const key_input = $('.api_key')
+  key_input.value = getItem(KEY)
+  key_input.onblur = ev => {
+    ev.target.type = 'password'
+    const { value } = ev.target
+    value && saveItem(KEY, value)
+  }
+  key_input.onfocus = ev => {
+    ev.target.type = 'text'
+  }
   loading($('.app'), () => {
     const settings = $('.settings')
     settings.classList.add('show')
     return eventListenerPromise($('.bg_ani'), 'click', () => {
       settings.classList.remove('show')
+      init()
     })
   })
 }
@@ -201,7 +214,7 @@ function getForecastWeather(p) {
 //   console.log(data);
 // };
 
-function init() {
+function init(failed = false) {
   const fn = () =>
     new Promise(async resolve => {
       const geoData = await initGeo()
@@ -214,19 +227,31 @@ function init() {
         return
       }
       let data = {}
+      const notifConfig = {
+        type: NOTI.success,
+        content: '已更新',
+      }
+      const key = getItem(KEY)
       try {
-        if (isDevEnv()) {
+        if (isDevEnv() || !key || failed) {
+          notifConfig.type = NOTI.warn
+          notifConfig.content = ':p'
           const { _mockData } = await import('./js/data.mjs')
           data = await _mockData()
         } else {
+          const params = {
+            ...geoData,
+            key,
+          }
           const requestList = Promise.all([
-            getCurrWeather(geoData),
-            getForecastWeather({ cnt: 8, ...geoData }),
-            getAQI(geoData),
+            getCurrWeather(params),
+            getForecastWeather({ cnt: 8, ...params }),
+            getAQI(params),
             // emmm slow down... :p
             timeoutPromise(1e3),
           ])
           const [curr, forecast, aqi] = await requestList
+          // console.log(curr, forecast, aqi)
           data = {
             ...curr,
             forecast: forecast.list,
@@ -238,19 +263,16 @@ function init() {
         $(`.list_forecast`).innerHTML = ''
         $(`.list_forecast`).appendChild(list)
       } catch (err) {
-        // console.dir(err)
+        console.dir(err)
         const { name, code } = err
         const content = `[code: ${code}] ${name === 'AbortError' ? '请求超时' : name}`
         return showNotif({
           type: NOTI.error,
           content,
-          duration: () => eventListenerPromise($('.notif'), 'click', init),
+          duration: () => eventListenerPromise($('.notif'), 'click', () => init(true)),
         })
       }
-      showNotif({
-        type: NOTI.success,
-        content: '已更新',
-      })
+      showNotif(notifConfig)
       resolve()
     })
   return loading($('.app'), fn)
