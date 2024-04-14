@@ -2,7 +2,10 @@
 <html lang="zh-cn">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Weather</title>
     <script type="module" src="./js/animation.mjs"></script>
     <script type="module" src="./index.mjs"></script>
@@ -80,7 +83,6 @@
       </main>
       <footer class="footer">
         <p class="switch-mode-btn"></p>
-        <p class="version">[<span>?.?.?</span>]</p>
         <p><span class="name_city">??</span> <span class="time_dt">00:00</span>更新</p>
         <p>
           数据来源于
@@ -96,10 +98,16 @@
         <p>API key</p>
         <input class="bordered api_key" type="password" />
       </div>
-      <div class="items-settings">
-        <p>地名</p>
-        <input class="line" type="text" />
+      <div class="main">
+        <form id="form">
+          <div class="items-settings">
+            <p>地名</p>
+            <input class="line search" spellcheck="false" type="search" />
+          </div>
+          <div class="result_list"></div>
+        </form>
       </div>
+      <p class="version">[<span>?.?.?</span>]</p>
     </div>
   </body>
 </html>

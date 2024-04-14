@@ -98,8 +98,21 @@ export function getItem(key) {
   return JSON.parse(localStorage.getItem(key))
 }
 
+const POSITION = '_p'
+export function savePosInfo(data) {
+  saveItem(POSITION, data)
+}
+
+export function getPosInfo() {
+  return getItem(POSITION)
+}
 export function initGeo() {
   return new Promise(resolve => {
+    const pos = getPosInfo()
+    if (pos) {
+      resolve(pos)
+      return
+    }
     const defaultPos = {
       lon: 120.155,
       lat: 30.1804,

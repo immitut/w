@@ -23,6 +23,7 @@ body {
 
 :root {
   --rem: 4;
+  --text-indent: 2rem;
   font-size: calc(var(--rem) * 1px);
   --max-font-size: 15rem;
   --middle-font-size: 7.5rem;
@@ -475,6 +476,11 @@ body {
 }
 
 .settings {
+  --radius: 7.5rem;
+  --padding: calc(var(--radius) / 3 * 2);
+  --label_width: 20rem;
+  display: flex;
+  flex-direction: column;
   pointer-events: none;
   position: absolute;
   bottom: var(--spacing);
@@ -482,9 +488,8 @@ body {
   right: var(--spacing);
   z-index: var(--topLayer);
   height: calc(100% - 39rem);
-  --radius: 8rem;
   border-radius: var(--radius);
-  padding: calc(var(--radius) / 3 * 2);
+  padding: var(--padding);
   background-color: rgb(var(--secondary-bg-color) / 0.8);
   color: rgb(var(--on-secondary-bg-color));
   backdrop-filter: blur(4px);
@@ -497,6 +502,9 @@ body {
   .title {
     font-size: var(--middle-font-size);
   }
+  .main {
+    flex: 1;
+  }
   .items-settings {
     display: flex;
     width: 100%;
@@ -505,21 +513,42 @@ body {
     height: 9rem;
     line-height: 9rem;
     p {
+      width: var(--label_width);
       text-wrap: nowrap;
     }
   }
+  .result_list {
+    margin-left: var(--label_width);
+    margin-top: var(--spacing);
+    p {
+      cursor: pointer;
+      text-indent: var(--text-indent);
+      line-height: 9rem;
+      transition: 0.4s ease-in-out;
+      &:hover {
+        color: rgb(var(--primary-color));
+      }
+    }
+  }
+  .version {
+    text-align: center;
+  }
 }
+
 input {
   --border-style: 1px solid rgb(var(--outline-color));
   width: 100%;
   font-size: inherit;
   color: currentColor;
   caret-color: currentColor;
-  text-indent: 2rem;
+  text-indent: var(--text-indent);
   background-color: transparent;
   outline: none;
   border: none;
   transition: 0.4s ease-in-out;
+  &[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
   &.line {
     border-bottom: var(--border-style);
   }
@@ -531,6 +560,7 @@ input {
     border-color: rgb(var(--primary-color));
   }
 }
+
 @keyframes colorChange {
   0%,
   100% {

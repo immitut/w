@@ -14,6 +14,7 @@ import {
   vibrate,
   timeoutPromise,
   eventListenerPromise,
+  savePosInfo,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
@@ -21,8 +22,9 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.14'
+const VERSION = '0.3.15'
 const KEY = '_k'
+
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
 
@@ -111,6 +113,61 @@ window.onload = () => {
   }
 }
 
+// const searchBtn = document.querySelector("#submit");
+// searchBtn.onclick = async () => {
+//   const input = document.querySelector("input");
+//   const data = await fetchGeo(input.value);
+//   console.log(data);
+// };
+
+function _formatData({ country, local_names, name, state, lat, lon }) {
+  name = local_names?.zh ?? name
+  state = state ? `, ${state}` : ''
+  return {
+    desc: `${name}${state}, ${country}`,
+    name,
+    lat,
+    lon,
+  }
+}
+
+function rendersearchResult(list) {
+  const frag = document.createDocumentFragment()
+  for (const item of list) {
+    const { desc, name, lat, lon } = _formatData(item)
+    const p = document.createElement('p')
+    p.dataset.data = JSON.stringify({ name, lat, lon })
+    // div.classList.add('item_forecast')
+    p.textContent = desc
+    frag.appendChild(p)
+  }
+  return frag
+}
+
+$('#form').onsubmit = async ev => {
+  ev.preventDefault()
+  const search = $('.search')
+  const value = search?.value?.trim()
+  if (!value) return
+  const key = getItem(KEY)
+  const data = await fetchGeo(value, key)
+  const resList = $('.result_list')
+  if (data && data.length) {
+    const frag = rendersearchResult(data)
+    eventListenerPromise(resList, 'click', ev => {
+      const { data } = ev.target?.dataset
+      if (data) {
+        savePosInfo(JSON.parse(data))
+        resList.innerHTML = ''
+        search.value = ''
+      }
+    })
+    resList.innerHTML = ''
+    resList.appendChild(frag)
+  } else {
+    resList.textContent = '无数据'
+  }
+}
 $('.name_city').onclick = () => {
   const key_input = $('.api_key')
   key_input.value = getItem(KEY)
@@ -176,24 +233,6 @@ $('.num_aqi').ondblclick = () => {
   })
 }
 
-function initMsgChannel(controller) {
-  if (!controller) return null
-  const { port1, port2 } = new MessageChannel()
-  const msgTypes = {
-    REQUEST: 'request',
-    CACHE: 'cache',
-    CACHEINFO: 'cacheInfo',
-  }
-  controller.postMessage(
-    {
-      type: 'INIT_PORT',
-      data: msgTypes,
-    },
-    [port2],
-  )
-  return port1
-}
-
 function updateIcon(key, value) {
   const iconpath = _getIconPath(value)
   $(`.${key}`).style.setProperty('--icon-url', `url("${iconpath}")`)
@@ -206,13 +245,6 @@ function getCurrWeather(p) {
 function getForecastWeather(p) {
   return getWeather('forecast', p)
 }
-
-// const searchBtn = document.querySelector("#submit");
-// searchBtn.onclick = async () => {
-//   const input = document.querySelector("input");
-//   const data = await fetchGeo(input.value);
-//   console.log(data);
-// };
 
 function init(failed = false) {
   const fn = () =>
@@ -373,4 +405,22 @@ function addPullToRefresh() {
       }
     },
   })
+}
+
+function initMsgChannel(controller) {
+  if (!controller) return null
+  const { port1, port2 } = new MessageChannel()
+  const msgTypes = {
+    REQUEST: 'request',
+    CACHE: 'cache',
+    CACHEINFO: 'cacheInfo',
+  }
+  controller.postMessage(
+    {
+      type: 'INIT_PORT',
+      data: msgTypes,
+    },
+    [port2],
+  )
+  return port1
 }
