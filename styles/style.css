@@ -433,6 +433,7 @@ body {
   --ani-play-state: paused;
   &.show {
     opacity: 1;
+    pointer-events: all;
     transform: translateY(20rem);
     --ani-play-state: running;
   }
@@ -480,11 +481,12 @@ body {
   left: var(--spacing);
   right: var(--spacing);
   z-index: var(--topLayer);
-  height: 80%;
-  --radius: 10rem;
+  height: calc(100% - 39rem);
+  --radius: 8rem;
   border-radius: var(--radius);
   padding: calc(var(--radius) / 3 * 2);
   background-color: rgb(var(--secondary-bg-color) / 0.8);
+  color: rgb(var(--on-secondary-bg-color));
   backdrop-filter: blur(4px);
   transform: translateY(120%);
   transition: 0.6s ease-in-out;
@@ -492,11 +494,43 @@ body {
     pointer-events: all;
     transform: translateY(0);
   }
-  p {
+  .title {
+    font-size: var(--middle-font-size);
+  }
+  .items-settings {
+    display: flex;
     width: 100%;
+    gap: var(--spacing);
+    margin-top: var(--spacing);
+    height: 9rem;
+    line-height: 9rem;
+    p {
+      text-wrap: nowrap;
+    }
   }
 }
-
+input {
+  --border-style: 1px solid rgb(var(--outline-color));
+  width: 100%;
+  font-size: inherit;
+  color: currentColor;
+  caret-color: currentColor;
+  text-indent: 2rem;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  transition: 0.4s ease-in-out;
+  &.line {
+    border-bottom: var(--border-style);
+  }
+  &.bordered {
+    border-radius: 2rem;
+    border: var(--border-style);
+  }
+  &:focus-visible {
+    border-color: rgb(var(--primary-color));
+  }
+}
 @keyframes colorChange {
   0%,
   100% {

@@ -19,7 +19,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.12'
+const VERSION = '0.3.13'
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -113,7 +113,7 @@ $('.name_city').onclick = () => {
   loading($('.app'), () => {
     const settings = $('.settings')
     settings.classList.add('show')
-    return eventListenerPromise($('.close'), 'click', () => {
+    return eventListenerPromise($('.bg_ani'), 'click', () => {
       settings.classList.remove('show')
     })
   })
