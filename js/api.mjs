@@ -41,7 +41,7 @@ const getInfo = async (api, { cached = false } = {}) => {
 }
 
 function fetchGeo(str, key) {
-  const href = '//api.openweathermap.org/geo/1.0/direct'
+  const href = 'https://api.openweathermap.org/geo/1.0/direct'
   const params = {
     q: str,
     limit: 5,

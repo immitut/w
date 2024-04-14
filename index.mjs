@@ -20,9 +20,9 @@ import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
 import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
-import('./js/dev.mjs')
+import { VERSION } from './js/constant.mjs'
 
-const VERSION = '0.3.17'
+import('./js/dev.mjs')
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -100,7 +100,7 @@ window.onload = () => {
   }
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register('./sw.js')
+      .register('./serviceWorker.mjs', { type: 'module' })
       .then(ev => {
         console.log('register done')
       })
@@ -153,7 +153,12 @@ $('#form').onsubmit = async ev => {
   if (data && data.length) {
     const frag = rendersearchResult(data)
     eventListenerPromise(resList, 'click', ev => {
-      const { data } = ev.target?.dataset
+      let node = ev.target
+      // 1 === 'span'
+      if (node.nodeType === 1) {
+        node = node.parentElement
+      }
+      const { data } = node?.dataset
       if (data) {
         savePosInfo(JSON.parse(data))
         resList.innerHTML = ''
@@ -266,7 +271,7 @@ function init(failed = false) {
       try {
         if (isDevEnv() || !key || failed) {
           notifConfig.type = NOTI.warn
-          notifConfig.content = ':p'
+          notifConfig.content = 'API Key 不存在或网络异常,请稍后重试:p'
           const { _mockData } = await import('./js/data.mjs')
           data = await _mockData()
         } else {

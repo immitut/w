@@ -1,10 +1,7 @@
-const CACHEVERSION = '1.13'
-const DBINFO = {
-  name: 'Nexus',
-  version: 1,
-  storeName: 'Record',
-  key: 'id',
-}
+import { openDB, closeDB, findDBDataByKey, updateDBData, deleteDB } from './js/db/index.mjs'
+import { _ts } from './js/common.mjs'
+
+const CACHEVERSION = '1.14'
 
 const cacheList = [
   // "/w/",
@@ -13,13 +10,12 @@ const cacheList = [
   '/w/js/animation.mjs',
   '/w/js/api.mjs',
   '/w/js/common.mjs',
+  '/w/assets/..',
   // "/w/dev.mjs",
   // "/w/manifest.json",
   // "/w/manifest_dark.json",
   // "/w/style.css",
 ]
-
-const _ts = t => (t === undefined ? +new Date() : +new Date(t))
 
 /**
  * Check the history for saved information corresponding to the current request
@@ -34,7 +30,7 @@ function checkCacheInfo(url) {
     const db = await openDB()
     const {
       target: { result },
-    } = await findDataByKey(url, db)
+    } = await findDBDataByKey(url, db)
     closeDB(db)
     if (!result) {
       resolve({ msg: `${url}: no cache`, isExpired: true })
@@ -59,64 +55,8 @@ function checkCacheInfo(url) {
 
 async function saveCacheInfo({ url, destination }) {
   const db = await openDB()
-  await updateData({ id: url, destination, ts: _ts() }, db)
+  await updateDBData({ id: url, destination, ts: _ts() }, db)
   closeDB(db)
-}
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DBINFO.name, DBINFO.version)
-    request.onsuccess = ev => {
-      resolve(ev.target.result)
-    }
-    request.onerror = reject
-    // Callback on initialization/upgrade
-    request.onupgradeneeded = ev => {
-      const db = ev.target.result
-      const obStore = db.createObjectStore(DBINFO.storeName, {
-        keyPath: DBINFO.key,
-      })
-      obStore.createIndex('type', 'type', { unique: false })
-    }
-  })
-}
-
-function closeDB(db) {
-  db?.close()
-}
-
-function deleteDB(dbName = DBINFO.name) {
-  console.log('deleteDB', dbName)
-  return _dbCommonPromise(indexedDB.deleteDatabase(dbName))
-}
-
-function addData(data, db, storeName = DBINFO.storeName) {
-  return _dbCommonPromise(_dbCommonRequest('add', db, storeName, data))
-}
-
-function updateData(data, db, storeName = DBINFO.storeName) {
-  return _dbCommonPromise(_dbCommonRequest('put', db, storeName, data))
-}
-
-function deleteDataByKey(key, db, storeName = DBINFO.storeName) {
-  return _dbCommonPromise(_dbCommonRequest('delete', db, storeName, key))
-}
-
-function _dbCommonRequest(action, db, storeName, data) {
-  return db.transaction([storeName], 'readwrite').objectStore(storeName)[action](data)
-}
-
-function _dbCommonPromise(request) {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = resolve
-    request.onerror = reject
-  })
-}
-
-function findDataByKey(key, db, storeName = DBINFO.storeName) {
-  const obStore = db.transaction([storeName]).objectStore(storeName)
-  const request = obStore.get(key)
-  return _dbCommonPromise(request)
 }
 
 self.addEventListener('message', ev => {

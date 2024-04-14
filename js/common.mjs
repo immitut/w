@@ -11,6 +11,8 @@ export {
   getDisplayMode,
 } from './stroage/index.mjs'
 
+export const _ts = t => (t === undefined ? +new Date() : +new Date(t))
+
 export function _zeroPrefix(s) {
   return `0${s}`.slice(-2)
 }
