@@ -528,6 +528,9 @@ body {
       &:hover {
         color: rgb(var(--primary-color));
       }
+      span {
+        font-size: var(--small-font-size);
+      }
     }
   }
   .version {
@@ -536,7 +539,7 @@ body {
 }
 
 input {
-  --border-style: 1px solid rgb(var(--outline-color));
+  --border-style: 2px solid rgb(var(--outline-color));
   width: 100%;
   font-size: inherit;
   color: currentColor;
@@ -556,11 +559,23 @@ input {
     border-radius: 2rem;
     border: var(--border-style);
   }
+  &.input_loading {
+    animation: breathing 2s ease-in-out infinite;
+  }
   &:focus-visible {
     border-color: rgb(var(--primary-color));
   }
 }
 
+@keyframes breathing {
+  0%,
+  100% {
+    border-color: rgb(var(--outline-color));
+  }
+  50% {
+    border-color: rgb(var(--primary-color));
+  }
+}
 @keyframes colorChange {
   0%,
   100% {

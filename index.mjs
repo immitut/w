@@ -22,7 +22,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.15'
+const VERSION = '0.3.16'
 const KEY = '_k'
 
 // In order to detect if a notification has disappeared
@@ -89,6 +89,7 @@ function loading(elm, fn) {
 
 window.onload = () => {
   updateData({ version: VERSION })
+  // $('.name_city').click()
   addPullToRefresh()
   const next = () => {
     renderTheme()
@@ -113,18 +114,11 @@ window.onload = () => {
   }
 }
 
-// const searchBtn = document.querySelector("#submit");
-// searchBtn.onclick = async () => {
-//   const input = document.querySelector("input");
-//   const data = await fetchGeo(input.value);
-//   console.log(data);
-// };
-
 function _formatData({ country, local_names, name, state, lat, lon }) {
   name = local_names?.zh ?? name
-  state = state ? `, ${state}` : ''
+  state = state ? `${state}, ` : ''
   return {
-    desc: `${name}${state}, ${country}`,
+    desc: `${state}${country}`,
     name,
     lat,
     lon,
@@ -138,7 +132,10 @@ function rendersearchResult(list) {
     const p = document.createElement('p')
     p.dataset.data = JSON.stringify({ name, lat, lon })
     // div.classList.add('item_forecast')
-    p.textContent = desc
+    p.textContent = name + ' '
+    const span = document.createElement('span')
+    span.textContent = desc
+    p.insertAdjacentElement('beforeend', span)
     frag.appendChild(p)
   }
   return frag
@@ -149,8 +146,10 @@ $('#form').onsubmit = async ev => {
   const search = $('.search')
   const value = search?.value?.trim()
   if (!value) return
+  search.classList.add('input_loading')
   const key = getItem(KEY)
   const data = await fetchGeo(value, key)
+  search.classList.remove('input_loading')
   const resList = $('.result_list')
   if (data && data.length) {
     const frag = rendersearchResult(data)
@@ -168,6 +167,7 @@ $('#form').onsubmit = async ev => {
     resList.textContent = '无数据'
   }
 }
+
 $('.name_city').onclick = () => {
   const key_input = $('.api_key')
   key_input.value = getItem(KEY)
