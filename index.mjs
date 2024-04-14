@@ -8,8 +8,8 @@ import {
   _getIconPath,
   $,
   get1rem,
-  getItem,
-  saveItem,
+  getAPIKey,
+  saveAPIKey,
   initGeo,
   vibrate,
   timeoutPromise,
@@ -22,8 +22,7 @@ import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
 import('./js/dev.mjs')
 
-const VERSION = '0.3.16'
-const KEY = '_k'
+const VERSION = '0.3.17'
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
@@ -147,7 +146,7 @@ $('#form').onsubmit = async ev => {
   const value = search?.value?.trim()
   if (!value) return
   search.classList.add('input_loading')
-  const key = getItem(KEY)
+  const key = getAPIKey()
   const data = await fetchGeo(value, key)
   search.classList.remove('input_loading')
   const resList = $('.result_list')
@@ -170,11 +169,11 @@ $('#form').onsubmit = async ev => {
 
 $('.name_city').onclick = () => {
   const key_input = $('.api_key')
-  key_input.value = getItem(KEY)
+  key_input.value = getAPIKey()
   key_input.onblur = ev => {
     ev.target.type = 'password'
     const { value } = ev.target
-    value && saveItem(KEY, value)
+    value && saveAPIKey(value)
   }
   key_input.onfocus = ev => {
     ev.target.type = 'text'
@@ -263,7 +262,7 @@ function init(failed = false) {
         type: NOTI.success,
         content: '已更新',
       }
-      const key = getItem(KEY)
+      const key = getAPIKey()
       try {
         if (isDevEnv() || !key || failed) {
           notifConfig.type = NOTI.warn

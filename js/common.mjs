@@ -1,3 +1,16 @@
+import { getPosInfo } from './stroage/index.mjs'
+
+export {
+  savePosInfo,
+  getPosInfo,
+  saveAPIKey,
+  getAPIKey,
+  saveAmoledMode,
+  getAmoledMode,
+  saveDisplaydMode,
+  getDisplayMode,
+} from './stroage/index.mjs'
+
 export function _zeroPrefix(s) {
   return `0${s}`.slice(-2)
 }
@@ -90,27 +103,12 @@ export function get1rem() {
   return parseInt(getComputedStyle($(':root')).getPropertyValue('--rem'))
 }
 
-export function saveItem(key, value) {
-  localStorage.setItem(key, JSON.stringify(value))
-}
-
-export function getItem(key) {
-  return JSON.parse(localStorage.getItem(key))
-}
-
-const POSITION = '_p'
-export function savePosInfo(data) {
-  saveItem(POSITION, data)
-}
-
-export function getPosInfo() {
-  return getItem(POSITION)
-}
 export function initGeo() {
   return new Promise(resolve => {
     const pos = getPosInfo()
     if (pos) {
-      resolve(pos)
+      const { lon, lat } = pos
+      resolve({ lon, lat })
       return
     }
     const defaultPos = {
