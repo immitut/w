@@ -244,7 +244,7 @@ function init() {
         return showNotif({
           type: NOTI.error,
           content,
-          duration: eventListenerPromise($('.notif'), 'click', init),
+          duration: () => eventListenerPromise($('.notif'), 'click', init),
         })
       }
       showNotif({
@@ -289,7 +289,7 @@ function offLineCheck() {
     showNotif({
       type: NOTI.error,
       content: '无网络',
-      duration: eventListenerPromise(window, 'online'),
+      duration: () => eventListenerPromise(window, 'online'),
     })
   }
   window.addEventListener('offline', offLineCallback)
