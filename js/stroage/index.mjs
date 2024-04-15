@@ -27,7 +27,6 @@ export function clearPosInfo() {
 export function savePosInfo(data) {
   _saveItem(POSITION, data)
   const list = getPosList()
-  console.log(list)
   if (list.length) {
     const i = list.findIndex(({ lon, lat }) => data.lat === lat && data.lon === lon)
     if (i !== -1) {
