@@ -78,11 +78,19 @@ const proxy = new Proxy(
 
 function loading(elm, fn, callback) {
   return new Promise(async resolve => {
-    elm.classList.add('loading')
     $('.loading_ani').classList.add('show')
-    await fn()
-    elm.classList.remove('loading')
+    await masking(elm, fn)
     $('.loading_ani').classList.remove('show')
+    resolve()
+    typeof callback === 'function' && callback()
+  })
+}
+
+function masking(elm, fn, callback) {
+  return new Promise(async resolve => {
+    elm.classList.add('mask')
+    await fn()
+    elm.classList.remove('mask')
     resolve()
     typeof callback === 'function' && callback()
   })
@@ -118,7 +126,7 @@ window.onload = () => {
 }
 
 function _formatData({ country, local_names, name, state, lat, lon }) {
-  name = local_names?.zh ?? name
+  name = (local_names?.zh ?? name).split('/')[0]
   state = state ? `${state}, ` : ''
   return {
     desc: `${state}${country}`,
@@ -191,8 +199,7 @@ $('.temp_cur').onclick = () => {
   key_input.onfocus = ev => {
     ev.target.type = 'text'
   }
-  console.log('settings')
-  loading(
+  masking(
     $('.app'),
     () => {
       const settings = $('.settings')

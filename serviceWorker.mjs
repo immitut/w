@@ -100,14 +100,16 @@ self.addEventListener('fetch', ev => {
         }
         try {
           const resp = await fetch(request)
-          cache
-            .put(request, resp.clone())
-            .then(() => {
-              saveCacheInfo({ url, destination })
-            })
-            .catch(err => {
-              console.warn(request, err)
-            })
+          if (resp.ok) {
+            cache
+              .put(request, resp.clone())
+              .then(() => {
+                saveCacheInfo({ url, destination })
+              })
+              .catch(err => {
+                console.warn(request, err)
+              })
+          }
           console.log('[online]', url)
           return resp
         } catch (err) {
