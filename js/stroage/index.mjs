@@ -16,7 +16,7 @@ function _saveItem(key, value) {
 function _getItem(key) {
   return JSON.parse(localStorage.getItem(key))
 }
-function _getItem(key) {
+function _deleteItem(key) {
   localStorage.removeItem(key)
 }
 
