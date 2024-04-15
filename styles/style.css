@@ -14,6 +14,35 @@ a {
   text-decoration: none;
 }
 
+input {
+  --border-style: 2px solid rgb(var(--color-outline));
+  width: 100%;
+  font-size: inherit;
+  color: currentColor;
+  caret-color: currentColor;
+  text-indent: var(--text-indent);
+  background-color: transparent;
+  outline: none;
+  border: none;
+  transition: 0.4s ease-in-out;
+  &[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+  &.line {
+    border-bottom: var(--border-style);
+  }
+  &.bordered {
+    border-radius: 2rem;
+    border: var(--border-style);
+  }
+  &.input_loading {
+    animation: breathing 2s ease-in-out infinite;
+  }
+  &:focus-visible {
+    border-color: rgb(var(--color-primary));
+  }
+}
+
 html,
 body {
   height: 100%;
@@ -25,56 +54,64 @@ body {
   --rem: 4;
   --text-indent: 2rem;
   font-size: calc(var(--rem) * 1px);
-  --max-font-size: 15rem;
-  --middle-font-size: 7.5rem;
-  --normal-font-size: 4.5rem;
-  --small-font-size: 12px;
+  --font-size-max: 15rem;
+  --font-size-middle: 7.5rem;
+  --font-size-normal: 4.5rem;
+  --font-size-small: 12px;
   --radius: 12rem;
   --spacing: 4rem;
-  --topLayer: 3;
-  --midLayer: 2;
-  --normalLayer: 1;
+  --layer-top: 3;
+  --layer-mid: 2;
+  --layer-normal: 1;
   .dark {
-    --bg-color: var(--dark-color-background);
-    --on-bg-color: var(--dark-color-on-background);
-    --primary-color: var(--dark-color-primary);
-    --on-primary-color: var(--dark-color-on-primary);
-    --primary-bg-color: var(--dark-color-primary-container);
-    --on-primary-bg-color: var(--dark-color-on-primary-container);
-    --secondary-color: var(--dark-color-secondary);
-    --on-secondary-color: var(--dark-color-on-secondary);
-    --secondary-bg-color: var(--dark-color-secondary-container);
-    --on-secondary-bg-color: var(--dark-color-on-secondary-container);
-    --error-bg-color: var(--dark-color-error);
-    --on-error-bg-color: var(--dark-color-on-error);
-    --surface-color: var(--dark-color-surface);
-    --on-surface-color: var(--dark-color-on-surface);
-    --outline-color: var(--dark-color-outline);
+    --color-container: var(--dark-color-background);
+    --color-on-container: var(--dark-color-on-background);
+    --color-primary: var(--dark-color-primary);
+    --color-on-primary: var(--dark-color-on-primary);
+    --color-primary-container: var(--dark-color-primary-container);
+    --color-on-primary-container: var(--dark-color-on-primary-container);
+    --color-secondary: var(--dark-color-secondary);
+    --color-on-secondary: var(--dark-color-on-secondary);
+    --color-secondary-container: var(--dark-color-secondary-container);
+    --color-on-secondary-container: var(--dark-color-on-secondary-container);
+    --color-tertiary: var(--dark-color-tertiary);
+    --color-on-tertiary: var(--dark-color-on-tertiary);
+    --color-tertiary-container: var(--dark-color-tertiary-container);
+    --color-on-tertiary-container: var(--dark-color-on-tertiary-container);
+    --color-error-container: var(--dark-color-error);
+    --color-on-error-container: var(--dark-color-on-error);
+    --color-surface: var(--dark-color-surface);
+    --color-on-surface: var(--dark-color-on-surface);
+    --color-outline: var(--dark-color-outline);
     &.amoled {
-      --bg-color: 0 0 0;
+      --color-container: 0 0 0;
     }
   }
 }
 
 :root .light,
 body.auto {
-  --bg-color: var(--light-color-background);
-  --on-bg-color: var(--light-color-on-background);
-  --primary-color: var(--light-color-primary);
-  --on-primary-color: var(--light-color-on-primary);
-  --primary-bg-color: var(--light-color-primary-container);
-  --on-primary-bg-color: var(--light-color-on-primary-container);
-  --secondary-color: var(--light-color-secondary);
-  --on-secondary-color: var(--light-color-on-secondary);
-  --secondary-bg-color: var(--light-color-secondary-container);
-  --on-secondary-bg-color: var(--light-color-on-secondary-container);
-  --error-bg-color: var(--light-color-error);
-  --on-error-bg-color: var(--light-color-on-error);
-  --surface-color: var(--light-color-surface);
-  --on-surface-color: var(--light-color-on-surface);
-  --outline-color: var(--light-color-outline);
+  --color-container: var(--light-color-background);
+  --color-on-container: var(--light-color-on-background);
+  --color-primary: var(--light-color-primary);
+  --color-on-primary: var(--light-color-on-primary);
+  --color-primary-container: var(--light-color-primary-container);
+  --color-on-primary-container: var(--light-color-on-primary-container);
+  --color-secondary: var(--light-color-secondary);
+  --color-on-secondary: var(--light-color-on-secondary);
+  --color-secondary-container: var(--light-color-secondary-container);
+  --color-on-secondary-container: var(--light-color-on-secondary-container);
+  --color-tertiary: var(--light-color-tertiary);
+  --color-on-tertiary: var(--light-color-on-tertiary);
+  --color-tertiary-container: var(--light-color-tertiary-container);
+  --color-on-tertiary-container: var(--light-color-on-tertiary-container);
+  --color-error-container: var(--light-color-error);
+  --color-on-error-container: var(--light-color-on-error);
+  --color-surface: var(--light-color-surface);
+  --color-on-surface: var(--light-color-on-surface);
+  --color-outline: var(--light-color-outline);
   .header {
-    background-color: rgb(var(--bg-color));
+    background-color: rgb(var(--color-container));
   }
 }
 
@@ -82,34 +119,37 @@ body {
   &.auto {
     /* TODO: Duplicate css code */
     @media (prefers-color-scheme: dark) {
-      --bg-color: var(--dark-color-background);
-      --on-bg-color: var(--dark-color-on-background);
-      --primary-color: var(--dark-color-primary);
-      --on-primary-color: var(--dark-color-on-primary);
-      --primary-bg-color: var(--dark-color-primary-container);
-      --on-primary-bg-color: var(--dark-color-on-primary-container);
-      --secondary-color: var(--dark-color-secondary);
-      --on-secondary-color: var(--dark-color-on-secondary);
-      --secondary-bg-color: var(--dark-color-secondary-container);
-      --on-secondary-bg-color: var(--dark-color-on-secondary-container);
-      --error-bg-color: var(--dark-color-error);
-      --on-error-bg-color: var(--dark-color-on-error);
-      --surface-color: var(--dark-color-surface);
-      --on-surface-color: var(--dark-color-on-surface);
-      --outline-color: var(--dark-color-outline);
+      --color-container: var(--dark-color-background);
+      --color-on-container: var(--dark-color-on-background);
+      --color-primary: var(--dark-color-primary);
+      --color-on-primary: var(--dark-color-on-primary);
+      --color-primary-container: var(--dark-color-primary-container);
+      --color-on-primary-container: var(--dark-color-on-primary-container);
+
+      --color-secondary: var(--dark-color-secondary);
+      --color-on-secondary: var(--dark-color-on-secondary);
+      --color-secondary-container: var(--dark-color-secondary-container);
+      --color-on-secondary-container: var(--dark-color-on-secondary-container);
+      --color-tertiary: var(--dark-color-tertiary);
+      --color-on-tertiary: var(--dark-color-on-tertiary);
+      --color-tertiary-container: var(--dark-color-tertiary-container);
+      --color-on-tertiary-container: var(--dark-color-on-tertiary-container);
+      --color-error-container: var(--dark-color-error);
+      --color-on-error-container: var(--dark-color-on-error);
+      --color-surface: var(--dark-color-surface);
+      --color-on-surface: var(--dark-color-on-surface);
+      --color-outline: var(--dark-color-outline);
       &.amoled {
-        --bg-color: 0 0 0;
+        --color-container: 0 0 0;
       }
     }
   }
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-  background: rgb(var(--bg-color));
-  font-size: var(--normal-font-size);
-  color: rgb(var(--on-bg-color));
+  background: rgb(var(--color-container));
+  font-size: var(--font-size-normal);
+  color: rgb(var(--color-on-container));
   font-weight: 600;
   user-select: none;
-  display: flex;
-  flex-direction: column;
 }
 
 /* @supports (font-variation-settings: normal) {
@@ -117,6 +157,14 @@ body {
     font-family: "Inter var", sans-serif;
   }
 } */
+
+.base {
+  height: 100%;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .notif-box {
   display: flex;
   height: 0;
@@ -129,13 +177,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: var(--topLayer);
+    z-index: var(--layer-top);
     transform: translateY(-20rem);
     height: 0rem;
     position: fixed;
-    top: 0;
-    left: 0;
-    font-size: var(--normal-font-size);
+    font-size: var(--font-size-normal);
     border-radius: 2rem;
     transition-property: transform, filter;
     transition-duration: 0.4s;
@@ -159,16 +205,16 @@ body {
       }
     }
     &.error {
-      background-color: rgb(var(--error-bg-color));
-      color: rgb(var(--on-error-bg-color));
+      background-color: rgb(var(--color-error-container));
+      color: rgb(var(--color-on-error-container));
     }
     &.success {
-      background-color: rgb(var(--primary-bg-color));
-      color: rgb(var(--on-primary-bg-color));
+      background-color: rgb(var(--color-primary-container));
+      color: rgb(var(--color-on-primary-container));
     }
     &.info {
-      background-color: rgb(var(--surface-color));
-      color: rgb(var(--on-surface-color));
+      background-color: rgb(var(--color-surface));
+      color: rgb(var(--color-on-surface));
     }
   }
 }
@@ -191,12 +237,12 @@ body {
   margin: 0 calc(var(--spacing) - 2px);
   position: sticky;
   top: 0;
-  z-index: var(--normalLayer);
+  z-index: var(--layer-normal);
   height: 135rem;
   background: linear-gradient(
-    rgb(var(--bg-color)) 90%,
-    rgb(var(--bg-color) / 0.9) 95%,
-    rgb(var(--bg-color) / 0.8) 100%
+    rgb(var(--color-container)) 90%,
+    rgb(var(--color-container) / 0.9) 95%,
+    rgb(var(--color-container) / 0.8) 100%
   );
   transition: background 0.4s ease-out;
   backdrop-filter: blur(10px);
@@ -204,13 +250,13 @@ body {
   .temp_cur {
     position: absolute;
     bottom: 8rem;
-    color: rgb(var(--primary-color));
-    font-size: var(--max-font-size);
+    color: rgb(var(--color-primary));
+    font-size: var(--font-size-max);
   }
   .temp_secondary {
     position: absolute;
     bottom: 0;
-    font-size: var(--middle-font-size);
+    font-size: var(--font-size-middle);
   }
   .icon_main {
     position: absolute;
@@ -243,7 +289,7 @@ body {
           scrollbar-width: none;
         }
       }
-      font-size: var(--small-font-size);
+      font-size: var(--font-size-small);
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-padding-left: 3rem;
@@ -278,8 +324,8 @@ body {
   padding: calc(var(--radius) / 3 * 2);
   line-height: 9rem;
   transition: all 0.4s ease-out;
-  color: rgb(var(--on-secondary-bg-color));
-  background-color: rgb(var(--secondary-bg-color) / 0.3);
+  color: rgb(var(--color-on-secondary-container));
+  background-color: rgb(var(--color-secondary-container) / 0.3);
   &:has(.num_aqi) {
     color: rgb(var(--light-color-on-background));
   }
@@ -318,8 +364,8 @@ body {
   aspect-ratio: 3;
   margin-bottom: 6rem;
   border-radius: 50%/100% 100% 0 0;
-  border: 1px solid rgb(var(--on-secondary-bg-color));
-  font-size: var(--small-font-size);
+  border: 1px solid rgb(var(--color-on-secondary-container));
+  font-size: var(--font-size-small);
   background-image: linear-gradient(
     to right,
     transparent calc(var(--sunrisePer) - 2px),
@@ -355,8 +401,8 @@ body {
   border-radius: 100%;
   width: 9rem;
   height: 9rem;
-  color: rgb(var(--on-secondary-color));
-  background-color: rgb(var(--secondary-color));
+  color: rgb(var(--color-on-secondary));
+  background-color: rgb(var(--color-secondary));
   transform: scale(1.6);
   .cursor_icon {
     width: 9rem;
@@ -365,7 +411,7 @@ body {
   }
   &::before {
     display: block;
-    font-size: var(--small-font-size);
+    font-size: var(--font-size-small);
     content: 'N';
     transform: translate(-50%, -34%) scale(0.6);
     position: absolute;
@@ -385,7 +431,7 @@ body {
 .footer {
   margin: 90rem var(--spacing) var(--spacing);
   line-height: 6rem;
-  font-size: var(--small-font-size);
+  font-size: var(--font-size-small);
   position: relative;
   .switch-mode-btn {
     position: absolute;
@@ -395,8 +441,8 @@ body {
     bottom: 0;
     right: 0;
     cursor: pointer;
-    background-color: rgb(var(--on-primary-color));
-    border: 2px solid rgb(var(--primary-color));
+    background-color: rgb(var(--color-on-primary));
+    border: 2px solid rgb(var(--color-primary));
     overflow: hidden;
     transition: all 0.4s ease-out;
     &::before {
@@ -405,7 +451,7 @@ body {
       display: block;
       width: 200%;
       height: 200%;
-      background-color: rgb(var(--primary-color));
+      background-color: rgb(var(--color-primary));
       transition: all 0.8s ease-in-out;
     }
     :where(.auto) &::before {
@@ -428,7 +474,7 @@ body {
   width: 100%;
   position: absolute;
   opacity: 0;
-  z-index: var(--topLayer);
+  z-index: var(--layer-top);
   transition: 0.2s;
   pointer-events: none;
   --ani-play-state: paused;
@@ -445,7 +491,7 @@ body {
     height: 10rem;
     border-radius: 100%;
     overflow: hidden;
-    border: 2px solid rgb(var(--primary-color));
+    border: 2px solid rgb(var(--color-primary));
     animation: colorChange 2.8s ease-in-out var(--ani-delay) infinite;
     animation-play-state: var(--ani-play-state);
     &::before {
@@ -472,7 +518,7 @@ body {
 }
 
 .shadow {
-  border-bottom: 1px solid rgb(var(--outline-color) / 0.3);
+  border-bottom: 1px solid rgb(var(--color-outline) / 0.3);
 }
 
 .settings {
@@ -480,57 +526,82 @@ body {
   --padding: calc(var(--radius) / 3 * 2);
   --label_width: 20rem;
   display: flex;
+  gap: var(--spacing);
   flex-direction: column;
-  pointer-events: none;
-  position: absolute;
-  bottom: var(--spacing);
-  left: var(--spacing);
-  right: var(--spacing);
-  z-index: var(--topLayer);
-  height: calc(100% - 39rem);
-  border-radius: var(--radius);
+  height: min(65%, calc(100% - 39rem));
+  /* height: calc(100% - 39rem); */
+  width: 100%;
+  max-width: 174rem;
+  margin: 0 auto;
+  border-radius: var(--radius) var(--radius) 0 0;
   padding: var(--padding);
-  background-color: rgb(var(--secondary-bg-color) / 0.8);
-  color: rgb(var(--on-secondary-bg-color));
-  backdrop-filter: blur(4px);
-  transform: translateY(120%);
+  background-color: rgb(var(--color-secondary-container));
+  color: rgb(var(--color-on-secondary-container));
   transition: 0.6s ease-in-out;
   &.show {
-    pointer-events: all;
-    transform: translateY(0);
+    transform: translateY(-100%);
   }
   .title {
-    font-size: var(--middle-font-size);
+    font-size: var(--font-size-middle);
   }
   .main {
     flex: 1;
+    gap: var(--spacing);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .items-settings {
     display: flex;
     width: 100%;
     gap: var(--spacing);
-    margin-top: var(--spacing);
     height: 9rem;
     line-height: 9rem;
     p {
       width: var(--label_width);
       text-wrap: nowrap;
     }
+    .api_key {
+      flex: 1;
+    }
+    .form-container {
+      flex: 1;
+      position: relative;
+    }
+  }
+  .result_list,
+  .items-saved {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 4rem;
   }
   .result_list {
-    margin-left: var(--label_width);
-    margin-top: var(--spacing);
+    background-color: rgb(var(--color-secondary));
+    color: rgb(var(--color-on-secondary));
     p {
       cursor: pointer;
-      text-indent: var(--text-indent);
       line-height: 9rem;
+      width: 100%;
       transition: 0.4s ease-in-out;
       &:hover {
-        color: rgb(var(--primary-color));
+        color: rgb(var(--color-on-primary));
       }
       span {
-        font-size: var(--small-font-size);
+        font-size: var(--font-size-small);
       }
+    }
+  }
+  .items-saved {
+    /* background-color: rgb(var(--color-tertiary-container)); */
+    /* color: rgb(var(--color-on-tertiary-container)); */
+    background-color: rgb(var(--color-tertiary));
+    color: rgb(var(--color-on-tertiary));
+    overflow-y: auto;
+    scrollbar-width: none;
+    p {
+      height: 12rem;
+      line-height: 12rem;
     }
   }
   .version {
@@ -538,51 +609,22 @@ body {
   }
 }
 
-input {
-  --border-style: 2px solid rgb(var(--outline-color));
-  width: 100%;
-  font-size: inherit;
-  color: currentColor;
-  caret-color: currentColor;
-  text-indent: var(--text-indent);
-  background-color: transparent;
-  outline: none;
-  border: none;
-  transition: 0.4s ease-in-out;
-  &[type='search']::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-  }
-  &.line {
-    border-bottom: var(--border-style);
-  }
-  &.bordered {
-    border-radius: 2rem;
-    border: var(--border-style);
-  }
-  &.input_loading {
-    animation: breathing 2s ease-in-out infinite;
-  }
-  &:focus-visible {
-    border-color: rgb(var(--primary-color));
-  }
-}
-
 @keyframes breathing {
   0%,
   100% {
-    border-color: rgb(var(--outline-color));
+    border-color: rgb(var(--color-outline));
   }
   50% {
-    border-color: rgb(var(--primary-color));
+    border-color: rgb(var(--color-primary));
   }
 }
 @keyframes colorChange {
   0%,
   100% {
-    background-color: rgb(var(--primary-color));
+    background-color: rgb(var(--color-primary));
   }
   50% {
-    background-color: rgb(var(--on-primary-color));
+    background-color: rgb(var(--color-on-primary));
   }
 }
 

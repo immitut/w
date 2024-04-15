@@ -1,5 +1,7 @@
 // position info
 const POSITION = '_p'
+// position list
+const POSITIONLIST = '_pl'
 // api key
 const KEY = '_k'
 // amoled mode
@@ -14,13 +16,43 @@ function _saveItem(key, value) {
 function _getItem(key) {
   return JSON.parse(localStorage.getItem(key))
 }
+function _getItem(key) {
+  localStorage.removeItem(key)
+}
+
+export function clearPosInfo() {
+  _deleteItem(POSITION)
+}
 
 export function savePosInfo(data) {
   _saveItem(POSITION, data)
+  const list = getPosList()
+  console.log(list)
+  if (list.length) {
+    const i = list.findIndex(({ lon, lat }) => data.lat === lat && data.lon === lon)
+    if (i !== -1) {
+      list.splice(i, 1)
+    } else if (list.length > 5) {
+      list.shift()
+    }
+  }
+  list.push(data)
+  savePosList(list)
 }
 
 export function getPosInfo() {
   return _getItem(POSITION)
+}
+
+function savePosList(data) {
+  _saveItem(POSITIONLIST, data)
+}
+
+/**
+ * @returns {[]}
+ */
+export function getPosList() {
+  return _getItem(POSITIONLIST) ?? []
 }
 
 export function saveAPIKey(key) {

@@ -1,6 +1,8 @@
 import { getPosInfo } from './stroage/index.mjs'
 
 export {
+  clearPosInfo,
+  getPosList,
   savePosInfo,
   getPosInfo,
   saveAPIKey,

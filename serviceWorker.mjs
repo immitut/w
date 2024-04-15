@@ -1,4 +1,4 @@
-import { openDB, closeDB, findDBDataByKey, updateDBData, deleteDB } from './js/db/index.mjs'
+import { openDB, closeDB, findDBDataByKey, updateDBData, deleteDB } from './js/stroage/db.mjs'
 import { _ts } from './js/common.mjs'
 
 const CACHEVERSION = '1.14'

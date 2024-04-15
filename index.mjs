@@ -15,6 +15,7 @@ import {
   timeoutPromise,
   eventListenerPromise,
   savePosInfo,
+  clearPosInfo,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
@@ -88,12 +89,14 @@ function loading(elm, fn) {
 
 window.onload = () => {
   updateData({ version: VERSION })
-  // $('.name_city').click()
   addPullToRefresh()
   const next = () => {
     renderTheme()
     offLineCheck()
     init()
+    // setTimeout(() => {
+    //   $('.temp_secondary').click()
+    // }, 2e3)
     // setTimeout(() => {
     //   showNotif({ type: NOTI.info, content: 'just for test', duration: 5 })
     // }, 1e3)
@@ -125,19 +128,26 @@ function _formatData({ country, local_names, name, state, lat, lon }) {
 }
 
 function rendersearchResult(list) {
-  const frag = document.createDocumentFragment()
-  for (const item of list) {
-    const { desc, name, lat, lon } = _formatData(item)
-    const p = document.createElement('p')
-    p.dataset.data = JSON.stringify({ name, lat, lon })
-    // div.classList.add('item_forecast')
-    p.textContent = name + ' '
-    const span = document.createElement('span')
-    span.textContent = desc
-    p.insertAdjacentElement('beforeend', span)
-    frag.appendChild(p)
+  const div = $('.result_list') ?? document.createElement('div')
+  div.innerHTML = ''
+  div.className = 'result_list'
+  if (list && list.length) {
+    for (const item of list) {
+      const { desc, name, lat, lon } = _formatData(item)
+      const p = document.createElement('p')
+      p.onclick = () => {
+        savePosInfo({ name, lat, lon })
+      }
+      p.textContent = name + ' '
+      const span = document.createElement('span')
+      span.textContent = desc
+      p.insertAdjacentElement('beforeend', span)
+      div.appendChild(p)
+    }
+  } else {
+    div.innerHTML = '无数据'
   }
-  return frag
+  return div
 }
 
 $('#form').onsubmit = async ev => {
@@ -149,30 +159,17 @@ $('#form').onsubmit = async ev => {
   const key = getAPIKey()
   const data = await fetchGeo(value, key)
   search.classList.remove('input_loading')
-  const resList = $('.result_list')
-  if (data && data.length) {
-    const frag = rendersearchResult(data)
-    eventListenerPromise(resList, 'click', ev => {
-      let node = ev.target
-      // 1 === 'span'
-      if (node.nodeType === 1) {
-        node = node.parentElement
-      }
-      const { data } = node?.dataset
-      if (data) {
-        savePosInfo(JSON.parse(data))
-        resList.innerHTML = ''
-        search.value = ''
-      }
-    })
-    resList.innerHTML = ''
-    resList.appendChild(frag)
-  } else {
-    resList.textContent = '无数据'
-  }
+  const main = $('.main')
+  const result_list = rendersearchResult(data)
+  main.insertAdjacentElement('afterbegin', result_list)
 }
 
-$('.name_city').onclick = () => {
+$('.my-pos').onclick = () => {
+  clearPosInfo()
+}
+
+$('.temp_secondary').onclick = () => {
+  // $('.name_city').onclick = () => {
   const key_input = $('.api_key')
   key_input.value = getAPIKey()
   key_input.onblur = ev => {
@@ -186,7 +183,8 @@ $('.name_city').onclick = () => {
   loading($('.app'), () => {
     const settings = $('.settings')
     settings.classList.add('show')
-    return eventListenerPromise($('.bg_ani'), 'click', () => {
+    return eventListenerPromise($('.title'), 'click', () => {
+      // return eventListenerPromise($('.bg_ani'), 'click', () => {
       settings.classList.remove('show')
       init()
     })

@@ -5,9 +5,14 @@ const DBINFO = {
   key: 'id',
 }
 
-export function openDB() {
+export function openDB(
+  dbname = DBINFO.name,
+  version = DBINFO.version,
+  storeName = DBINFO.storeName,
+  keyPath = DBINFO.key,
+) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DBINFO.name, DBINFO.version)
+    const request = indexedDB.open(dbname, version)
     request.onsuccess = ev => {
       resolve(ev.target.result)
     }
@@ -15,8 +20,8 @@ export function openDB() {
     // Callback on initialization/upgrade
     request.onupgradeneeded = ev => {
       const db = ev.target.result
-      const obStore = db.createObjectStore(DBINFO.storeName, {
-        keyPath: DBINFO.key,
+      const obStore = db.createObjectStore(storeName, {
+        keyPath,
       })
       obStore.createIndex('type', 'type', { unique: false })
     }

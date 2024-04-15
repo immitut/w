@@ -10,15 +10,15 @@
   --light-color-secondary-container: 225 224 249;
   --light-color-on-secondary-container: 25 26 44;
 
-  --light-color-tertiary: rgb(120 83 107);
-  --light-color-on-tertiary: rgb(255 255 255);
-  --light-color-tertiary-container: rgb(255 215 238);
-  --light-color-on-tertiary-container: rgb(46 17 38);
+  --light-color-tertiary: 120 83 107;
+  --light-color-on-tertiary: 255 255 255;
+  --light-color-tertiary-container: 255 215 238;
+  --light-color-on-tertiary-container: 46 17 38;
 
   --light-color-error: 186 26 26;
   --light-color-on-error: 255 255 255;
-  --light-color-error-container: rgb(255 218 214);
-  --light-color-on-error-container: rgb(65 0 2);
+  --light-color-error-container: 255 218 214;
+  --light-color-on-error-container: 65 0 2;
 
   --light-color-background: 255 251 255;
   --light-color-on-background: 27 27 31;
@@ -38,15 +38,15 @@
   --dark-color-secondary-container: 68 69 89;
   --dark-color-on-secondary-container: 225 224 249;
 
-  --dark-color-tertiary: rgb(231 185 213);
-  --dark-color-on-tertiary: rgb(69 38 60);
-  --dark-color-tertiary-container: rgb(94 60 83);
-  --dark-color-on-tertiary-container: rgb(255 215 238);
+  --dark-color-tertiary: 231 185 213;
+  --dark-color-on-tertiary: 69 38 60;
+  --dark-color-tertiary-container: 94 60 83;
+  --dark-color-on-tertiary-container: 255 215 238;
 
   --dark-color-error: 255 180 171;
   --dark-color-on-error: 105 0 5;
-  --dark-color-error-container: rgb(147 0 10);
-  --dark-color-on-error-container: rgb(255 218 214);
+  --dark-color-error-container: 147 0 10;
+  --dark-color-on-error-container: 255 218 214;
 
   --dark-color-background: 27 27 31;
   --dark-color-on-background: 229 225 230;

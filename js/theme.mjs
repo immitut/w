@@ -32,7 +32,7 @@ export function renderTheme() {
 }
 
 export function resetThemeColor() {
-  const bgColor = getComputedStyle($('body')).getPropertyValue('--bg-color')
+  const bgColor = getComputedStyle($('body')).getPropertyValue('--color-container')
   setThemeColor(`rgb(${bgColor})`)
 }
 

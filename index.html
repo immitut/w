@@ -26,69 +26,69 @@
     })()
   </script>
   <body>
-    <div class="notif-box"></div>
-    <div class="loading_ani">
-      <p class="bg_ani"></p>
-    </div>
-    <div class="app loading">
-      <header class="header">
-        <div class="icon_main"></div>
-        <span class="temp_cur">??</span>
-        <p class="temp_secondary">
-          <!-- <span class="temp_min">00</span>/<span class="temp_max">00</span> -->
-          体感温度 <span class="temp_feels_like">??</span>
-        </p>
-      </header>
-      <main class="content">
-        <div class="items block forecast">
-          <div class="list_forecast"></div>
-        </div>
-        <div class="items">
-          <p class="desc block">无</p>
-          <p class="block">AQI <span class="num_aqi">?</span></p>
-        </div>
-        <div class="items">
-          <p class="block cotton">气压 <span class="atm_pressure">?</span></p>
-
-          <p class="block">湿度 <span class="per_humidity">??</span></p>
-        </div>
-
-        <div class="items">
-          <div class="block">
-            <p class="deg_wind">
-              <svg class="cursor_icon" viewBox="0 0 1000 1000" xml:space="preserve">
-                <g data-v-47880d39="" fill="currentColor">
-                  <path
-                    data-v-47880d39=""
-                    d="M510.5,749.6c-14.9-9.9-38.1-9.9-53.1,1.7l-262,207.3c-14.9,11.6-21.6,6.6-14.9-11.6L474,48.1c5-16.6,14.9-18.2,21.6,0l325,898.7c6.6,16.6-1.7,23.2-14.9,11.6L510.5,749.6z"
-                  ></path>
-                  <path
-                    data-v-47880d39=""
-                    d="M817.2,990c-8.3,0-16.6-3.3-26.5-9.9L497.2,769.5c-5-3.3-18.2-3.3-23.2,0L210.3,976.7c-19.9,16.6-41.5,14.9-51.4,0c-6.6-9.9-8.3-21.6-3.3-38.1L449.1,39.8C459,13.3,477.3,10,483.9,10c6.6,0,24.9,3.3,34.8,29.8l325,898.7c5,14.9,5,28.2-1.7,38.1C837.1,985,827.2,990,817.2,990z M485.6,716.4c14.9,0,28.2,5,39.8,11.6l255.4,182.4L485.6,92.9l-267,814.2l223.9-177.4C454.1,721.4,469,716.4,485.6,716.4z"
-                  ></path>
-                </g>
-              </svg>
-            </p>
+    <div class="base">
+      <div class="notif-box"></div>
+      <div class="loading_ani">
+        <p class="bg_ani"></p>
+      </div>
+      <div class="app loading">
+        <header class="header">
+          <div class="icon_main"></div>
+          <span class="temp_cur">??</span>
+          <p class="temp_secondary">
+            <!-- <span class="temp_min">00</span>/<span class="temp_max">00</span> -->
+            体感温度 <span class="temp_feels_like">??</span>
+          </p>
+        </header>
+        <main class="content">
+          <div class="items block forecast">
+            <div class="list_forecast"></div>
           </div>
-          <p class="block cotton">风速 <span class="spe_wind">?</span></p>
-        </div>
-        <div class="items block">
-          <div class="sun_info">
-            <span class="time_sunrise">??</span>
-            <span class="time_sunset">??</span>
+          <div class="items">
+            <p class="desc block">无</p>
+            <p class="block">AQI <span class="num_aqi">?</span></p>
           </div>
-        </div>
-      </main>
-      <footer class="footer">
-        <p class="switch-mode-btn"></p>
-        <p><span class="name_city">??</span> <span class="time_dt">00:00</span>更新</p>
-        <p>
-          数据来源于
-          <a target="_blank" rel="noopener noreferrer" href="https://openweathermap.org/"
-            >OpenWeather</a
-          >
-        </p>
-      </footer>
+          <div class="items">
+            <p class="block cotton">气压 <span class="atm_pressure">?</span></p>
+            <p class="block">湿度 <span class="per_humidity">??</span></p>
+          </div>
+          <div class="items">
+            <div class="block">
+              <p class="deg_wind">
+                <svg class="cursor_icon" viewBox="0 0 1000 1000" xml:space="preserve">
+                  <g data-v-47880d39="" fill="currentColor">
+                    <path
+                      data-v-47880d39=""
+                      d="M510.5,749.6c-14.9-9.9-38.1-9.9-53.1,1.7l-262,207.3c-14.9,11.6-21.6,6.6-14.9-11.6L474,48.1c5-16.6,14.9-18.2,21.6,0l325,898.7c6.6,16.6-1.7,23.2-14.9,11.6L510.5,749.6z"
+                    ></path>
+                    <path
+                      data-v-47880d39=""
+                      d="M817.2,990c-8.3,0-16.6-3.3-26.5-9.9L497.2,769.5c-5-3.3-18.2-3.3-23.2,0L210.3,976.7c-19.9,16.6-41.5,14.9-51.4,0c-6.6-9.9-8.3-21.6-3.3-38.1L449.1,39.8C459,13.3,477.3,10,483.9,10c6.6,0,24.9,3.3,34.8,29.8l325,898.7c5,14.9,5,28.2-1.7,38.1C837.1,985,827.2,990,817.2,990z M485.6,716.4c14.9,0,28.2,5,39.8,11.6l255.4,182.4L485.6,92.9l-267,814.2l223.9-177.4C454.1,721.4,469,716.4,485.6,716.4z"
+                    ></path>
+                  </g>
+                </svg>
+              </p>
+            </div>
+            <p class="block cotton">风速 <span class="spe_wind">?</span></p>
+          </div>
+          <div class="items block">
+            <div class="sun_info">
+              <span class="time_sunrise">??</span>
+              <span class="time_sunset">??</span>
+            </div>
+          </div>
+        </main>
+        <footer class="footer">
+          <p class="switch-mode-btn"></p>
+          <p><span class="name_city">??</span> <span class="time_dt">00:00</span>更新</p>
+          <p>
+            数据来源于
+            <a target="_blank" rel="noopener noreferrer" href="https://openweathermap.org/"
+              >OpenWeather</a
+            >
+          </p>
+        </footer>
+      </div>
     </div>
     <div class="settings">
       <p class="title">设置</p>
@@ -96,15 +96,17 @@
         <p>API key</p>
         <input class="bordered api_key" type="password" />
       </div>
-      <div class="main">
-        <form id="form">
-          <div class="items-settings">
-            <p>地名</p>
-            <input class="line search" spellcheck="false" type="search" />
-          </div>
-          <div class="result_list"></div>
+      <div class="items-settings">
+        <p>地名</p>
+        <form class="form-container" id="form">
+          <input class="line search" spellcheck="false" type="search" />
         </form>
-        <div class="items-saved"></div>
+      </div>
+      <div class="main">
+        <!-- <div class="result_list"></div> -->
+        <div class="items-saved">
+          <p class="my-pos">我的位置</p>
+        </div>
       </div>
       <p class="version">[<span>?.?.?</span>]</p>
     </div>
