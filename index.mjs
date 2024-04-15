@@ -165,11 +165,12 @@ $('#form').onsubmit = async ev => {
 }
 
 $('.my-pos').onclick = () => {
+  vibrate()
   clearPosInfo()
 }
 
-$('.temp_secondary').onclick = () => {
-  // $('.name_city').onclick = () => {
+$('.temp_cur').onclick = () => {
+  vibrate()
   const key_input = $('.api_key')
   key_input.value = getAPIKey()
   key_input.onblur = ev => {
@@ -183,8 +184,7 @@ $('.temp_secondary').onclick = () => {
   loading($('.app'), () => {
     const settings = $('.settings')
     settings.classList.add('show')
-    return eventListenerPromise($('.title'), 'click', () => {
-      // return eventListenerPromise($('.bg_ani'), 'click', () => {
+    return eventListenerPromise($('.bg_ani'), 'click', () => {
       settings.classList.remove('show')
       init()
     })
@@ -193,7 +193,7 @@ $('.temp_secondary').onclick = () => {
 
 $('.icon_main').onclick = vibrate.bind(null, 1, init)
 
-$('.time_dt').onclick = () => {
+$('.version').onclick = () => {
   vibrate()
   const isAmoled = switchAmoled()
   showNotif({

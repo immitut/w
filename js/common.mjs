@@ -1,4 +1,4 @@
-import { getPosInfo } from './stroage/index.mjs'
+import { getDisplayMode, getPosInfo } from './stroage/index.mjs'
 
 export {
   clearPosInfo,
@@ -78,7 +78,9 @@ export function _getIconPath(value) {
     n: 'night',
   }
   let icon = map[i] ?? 'unknown'
-  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const mode = getDisplayMode()
+  const isDarkMode =
+    mode === 0 ? window.matchMedia('(prefers-color-scheme: dark)').matches : mode === 2
   const style = isDarkMode ? 'dark' : 'light'
   if (icon.endsWith('-')) icon += types[t]
   return `/w/assets/icons/${style}/${icon}.png` // ./assets/icons/dark/unknown.png

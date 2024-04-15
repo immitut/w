@@ -429,42 +429,10 @@ body {
 }
 
 .footer {
+  text-align: center;
   margin: 90rem var(--spacing) var(--spacing);
   line-height: 6rem;
   font-size: var(--font-size-small);
-  position: relative;
-  .switch-mode-btn {
-    position: absolute;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 100%;
-    bottom: 0;
-    right: 0;
-    cursor: pointer;
-    background-color: rgb(var(--color-on-primary));
-    border: 2px solid rgb(var(--color-primary));
-    overflow: hidden;
-    transition: all 0.4s ease-out;
-    &::before {
-      border-radius: 100%;
-      content: '';
-      display: block;
-      width: 200%;
-      height: 200%;
-      background-color: rgb(var(--color-primary));
-      transition: all 0.8s ease-in-out;
-    }
-    :where(.auto) &::before {
-      border-radius: 0;
-      transform: translate(-75%, -25%);
-    }
-    :where(.light) &::before {
-      transform: translate(-76%, -25%);
-    }
-    :where(.dark) &::before {
-      transform: translate(26%, -25%);
-    }
-  }
   a {
     color: #e96e50 !important;
   }
@@ -510,6 +478,39 @@ body {
   }
 }
 
+.switch-mode-btn {
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 100%;
+  bottom: 5rem;
+  right: 5rem;
+  cursor: pointer;
+  background-color: rgb(var(--color-on-primary));
+  border: 2px solid rgb(var(--color-primary));
+  overflow: hidden;
+  transition: all 0.4s ease-out;
+  &::before {
+    border-radius: 100%;
+    content: '';
+    display: block;
+    width: 200%;
+    height: 200%;
+    background-color: rgb(var(--color-primary));
+    transition: all 0.8s ease-in-out;
+  }
+  :where(.auto) &::before {
+    border-radius: 0;
+    transform: translate(-75%, -25%);
+  }
+  :where(.light) &::before {
+    transform: translate(-76%, -25%);
+  }
+  :where(.dark) &::before {
+    transform: translate(26%, -25%);
+  }
+}
+
 .loading {
   filter: blur(16px) grayscale(1);
   overflow: hidden;
@@ -522,6 +523,7 @@ body {
 }
 
 .settings {
+  position: relative;
   --radius: 7.5rem;
   --padding: calc(var(--radius) / 3 * 2);
   --label_width: 20rem;
@@ -542,6 +544,7 @@ body {
     transform: translateY(-100%);
   }
   .title {
+    text-align: center;
     font-size: var(--font-size-middle);
   }
   .main {
@@ -606,6 +609,7 @@ body {
   }
   .version {
     text-align: center;
+    font-weight: normal;
   }
 }
 

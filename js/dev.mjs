@@ -1,25 +1,28 @@
 import { $ } from './common.mjs'
 
-$('.temp_cur').addEventListener('dblclick', showScreenInfo)
-$('.version').addEventListener('dblclick', showDevInfo)
+$('.temp_secondary').addEventListener('dblclick', showInfo)
 
-function showDevInfo() {
-  const str = Object.keys(localStorage).reduce((res, key) => {
+function showInfo() {
+  const d = getDevInfo()
+  const s = getScreenInfo()
+  _display(d + s)
+}
+
+function getDevInfo() {
+  return Object.keys(localStorage).reduce((res, key) => {
     const data = localStorage.getItem(key)
     res += `[${key}]: ${data},\n`
     return res
   }, '')
-  _display(str)
 }
 
-function showScreenInfo() {
-  const str = Object.keys(window).reduce((res, cur) => {
-    if (['number'].includes(typeof window[cur])) {
+function getScreenInfo() {
+  return Object.keys(window).reduce((res, cur) => {
+    if (['number'].includes(typeof window[cur]) && window[cur] !== 0) {
       res += `[${cur}]: ${window[cur]},\n`
     }
     return res
   }, '')
-  _display(str)
 }
 
 function _display(content) {
