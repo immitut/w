@@ -76,7 +76,7 @@ const proxy = new Proxy(
   },
 )
 
-function loading(elm, fn) {
+function loading(elm, fn, callback) {
   return new Promise(async resolve => {
     elm.classList.add('loading')
     $('.loading_ani').classList.add('show')
@@ -84,6 +84,7 @@ function loading(elm, fn) {
     elm.classList.remove('loading')
     $('.loading_ani').classList.remove('show')
     resolve()
+    typeof callback === 'function' && callback()
   })
 }
 
@@ -136,7 +137,12 @@ function rendersearchResult(list) {
       const { desc, name, lat, lon } = _formatData(item)
       const p = document.createElement('p')
       p.onclick = () => {
+        vibrate()
         savePosInfo({ name, lat, lon })
+        showNotif({
+          type: NOTI.success,
+          content: `地点已切换到${name}`,
+        })
       }
       p.textContent = name + ' '
       const span = document.createElement('span')
@@ -167,6 +173,10 @@ $('#form').onsubmit = async ev => {
 $('.my-pos').onclick = () => {
   vibrate()
   clearPosInfo()
+  showNotif({
+    type: NOTI.success,
+    content: `地点已重置为我的位置`,
+  })
 }
 
 $('.temp_cur').onclick = () => {
@@ -181,14 +191,18 @@ $('.temp_cur').onclick = () => {
   key_input.onfocus = ev => {
     ev.target.type = 'text'
   }
-  loading($('.app'), () => {
-    const settings = $('.settings')
-    settings.classList.add('show')
-    return eventListenerPromise($('.bg_ani'), 'click', () => {
-      settings.classList.remove('show')
-      init()
-    })
-  })
+  console.log('settings')
+  loading(
+    $('.app'),
+    () => {
+      const settings = $('.settings')
+      settings.classList.add('show')
+      return eventListenerPromise($('.title'), 'click', () => {
+        settings.classList.remove('show')
+      })
+    },
+    init,
+  )
 }
 
 $('.icon_main').onclick = vibrate.bind(null, 1, init)
