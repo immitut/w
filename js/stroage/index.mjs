@@ -26,6 +26,13 @@ export function clearPosInfo() {
 
 export function savePosInfo(data) {
   _saveItem(POSITION, data)
+}
+
+export function getPosInfo() {
+  return _getItem(POSITION)
+}
+
+export function savePosList(data) {
   const list = getPosList()
   if (list.length) {
     const i = list.findIndex(({ lon, lat }) => data.lat === lat && data.lon === lon)
@@ -36,15 +43,7 @@ export function savePosInfo(data) {
     }
   }
   list.push(data)
-  savePosList(list)
-}
-
-export function getPosInfo() {
-  return _getItem(POSITION)
-}
-
-function savePosList(data) {
-  _saveItem(POSITIONLIST, data)
+  _saveItem(POSITIONLIST, list)
 }
 
 /**

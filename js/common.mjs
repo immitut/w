@@ -5,6 +5,7 @@ export { default as request } from './request.mjs'
 export {
   clearPosInfo,
   getPosList,
+  savePosList,
   savePosInfo,
   getPosInfo,
   saveAPIKey,

@@ -16,8 +16,11 @@ import {
   eventListenerPromise,
   savePosInfo,
   clearPosInfo,
+  getPosList,
+  savePosList,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api/openWeatherApi.mjs'
+import { GeopositionSearch } from './js/api/ACCUWeatherApi.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
 import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
@@ -102,6 +105,7 @@ window.onload = () => {
   const next = () => {
     renderTheme()
     offLineCheck()
+    renderSavedList()
     init()
     // setTimeout(() => {
     //   $('.temp_secondary').click()
@@ -142,17 +146,19 @@ function rendersearchResult(list) {
   div.className = 'result_list'
   if (list && list.length) {
     for (const item of list) {
-      const { desc, name, lat, lon } = _formatData(item)
+      const { desc, ...rest } = _formatData(item)
       const p = document.createElement('p')
       p.onclick = () => {
         vibrate()
-        savePosInfo({ name, lat, lon })
+        savePosInfo(rest)
+        savePosList(rest)
+        renderSavedList()
         showNotif({
           type: NOTI.success,
-          content: `地点已切换到${name}`,
+          content: `地点已切换到${rest.name}`,
         })
       }
-      p.textContent = name + ' '
+      p.textContent = rest.name + ' '
       const span = document.createElement('span')
       span.textContent = desc
       p.insertAdjacentElement('beforeend', span)
@@ -162,6 +168,30 @@ function rendersearchResult(list) {
     div.innerHTML = '无数据'
   }
   return div
+}
+
+function renderSavedList() {
+  const list = [{ name: '我的位置' }, ...getPosList()]
+  const frag = document.createDocumentFragment()
+  for (const [index, item] of list.entries()) {
+    const p = document.createElement('p')
+    p.onclick = () => {
+      vibrate()
+      if (index) {
+        savePosInfo(item)
+      } else {
+        clearPosInfo()
+      }
+      showNotif({
+        type: NOTI.success,
+        content: `地点已切换到${item.name}`,
+      })
+    }
+    p.textContent = item.name
+    frag.appendChild(p)
+  }
+  $('.items-saved').innerHTML = ''
+  $('.items-saved').appendChild(frag)
 }
 
 $('#form').onsubmit = async ev => {
@@ -176,15 +206,6 @@ $('#form').onsubmit = async ev => {
   const main = $('.main')
   const result_list = rendersearchResult(data)
   main.insertAdjacentElement('afterbegin', result_list)
-}
-
-$('.my-pos').onclick = () => {
-  vibrate()
-  clearPosInfo()
-  showNotif({
-    type: NOTI.success,
-    content: `地点已重置为我的位置`,
-  })
 }
 
 $('.temp_cur').onclick = () => {
@@ -281,12 +302,17 @@ function init(failed = false) {
         resolve()
         return
       }
+
       let data = {}
       const notifConfig = {
         type: NOTI.success,
         content: '已更新',
       }
       const key = getAPIKey()
+      // const _key = ''
+      // const dd = await GeopositionSearch(`${geoData.lat},${geoData.lon}`, _key)
+      // binjiang code "2333614"
+      // console.log(dd)
       try {
         if (isDevEnv() || !key || failed) {
           notifConfig.type = NOTI.warn
