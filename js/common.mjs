@@ -1,6 +1,7 @@
 import { getDisplayMode, getPosInfo } from './stroage/index.mjs'
 import { icons } from './iconMap.mjs'
 
+export { default as request } from './request.mjs'
 export {
   clearPosInfo,
   getPosList,

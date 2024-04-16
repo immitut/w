@@ -17,7 +17,7 @@ import {
   savePosInfo,
   clearPosInfo,
 } from './js/common.mjs'
-import { getWeather, getAQI, fetchGeo } from './js/api.mjs'
+import { getWeather, getAQI, fetchGeo } from './js/api/openWeatherApi.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
 import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
