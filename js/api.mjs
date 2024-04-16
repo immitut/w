@@ -3,7 +3,9 @@ import { _toQueryString } from './common.mjs'
 const CACHEEXPIRATIONTIME = 5 * 60e3
 const _cache = new Map()
 let errNum = 0
-const getInfo = async (api, { cached = false } = {}) => {
+const ZH_CN = 'zh-cn'
+
+const request = async (api, { cached = false } = {}) => {
   const cur = +new Date()
   if (_cache.has(api)) {
     const { ts, data } = _cache.get(api)
@@ -47,12 +49,12 @@ function fetchGeo(str, key) {
     limit: 5,
     appid: key,
   }
-  return getInfo(`${href}?${_toQueryString(params)}`)
+  return request(`${href}?${_toQueryString(params)}`)
 }
 
 function getAQI({ key, ...p }) {
   const href = `https://api.openweathermap.org/data/2.5/air_pollution`
-  return getInfo(`${href}?${_toQueryString({ appid: key, ...p })}`)
+  return request(`${href}?${_toQueryString({ appid: key, ...p })}`)
 }
 
 function getWeather(type, { key, ...rest }) {
@@ -66,7 +68,7 @@ function getWeather(type, { key, ...rest }) {
     appid: key,
     ...rest,
   })
-  return getInfo(`${href}?${_toQueryString(params)}`)
+  return request(`${href}?${_toQueryString(params)}`)
 }
 
 export { getWeather, getAQI, fetchGeo }

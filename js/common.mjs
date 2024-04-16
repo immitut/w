@@ -1,4 +1,5 @@
 import { getDisplayMode, getPosInfo } from './stroage/index.mjs'
+import { icons } from './iconMap.mjs'
 
 export {
   clearPosInfo,
@@ -57,6 +58,11 @@ export function semanticTimeExpression(t) {
 export function isDevEnv() {
   const { searchParams } = new URL(location.href)
   return searchParams.has('dev')
+}
+
+export function getIconPath(i) {
+  const icon = i ?? icons[i] ?? 'unknown'
+  return `/w/assets/icons/default/${icon}.png` // ./assets/icons/dark/unknown.png
 }
 
 export function _getIconPath(value) {
