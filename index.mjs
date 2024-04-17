@@ -241,8 +241,10 @@ $('#form').onsubmit = async ev => {
   if (!value) return
   search.classList.add('input_loading')
   const key = Storage.getAPIKey()
-  // const data = await fetchGeo(value, key)
-  const data = await fetchLocationInfoByName(value, key)
+
+  const fnMap = [fetchGeo, fetchLocationInfoByName]
+  const dataSource = Storage.getDataSource()
+  data = await fnMap[dataSource](value, key)
   // console.log(data)
   search.classList.remove('input_loading')
   const main = $('.main')
