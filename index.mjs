@@ -20,7 +20,10 @@ import {
   savePosList,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api/openWeatherApi.mjs'
-import { GeopositionSearch } from './js/api/ACCUWeatherApi.mjs'
+import {
+  fetchLocationKeyByGeo,
+  fetchCurrentConditionsByLocationKey,
+} from './js/api/ACCUWeatherApi.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
 import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
 import { pullToRefresh } from './js/pullToRefresh.mjs'
@@ -39,18 +42,19 @@ const proxy = new Proxy(
         console.warn(`[update error]: ${key} 不存在`)
         return true
       }
+
+      let handler = () => {
+        const renderElm = $(`.${key}`).firstElementChild || $(`.${key}`)
+        renderElm.textContent = value
+      }
       if (key.startsWith('temp_')) {
         value = tempRander(value)
       }
+
       if (key.startsWith('per_')) {
         value = `${value}%`
       }
-      if (key.startsWith('spe_')) {
-        value = `${value?.toFixed(1)}m/s`
-      }
-      if (key.startsWith('atm_')) {
-        value = `${value}hPa`
-      }
+
       if (key.startsWith('time_')) {
         if (key === 'time_dt') {
           value = semanticTimeExpression(value * 1e3)
@@ -61,24 +65,30 @@ const proxy = new Proxy(
         }
       }
       if (key.startsWith('icon_')) {
-        updateIcon(key, value)
-        return true
+        handler = () => {
+          value = _getIconPath(value)
+          $(`.${key}`).style.setProperty('--icon-url', `url("${value}")`)
+        }
       }
       if (key.startsWith('deg_')) {
-        $(`.${key}`).style.setProperty('--deg', `${value}deg`)
-        return true
+        handler = () => {
+          $(`.${key}`).style.setProperty('--deg', `${value}deg`)
+        }
       }
       if (key === 'num_aqi') {
         $(`.${key}`).className = `${key} rank_${value}`
       }
-      const renderElm = $(`.${key}`).firstElementChild || $(`.${key}`)
-      renderElm.textContent = value
+      if (key === 'link_about') {
+        $(`.${key}`).href = value?.href
+        value = value?.value
+      }
+      handler()
       Reflect.set(target, key, value, receiver)
       return true
     },
   },
 )
-
+window._p = proxy
 function loading(elm, fn, callback) {
   return new Promise(async resolve => {
     $('.loading_ani').classList.add('show')
@@ -277,11 +287,6 @@ $('.num_aqi').ondblclick = () => {
   })
 }
 
-function updateIcon(key, value) {
-  const iconpath = _getIconPath(value)
-  $(`.${key}`).style.setProperty('--icon-url', `url("${iconpath}")`)
-}
-
 function getCurrWeather(p) {
   return getWeather('weather', p)
 }
@@ -309,10 +314,6 @@ function init(failed = false) {
         content: '已更新',
       }
       const key = getAPIKey()
-      // const _key = ''
-      // const dd = await GeopositionSearch(`${geoData.lat},${geoData.lon}`, _key)
-      // binjiang code "2333614"
-      // console.log(dd)
       try {
         if (isDevEnv() || !key || failed) {
           notifConfig.type = NOTI.warn
@@ -324,20 +325,9 @@ function init(failed = false) {
             ...geoData,
             key,
           }
-          const requestList = Promise.all([
-            getCurrWeather(params),
-            getForecastWeather({ cnt: 8, ...params }),
-            getAQI(params),
-            // emmm slow down... :p
-            timeoutPromise(1e3),
-          ])
-          const [curr, forecast, aqi] = await requestList
-          // console.log(curr, forecast, aqi)
-          data = {
-            ...curr,
-            forecast: forecast.list,
-            aqi: aqi.list[0],
-          }
+          data = await _fetchOpenWeatherData(params)
+          // data = await _fetchACCUWeatherData(params)
+          // console.log(data)
         }
         updateData(data)
         const list = await renderList(data.forecast)
@@ -359,28 +349,78 @@ function init(failed = false) {
   return loading($('.app'), fn)
 }
 
-function updateData({ main, wind, sys, weather, dt, aqi, version, name }) {
+async function _fetchACCUWeatherData(param) {
+  const { lat, lon } = param
+  const key = ''
+  const locationInfo = await fetchLocationKeyByGeo(`${lat},${lon}`, key)
+  const { Key: locationKey, LocalizedName } = locationInfo
+  const [cur] = await fetchCurrentConditionsByLocationKey(locationKey, key)
+  // // binjiang code "2333614"
+  console.log(cur)
+  const UNITS = ['Metric', 'Imperial']
+  const unit = UNITS[0]
   const data = {
-    version,
-    name_city: name,
-    temp_cur: main?.temp,
-    // temp_min: main?.temp_min,
-    // temp_max: main?.temp_max,
-    atm_pressure: main?.pressure,
-    per_humidity: main?.humidity,
-    spe_wind: wind?.speed,
-    deg_wind: wind?.deg,
-    time_sunrise: sys?.sunrise,
-    time_sunset: sys?.sunset,
-    time_dt: dt,
-    // spe_wind:wind?.gust,
-    temp_feels_like: main?.feels_like,
-    desc: weather?.[0]?.description,
-    icon_main: weather?.[0]?.icon,
-    num_aqi: AQIcalculation(aqi?.components),
+    name_city: LocalizedName,
+    temp_cur: cur?.Temperature?.[unit]?.Value,
+    temp_dew_point: cur?.DewPoint?.[unit]?.Value,
+    temp_min: cur?.TemperatureSummary?.Past6HourRange?.Minimum?.[unit]?.Value,
+    temp_max: cur?.TemperatureSummary?.Past6HourRange?.Maximum?.[unit]?.Value,
+    num_pressure: cur?.Pressure?.[unit]?.Value,
+    unit_pressure: cur?.Pressure?.[unit]?.Unit,
+    per_humidity: cur?.RelativeHumidity,
+    temp_feels_like: cur?.RealFeelTemperature?.[unit]?.Value,
+    num_wind: cur?.Wind?.Speed?.[unit]?.Value,
+    unit_wind: cur?.Wind?.Speed?.[unit]?.Unit,
+    deg_wind: cur?.Wind?.Direction?.Degrees,
+    desc_wind: cur?.Wind?.Direction?.Localized,
+    //   time_sunrise:,
+    //   time_sunset:,
+    time_dt: cur?.EpochTime,
+    desc_weather: cur?.WeatherText,
+    icon_main: cur?.WeatherIcon,
+    num_UVIndex: cur?.UVIndex,
+    desc_UVIndex: cur?.UVIndexText,
+    // num_aqi:
+    link_about: {
+      value: 'AccuWeather',
+      href: cur?.Link,
+    },
+    forecast: [],
   }
+  return data
+}
 
+function updateData(data) {
+  const validKeys = [
+    'version',
+    'name_city',
+    'temp_cur',
+    'temp_min',
+    'temp_max',
+    'temp_feels_like',
+    'temp_dew_point',
+    'num_pressure',
+    'unit_pressure',
+    'per_humidity',
+    'num_wind',
+    'unit_wind',
+    'deg_wind',
+    'desc_wind',
+    'time_sunrise',
+    'time_sunset',
+    'time_dt',
+    'desc_weather',
+    'icon_main',
+    'num_aqi',
+    'num_UVIndex',
+    'desc_UVIndex',
+    'link_about',
+  ]
   for (const key in data) {
+    if (!validKeys.includes(key)) {
+      console.log(key)
+      continue
+    }
     if (data[key] !== undefined) {
       proxy[key] = data[key]
     }
@@ -472,4 +512,32 @@ function initMsgChannel(controller) {
     [port2],
   )
   return port1
+}
+
+async function _fetchOpenWeatherData(params) {
+  const requestList = Promise.all([
+    getCurrWeather(params),
+    getForecastWeather({ cnt: 8, ...params }),
+    getAQI(params),
+    // emmm slow down... :p
+    timeoutPromise(1e3),
+  ])
+  const [curr, forecast, aqi] = await requestList
+  const data = {
+    name_city: curr?.name,
+    temp_cur: curr?.main?.temp,
+    num_pressure: curr?.main?.pressure,
+    per_humidity: curr?.main?.humidity,
+    num_wind: curr?.wind?.speed,
+    deg_wind: curr?.wind?.deg,
+    time_sunrise: curr?.sys?.sunrise,
+    time_sunset: curr?.sys?.sunset,
+    time_dt: curr?.dt,
+    temp_feels_like: curr?.main?.feels_like,
+    desc_weather: curr?.weather?.[0]?.description,
+    icon_main: curr?.weather?.[0]?.icon,
+    num_aqi: AQIcalculation(aqi?.list?.[0]?.components),
+    forecast: forecast.list,
+  }
+  return data
 }

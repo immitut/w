@@ -45,11 +45,13 @@
             <div class="list_forecast"></div>
           </div>
           <div class="items">
-            <p class="desc block">无</p>
+            <p class="desc_weather block cotton">无</p>
             <p class="block">AQI <span class="num_aqi">?</span></p>
           </div>
           <div class="items">
-            <p class="block cotton">气压 <span class="atm_pressure">?</span></p>
+            <p class="block cotton">
+              气压 <span class="num_pressure">?</span><span class="unit_pressure">hPa</span>
+            </p>
             <p class="block">湿度 <span class="per_humidity">??</span></p>
           </div>
           <div class="items">
@@ -69,7 +71,9 @@
                 </svg>
               </p>
             </div>
-            <p class="block cotton">风速 <span class="spe_wind">?</span></p>
+            <p class="block cotton">
+              风速 <span class="num_wind">?</span><span class="unit_wind">m/s</span>
+            </p>
           </div>
           <div class="items block">
             <div class="sun_info">
@@ -82,7 +86,11 @@
           <p><span class="name_city">??</span> <span class="time_dt">00:00</span>更新</p>
           <p>
             数据来源于
-            <a target="_blank" rel="noopener noreferrer" href="https://openweathermap.org/"
+            <a
+              target="_blank"
+              class="link_about"
+              rel="noopener noreferrer"
+              href="https://openweathermap.org/"
               >OpenWeather</a
             >
           </p>
@@ -103,9 +111,7 @@
       </div>
       <div class="main">
         <!-- <div class="result_list" /> -->
-        <div class="items-saved">
-          <p class="my-pos">我的位置</p>
-        </div>
+        <div class="items-saved"></div>
       </div>
       <p class="switch-mode-btn"></p>
       <p class="version">ver: <span>?.?.?</span></p>

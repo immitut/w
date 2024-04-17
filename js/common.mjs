@@ -63,11 +63,13 @@ export function isDevEnv() {
 }
 
 export function getIconPath(i) {
-  const icon = i ?? icons[i] ?? 'unknown'
+  const icon = (i && icons[i]) ?? 'unknown'
   return `/w/assets/icons/default/${icon}.png` // ./assets/icons/dark/unknown.png
 }
 
 export function _getIconPath(value) {
+  // TODO: should be determined by the data source
+  if (typeof value === 'number') return getIconPath(value)
   if (!value) return null
   const [i, t] = value.match(/(\d+)|(\D+)/g)
   const map = {

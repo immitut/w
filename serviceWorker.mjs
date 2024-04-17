@@ -8,9 +8,8 @@ const cacheList = [
   // "/w/index.html",
   // "/w/index.mjs",
   '/w/js/animation.mjs',
-  '/w/js/api.mjs',
+  // '/w/js/api.mjs',
   '/w/js/common.mjs',
-  '/w/assets/..',
   // "/w/dev.mjs",
   // "/w/manifest.json",
   // "/w/manifest_dark.json",
@@ -38,7 +37,8 @@ function checkCacheInfo(url) {
       const { ts, destination } = result
       const expiredTimeMap = {
         image: 2592e6, // 30 days
-        '': 18e5, // 30 mins
+        '': Infinity, // 30 mins
+        // '': 18e5, // 30 mins
         // TODO: remove for better dev
         // document: 432e5, // half day
         // script: 432e5,
@@ -126,7 +126,7 @@ self.addEventListener('fetch', ev => {
 
 self.addEventListener('install', async ev => {
   console.log('== install ==', ev)
-  await deleteDB()
+  // await deleteDB()
   const cache = await caches.open(CACHEVERSION)
   cache.addAll(cacheList)
   self.skipWaiting()
