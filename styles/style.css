@@ -271,46 +271,70 @@ body {
 
 .content {
   margin: 8rem var(--spacing) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
   .items {
-    position: relative;
     display: flex;
     gap: var(--spacing);
     justify-content: space-between;
     align-items: center;
-    &:not(:first-child) {
-      margin-top: var(--spacing);
+  }
+  .forecast {
+    @media screen and (max-width: 480px) {
+      & {
+        scrollbar-width: none;
+      }
     }
-    &.forecast {
-      @media screen and (max-width: 480px) {
-        & {
-          scrollbar-width: none;
+    display: flex;
+    font-size: var(--font-size-small);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 3rem;
+    .list_hourly_forecast {
+      display: flex;
+      height: 24rem;
+      flex-wrap: nowrap;
+      .item_forecast {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+        scroll-snap-align: start;
+        padding: 0 4.5rem;
+        text-align: center;
+        p {
+          line-height: 3rem;
+          text-wrap: nowrap;
+        }
+        img {
+          pointer-events: none;
+          user-select: none;
+          width: 14rem;
         }
       }
-      font-size: var(--font-size-small);
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-padding-left: 3rem;
-      .list_forecast {
-        display: flex;
-        height: 20rem;
-        flex-wrap: nowrap;
-        .item_forecast {
-          display: flex;
-          justify-content: space-between;
-          flex-direction: column;
-          align-items: center;
-          scroll-snap-align: start;
-          padding: 0 4.5rem;
-          text-align: center;
-          P {
-            line-height: 3rem;
-          }
-          img {
-            pointer-events: none;
-            user-select: none;
-            width: 10.5rem;
-          }
+    }
+  }
+  .list_daily_forecast {
+    .item_forecast {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 9rem;
+      &:not(:last-child) {
+        margin-bottom: 2rem;
+      }
+
+      p {
+        flex: 2;
+        &:last-child {
+          flex: 1;
+          text-align: right;
         }
+      }
+      img {
+        height: 6rem;
+        width: 6rem;
       }
     }
   }

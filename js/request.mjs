@@ -16,7 +16,10 @@ async function request(api, { cached = false } = {}) {
   }
   try {
     return await fetch(api, { signal: AbortSignal.timeout(errNum * 2e3 + 1e4) }) // 10s timeout for single request
-      .then(res => res.json())
+      .then(res => {
+        // console.log('resp', res)
+        return res.json()
+      })
       .then(data => {
         if (cached) {
           _cache.set(api, { ts: cur, data })

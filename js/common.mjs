@@ -1,20 +1,8 @@
-import { getDisplayMode, getPosInfo } from './stroage/index.mjs'
+import * as Storage from './stroage/index.mjs'
 import { icons } from './iconMap.mjs'
 
 export { default as request } from './request.mjs'
-export {
-  clearPosInfo,
-  getPosList,
-  savePosList,
-  savePosInfo,
-  getPosInfo,
-  saveAPIKey,
-  getAPIKey,
-  saveAmoledMode,
-  getAmoledMode,
-  saveDisplaydMode,
-  getDisplayMode,
-} from './stroage/index.mjs'
+export * as Storage from './stroage/index.mjs'
 
 export const _ts = t => (t === undefined ? +new Date() : +new Date(t))
 
@@ -31,6 +19,13 @@ export function timeRander(t) {
   const h = _zeroPrefix(d.getHours())
   const m = _zeroPrefix(d.getMinutes())
   return `${h}:${m}`
+}
+
+export function dayRander(t) {
+  const days = ['天', '一', '二', '三', '四', '五', '六']
+  const d = new Date(t)
+  if (d.getDate() === new Date().getDate()) return '今天'
+  return '星期' + days[d.getDay()]
 }
 
 export function semanticTimeExpression(t) {
@@ -88,7 +83,7 @@ export function _getIconPath(value) {
     n: 'night',
   }
   let icon = map[i] ?? 'unknown'
-  const mode = getDisplayMode()
+  const mode = Storage.getDisplayMode()
   const isDarkMode =
     mode === 0 ? window.matchMedia('(prefers-color-scheme: dark)').matches : mode === 2
   const style = isDarkMode ? 'dark' : 'light'
@@ -121,10 +116,9 @@ export function get1rem() {
 
 export function initGeo() {
   return new Promise(resolve => {
-    const pos = getPosInfo()
+    const pos = Storage.getPosInfo()
     if (pos) {
-      const { lon, lat } = pos
-      resolve({ lon, lat })
+      resolve(pos)
       return
     }
     const defaultPos = {

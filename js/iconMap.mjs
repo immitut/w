@@ -18,7 +18,8 @@ export const icons = [
   'isolated_thunderstorms', //15
   'strong_thunderstorms', // 16
   'isolated_scattered_thunderstorms_day', // 17
-  'heavy_rain', // 18
+  'showers_rain', // 18
+  // 'heavy_rain', // 18
   'flurries', //19
   'cloudy_with_snow', //20
   'sunny_with_snow', // 21

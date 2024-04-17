@@ -1,4 +1,4 @@
-import { $, getAmoledMode, saveAmoledMode, getDisplayMode, saveDisplaydMode } from './common.mjs'
+import { $, Storage } from './common.mjs'
 
 const themeColorMetaId = 'theme-color'
 
@@ -9,24 +9,24 @@ export const modes = [
 ]
 
 export function switchAmoled() {
-  const isAmoled = getAmoledMode()
-  saveAmoledMode(!isAmoled)
+  const isAmoled = Storage.getAmoledMode()
+  Storage.saveAmoledMode(!isAmoled)
   renderTheme()
   return isAmoled
 }
 
 export function switchTheme() {
-  let i = getDisplayMode() || 0
+  let i = Storage.getDisplayMode() || 0
   i++
   if (i === modes.length) i = 0
-  saveDisplaydMode(i)
+  Storage.saveDisplaydMode(i)
   renderTheme()
   return i
 }
 
 export function renderTheme() {
-  const i = getDisplayMode() || '0'
-  const isAmoled = getAmoledMode()
+  const i = Storage.getDisplayMode() || '0'
+  const isAmoled = Storage.getAmoledMode()
   $('body').className = isAmoled ? `${modes[i].value} amoled` : modes[i].value
   resetThemeColor()
 }

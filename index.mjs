@@ -8,21 +8,21 @@ import {
   _getIconPath,
   $,
   get1rem,
-  getAPIKey,
-  saveAPIKey,
   initGeo,
   vibrate,
   timeoutPromise,
   eventListenerPromise,
-  savePosInfo,
-  clearPosInfo,
-  getPosList,
-  savePosList,
+  dayRander,
+  Storage,
 } from './js/common.mjs'
 import { getWeather, getAQI, fetchGeo } from './js/api/openWeatherApi.mjs'
 import {
-  fetchLocationKeyByGeo,
+  fetchLocationInfoByGeo,
   fetchCurrentConditionsByLocationKey,
+  fetchLocationInfoByName,
+  fetchHourlyForecasts,
+  fetchDailyForecasts,
+  fetchDailyAQI,
 } from './js/api/ACCUWeatherApi.mjs'
 import { createNotifList, NOTI } from './js/notif.mjs'
 import { modes, switchAmoled, switchTheme, renderTheme } from './js/theme.mjs'
@@ -33,54 +33,60 @@ import('./js/dev.mjs')
 
 // In order to detect if a notification has disappeared
 const showNotif = createNotifList()
+const OP = 'OpenWeather'
+const ACCU = 'ACCUWeather'
+const dataSources = [OP, ACCU]
 
 const proxy = new Proxy(
   {},
   {
     set: function (target, key, value, receiver) {
-      if (!$(`.${key}`)) {
-        console.warn(`[update error]: ${key} 不存在`)
+      if (value === Reflect.get(target, key)) return true
+      const elm = $(`.${key}`)
+      if (!elm) {
+        console.warn(`[update error]: ${key} 元素不存在`)
+        Reflect.set(target, key, value, receiver)
         return true
       }
+      let newVal = value
 
       let handler = () => {
-        const renderElm = $(`.${key}`).firstElementChild || $(`.${key}`)
-        renderElm.textContent = value
+        const renderElm = elm.firstElementChild || elm
+        renderElm.textContent = typeof newVal === 'object' ? newVal?.value : newVal
       }
       if (key.startsWith('temp_')) {
-        value = tempRander(value)
+        newVal = tempRander(newVal)
       }
 
       if (key.startsWith('per_')) {
-        value = `${value}%`
+        newVal = `${newVal}%`
       }
 
       if (key.startsWith('time_')) {
         if (key === 'time_dt') {
-          value = semanticTimeExpression(value * 1e3)
+          newVal = semanticTimeExpression(newVal * 1e3)
         } else {
-          value = timeRander(value * 1e3)
-          const [h, m] = value.split(':')
+          newVal = timeRander(newVal * 1e3)
+          const [h, m] = newVal.split(':')
           $(':root').style.setProperty(`--${key}`, (+h + m / 60).toFixed(2))
         }
       }
       if (key.startsWith('icon_')) {
         handler = () => {
-          value = _getIconPath(value)
-          $(`.${key}`).style.setProperty('--icon-url', `url("${value}")`)
+          newVal = _getIconPath(newVal)
+          elm.style.setProperty('--icon-url', `url("${newVal}")`)
         }
       }
       if (key.startsWith('deg_')) {
         handler = () => {
-          $(`.${key}`).style.setProperty('--deg', `${value}deg`)
+          elm.style.setProperty('--deg', `${newVal}deg`)
         }
       }
       if (key === 'num_aqi') {
-        $(`.${key}`).className = `${key} rank_${value}`
+        elm.className = `${key} rank_${newVal}`
       }
       if (key === 'link_about') {
-        $(`.${key}`).href = value?.href
-        value = value?.value
+        elm.href = newVal?.href
       }
       handler()
       Reflect.set(target, key, value, receiver)
@@ -139,6 +145,28 @@ window.onload = () => {
   }
 }
 
+function _formatACCUData({
+  Country,
+  AdministrativeArea,
+  ParentCity,
+  LocalizedName,
+  GeoPosition,
+  Key,
+}) {
+  const name = LocalizedName
+  const parentCity = ParentCity?.LocalizedName ? `${ParentCity?.LocalizedName}, ` : ''
+  const administrativeArea = AdministrativeArea?.LocalizedName
+    ? `${AdministrativeArea?.LocalizedName}, `
+    : ''
+  return {
+    desc: `${parentCity}${administrativeArea}${Country?.LocalizedName}`,
+    name,
+    lat: GeoPosition?.Latitude,
+    lon: GeoPosition?.Longitude,
+    locationKey: Key,
+  }
+}
+
 function _formatData({ country, local_names, name, state, lat, lon }) {
   name = (local_names?.zh ?? name).split('/')[0]
   state = state ? `${state}, ` : ''
@@ -156,12 +184,14 @@ function rendersearchResult(list) {
   div.className = 'result_list'
   if (list && list.length) {
     for (const item of list) {
-      const { desc, ...rest } = _formatData(item)
+      const fnMap = [_formatData, _formatACCUData]
+      const dataSource = Storage.getDataSource()
+      const { desc, ...rest } = fnMap[dataSource](item)
       const p = document.createElement('p')
       p.onclick = () => {
         vibrate()
-        savePosInfo(rest)
-        savePosList(rest)
+        Storage.savePosInfo(rest)
+        Storage.savePosList(rest)
         renderSavedList()
         showNotif({
           type: NOTI.success,
@@ -181,16 +211,16 @@ function rendersearchResult(list) {
 }
 
 function renderSavedList() {
-  const list = [{ name: '我的位置' }, ...getPosList()]
+  const list = [{ name: '我的位置' }, ...Storage.getPosList()]
   const frag = document.createDocumentFragment()
   for (const [index, item] of list.entries()) {
     const p = document.createElement('p')
     p.onclick = () => {
       vibrate()
       if (index) {
-        savePosInfo(item)
+        Storage.savePosInfo(item)
       } else {
-        clearPosInfo()
+        Storage.clearPosInfo()
       }
       showNotif({
         type: NOTI.success,
@@ -210,22 +240,35 @@ $('#form').onsubmit = async ev => {
   const value = search?.value?.trim()
   if (!value) return
   search.classList.add('input_loading')
-  const key = getAPIKey()
-  const data = await fetchGeo(value, key)
+  const key = Storage.getAPIKey()
+  // const data = await fetchGeo(value, key)
+  const data = await fetchLocationInfoByName(value, key)
+  // console.log(data)
   search.classList.remove('input_loading')
   const main = $('.main')
   const result_list = rendersearchResult(data)
   main.insertAdjacentElement('afterbegin', result_list)
 }
 
+$('.switch_dataSource').onclick = () => {
+  vibrate()
+  let i = Storage.getDataSource() ?? 0
+  i++
+  if (i === dataSources.length) i = 0
+  Storage.saveDataSource(i)
+  showNotif({
+    content: `数据源：${dataSources[i]}`,
+  })
+}
+
 $('.temp_cur').onclick = () => {
   vibrate()
   const key_input = $('.api_key')
-  key_input.value = getAPIKey()
+  key_input.value = Storage.getAPIKey()
   key_input.onblur = ev => {
     ev.target.type = 'password'
     const { value } = ev.target
-    value && saveAPIKey(value)
+    value && Storage.saveAPIKey(value)
   }
   key_input.onfocus = ev => {
     ev.target.type = 'text'
@@ -287,14 +330,6 @@ $('.num_aqi').ondblclick = () => {
   })
 }
 
-function getCurrWeather(p) {
-  return getWeather('weather', p)
-}
-
-function getForecastWeather(p) {
-  return getWeather('forecast', p)
-}
-
 function init(failed = false) {
   const fn = () =>
     new Promise(async resolve => {
@@ -313,7 +348,7 @@ function init(failed = false) {
         type: NOTI.success,
         content: '已更新',
       }
-      const key = getAPIKey()
+      const key = Storage.getAPIKey()
       try {
         if (isDevEnv() || !key || failed) {
           notifConfig.type = NOTI.warn
@@ -325,14 +360,25 @@ function init(failed = false) {
             ...geoData,
             key,
           }
-          data = await _fetchOpenWeatherData(params)
-          // data = await _fetchACCUWeatherData(params)
-          // console.log(data)
+          const fnMap = [_fetchOpenWeatherData, _fetchACCUWeatherData]
+          const dataSource = Storage.getDataSource()
+          data = await fnMap[dataSource](params)
         }
         updateData(data)
-        const list = await renderList(data.forecast)
-        $(`.list_forecast`).innerHTML = ''
-        $(`.list_forecast`).appendChild(list)
+        const hourlyForecastsList = await renderHourlyForecastsList(data.hourlyForecasts)
+        $(`.list_hourly_forecast`).innerHTML = ''
+        $(`.list_hourly_forecast`).appendChild(hourlyForecastsList)
+        if (data?.dailyForecasts?.length) {
+          let elm = $(`.list_daily_forecast`)
+          if (!elm) {
+            elm = document.createElement('div')
+            elm.className = 'block list_daily_forecast'
+            $('.content').appendChild(elm)
+          }
+          const dailyForecastsList = await renderDailyForecastsList(data.dailyForecasts)
+          elm.innerHTML = ''
+          elm.appendChild(dailyForecastsList)
+        }
       } catch (err) {
         console.dir(err)
         const { name, code } = err
@@ -350,42 +396,77 @@ function init(failed = false) {
 }
 
 async function _fetchACCUWeatherData(param) {
-  const { lat, lon } = param
-  const key = ''
-  const locationInfo = await fetchLocationKeyByGeo(`${lat},${lon}`, key)
-  const { Key: locationKey, LocalizedName } = locationInfo
-  const [cur] = await fetchCurrentConditionsByLocationKey(locationKey, key)
-  // // binjiang code "2333614"
-  console.log(cur)
+  const { lat, lon, key } = param
+  let locationKey, name
+  if (param.locationKey) {
+    locationKey = param.locationKey
+    name = param.name
+  } else {
+    const locationInfo = await fetchLocationInfoByGeo(`${lat},${lon}`, key)
+    locationKey = locationInfo.Key
+    name = locationInfo.LocalizedName
+  }
+
+  const p = { locationKey, key }
+  const requestList = Promise.all([
+    fetchCurrentConditionsByLocationKey(p),
+    fetchHourlyForecasts(p),
+    fetchDailyForecasts(p),
+    fetchDailyAQI(p),
+    // emmm slow down... :p
+    timeoutPromise(1e3),
+  ])
+  const [[cur], hourlyForecasts, { Headline: headline, DailyForecasts: dailyForecasts }, [aqi]] =
+    await requestList
+
   const UNITS = ['Metric', 'Imperial']
   const unit = UNITS[0]
   const data = {
-    name_city: LocalizedName,
+    name_city: name,
     temp_cur: cur?.Temperature?.[unit]?.Value,
     temp_dew_point: cur?.DewPoint?.[unit]?.Value,
     temp_min: cur?.TemperatureSummary?.Past6HourRange?.Minimum?.[unit]?.Value,
     temp_max: cur?.TemperatureSummary?.Past6HourRange?.Maximum?.[unit]?.Value,
     num_pressure: cur?.Pressure?.[unit]?.Value,
     unit_pressure: cur?.Pressure?.[unit]?.Unit,
-    per_humidity: cur?.RelativeHumidity,
+    // per_humidity: cur?.RelativeHumidity,
+    per_humidity: cur?.IndoorRelativeHumidity,
     temp_feels_like: cur?.RealFeelTemperature?.[unit]?.Value,
+    desc_feels_like: cur?.RealFeelTemperature?.[unit]?.Phrase,
     num_wind: cur?.Wind?.Speed?.[unit]?.Value,
     unit_wind: cur?.Wind?.Speed?.[unit]?.Unit,
     deg_wind: cur?.Wind?.Direction?.Degrees,
     desc_wind: cur?.Wind?.Direction?.Localized,
-    //   time_sunrise:,
-    //   time_sunset:,
+    time_sunrise: dailyForecasts?.[0]?.Sun?.EpochRise,
+    time_sunset: dailyForecasts?.[0]?.Sun?.EpochSet,
     time_dt: cur?.EpochTime,
     desc_weather: cur?.WeatherText,
     icon_main: cur?.WeatherIcon,
     num_UVIndex: cur?.UVIndex,
     desc_UVIndex: cur?.UVIndexText,
-    // num_aqi:
+    num_aqi: aqi?.Value,
     link_about: {
       value: 'AccuWeather',
       href: cur?.Link,
     },
-    forecast: [],
+    hourlyForecasts: hourlyForecasts.map(x => {
+      return {
+        temp: x?.Temperature?.Value,
+        icon: x?.WeatherIcon,
+        desc: x?.IconPhrase,
+        time: x?.EpochDateTime,
+      }
+    }),
+    dailyForecasts: dailyForecasts.map((x, i) => {
+      const type = i === 0 && !cur?.IsDayTime ? 'Night' : 'Day'
+      return {
+        temp_min: x?.Temperature?.Minimum?.Value,
+        temp_max: x?.Temperature?.Maximum?.Value,
+        icon: x?.[type]?.Icon,
+        // desc: x?.Day?.IconPhrase,
+        time: x?.EpochDate,
+      }
+    }),
   }
   return data
 }
@@ -398,6 +479,7 @@ function updateData(data) {
     'temp_min',
     'temp_max',
     'temp_feels_like',
+    'desc_feels_like',
     'temp_dew_point',
     'num_pressure',
     'unit_pressure',
@@ -418,7 +500,7 @@ function updateData(data) {
   ]
   for (const key in data) {
     if (!validKeys.includes(key)) {
-      console.log(key)
+      // console.log(key)
       continue
     }
     if (data[key] !== undefined) {
@@ -441,17 +523,17 @@ function offLineCheck() {
   }
 }
 
-async function renderList(list) {
+async function renderHourlyForecastsList(list) {
   const frag = document.createDocumentFragment()
   const imgLoaders = new Map()
-  for (const item of list) {
-    const { dt, weather, main } = item
+  for (const x of list) {
+    // temp icon desc time
     const div = document.createElement('div')
     div.classList.add('item_forecast')
     const time = document.createElement('p')
-    time.textContent = timeRander(dt * 1e3)
+    time.textContent = timeRander(x?.time * 1e3)
     const icon = document.createElement('img')
-    icon.src = _getIconPath(weather?.[0]?.icon)
+    icon.src = _getIconPath(x?.icon)
     if (!imgLoaders.has(icon.src)) {
       imgLoaders.set(
         icon.src,
@@ -460,9 +542,40 @@ async function renderList(list) {
         }),
       )
     }
-    icon.alt = weather?.[0]?.description
+    icon.alt = x?.desc
     const temp = document.createElement('p')
-    temp.textContent = tempRander(main?.temp)
+    temp.textContent = `${x?.desc} | ${tempRander(x?.temp)}`
+    div.appendChild(time)
+    div.appendChild(icon)
+    div.appendChild(temp)
+    frag.appendChild(div)
+  }
+  await Promise.all([...imgLoaders.values()])
+  return frag
+}
+
+async function renderDailyForecastsList(list) {
+  const frag = document.createDocumentFragment()
+  const imgLoaders = new Map()
+  for (const x of list) {
+    // temp_min temp_max icon time
+    const div = document.createElement('div')
+    div.classList.add('item_forecast')
+    const time = document.createElement('p')
+    time.textContent = dayRander(x?.time * 1e3)
+    const icon = document.createElement('img')
+    icon.src = _getIconPath(x?.icon)
+    if (!imgLoaders.has(icon.src)) {
+      imgLoaders.set(
+        icon.src,
+        new Promise(resolve => {
+          icon.onload = resolve
+        }),
+      )
+    }
+    icon.alt = ''
+    const temp = document.createElement('p')
+    temp.textContent = `${tempRander(x?.temp_min)}/${tempRander(x?.temp_max)}`
     div.appendChild(time)
     div.appendChild(icon)
     div.appendChild(temp)
@@ -516,8 +629,8 @@ function initMsgChannel(controller) {
 
 async function _fetchOpenWeatherData(params) {
   const requestList = Promise.all([
-    getCurrWeather(params),
-    getForecastWeather({ cnt: 8, ...params }),
+    getWeather('weather', params),
+    getWeather('forecast', { cnt: 8, ...params }),
     getAQI(params),
     // emmm slow down... :p
     timeoutPromise(1e3),
@@ -537,7 +650,14 @@ async function _fetchOpenWeatherData(params) {
     desc_weather: curr?.weather?.[0]?.description,
     icon_main: curr?.weather?.[0]?.icon,
     num_aqi: AQIcalculation(aqi?.list?.[0]?.components),
-    forecast: forecast.list,
+    hourlyForecasts: forecast?.list?.map(x => {
+      return {
+        temp: x?.main?.temp,
+        icon: x?.weather?.[0]?.icon,
+        desc: x?.weather?.[0]?.description,
+        time: x?.dt,
+      }
+    }),
   }
   return data
 }

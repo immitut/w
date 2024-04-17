@@ -37,8 +37,8 @@ function checkCacheInfo(url) {
       const { ts, destination } = result
       const expiredTimeMap = {
         image: 2592e6, // 30 days
-        '': Infinity, // 30 mins
-        // '': 18e5, // 30 mins
+        // '': 72e5, // for dev
+        '': 18e5, // 30 mins
         // TODO: remove for better dev
         // document: 432e5, // half day
         // script: 432e5,
@@ -100,6 +100,7 @@ self.addEventListener('fetch', ev => {
         }
         try {
           const resp = await fetch(request)
+          // console.log('status', resp.status)
           if (resp.ok) {
             cache
               .put(request, resp.clone())

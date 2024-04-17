@@ -9,6 +9,8 @@ const AMOLED = '_a'
 // auto/light/dark mode
 const DISPLAYMODE = '_m'
 
+const DATASOURCE = '_datasource'
+
 function _saveItem(key, value) {
   localStorage.setItem(key, JSON.stringify(value))
 }
@@ -46,19 +48,25 @@ export function savePosList(data) {
   _saveItem(POSITIONLIST, list)
 }
 
-/**
- * @returns {[]}
- */
 export function getPosList() {
   return _getItem(POSITIONLIST) ?? []
 }
 
+function _getKeyList() {
+  return _getItem(KEY) ?? ['', '', '', '']
+}
+
 export function saveAPIKey(key) {
-  _saveItem(KEY, key)
+  const dataSource = getDataSource()
+  const keyList = _getKeyList()
+  keyList[dataSource] = key
+  _saveItem(KEY, keyList)
 }
 
 export function getAPIKey() {
-  return _getItem(KEY)
+  const dataSource = getDataSource()
+  const keyList = _getKeyList()
+  return keyList[dataSource]
 }
 
 export function saveAmoledMode(bool) {
@@ -75,4 +83,12 @@ export function saveDisplaydMode(mode) {
 
 export function getDisplayMode() {
   return _getItem(DISPLAYMODE)
+}
+
+export function saveDataSource(dataSource) {
+  _saveItem(DATASOURCE, dataSource)
+}
+
+export function getDataSource() {
+  return _getItem(DATASOURCE) ?? 0
 }
