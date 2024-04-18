@@ -244,8 +244,7 @@ $('#form').onsubmit = async ev => {
 
   const fnMap = [fetchGeo, fetchLocationInfoByName]
   const dataSource = Storage.getDataSource()
-  data = await fnMap[dataSource](value, key)
-  // console.log(data)
+  const data = await fnMap[dataSource](value, key)
   search.classList.remove('input_loading')
   const main = $('.main')
   const result_list = rendersearchResult(data)
@@ -446,7 +445,7 @@ async function _fetchACCUWeatherData(param) {
     icon_main: cur?.WeatherIcon,
     num_UVIndex: cur?.UVIndex,
     desc_UVIndex: cur?.UVIndexText,
-    num_aqi: aqi?.Value,
+    num_aqi: aqi?.CategoryValue,
     link_about: {
       value: 'AccuWeather',
       href: cur?.Link,
