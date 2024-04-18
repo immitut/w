@@ -364,6 +364,7 @@ function init(failed = false) {
           const fnMap = [_fetchOpenWeatherData, _fetchACCUWeatherData]
           const dataSource = Storage.getDataSource()
           data = await fnMap[dataSource](params)
+          // console.log(data)
         }
         updateData(data)
         const hourlyForecastsList = await renderHourlyForecastsList(data.hourlyForecasts)
@@ -374,7 +375,7 @@ function init(failed = false) {
           if (!elm) {
             elm = document.createElement('div')
             elm.className = 'block list_daily_forecast'
-            $('.content').appendChild(elm)
+            $('.sun').insertAdjacentElement('beforebegin', elm)
           }
           const dailyForecastsList = await renderDailyForecastsList(data.dailyForecasts)
           elm.innerHTML = ''
@@ -463,8 +464,8 @@ async function _fetchACCUWeatherData(param) {
       return {
         temp_min: x?.Temperature?.Minimum?.Value,
         temp_max: x?.Temperature?.Maximum?.Value,
+        precipitation: x?.[type]?.HasPrecipitation ? x?.[type]?.PrecipitationProbability : null,
         icon: x?.[type]?.Icon,
-        // desc: x?.Day?.IconPhrase,
         time: x?.EpochDate,
       }
     }),
@@ -530,7 +531,7 @@ async function renderHourlyForecastsList(list) {
   for (const x of list) {
     // temp icon desc time
     const div = document.createElement('div')
-    div.classList.add('item_forecast')
+    div.classList.add('item_forecast', 'b')
     const time = document.createElement('p')
     time.textContent = timeRander(x?.time * 1e3)
     const icon = document.createElement('img')
@@ -559,11 +560,13 @@ async function renderDailyForecastsList(list) {
   const frag = document.createDocumentFragment()
   const imgLoaders = new Map()
   for (const x of list) {
-    // temp_min temp_max icon time
+    // temp_min temp_max icon time precipitation
     const div = document.createElement('div')
     div.classList.add('item_forecast')
     const time = document.createElement('p')
     time.textContent = dayRander(x?.time * 1e3)
+    const imgBox = document.createElement('p')
+    imgBox.classList.add('img_box')
     const icon = document.createElement('img')
     icon.src = _getIconPath(x?.icon)
     if (!imgLoaders.has(icon.src)) {
@@ -575,10 +578,12 @@ async function renderDailyForecastsList(list) {
       )
     }
     icon.alt = ''
+    const precipitation = x.precipitation ? `${x.precipitation}% ` : ''
+    imgBox.append(precipitation, icon)
     const temp = document.createElement('p')
     temp.textContent = `${tempRander(x?.temp_min)}/${tempRander(x?.temp_max)}`
     div.appendChild(time)
-    div.appendChild(icon)
+    div.appendChild(imgBox)
     div.appendChild(temp)
     frag.appendChild(div)
   }
@@ -637,6 +642,9 @@ async function _fetchOpenWeatherData(params) {
     timeoutPromise(1e3),
   ])
   const [curr, forecast, aqi] = await requestList
+  // const { dailyForecasts: d } = await import('./data.js')
+  // const { Headline, DailyForecasts: dailyForecasts } = d
+  // console.log(Headline)
   const data = {
     name_city: curr?.name,
     temp_cur: curr?.main?.temp,
