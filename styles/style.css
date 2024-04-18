@@ -148,7 +148,7 @@ body {
   background: rgb(var(--color-container));
   font-size: var(--font-size-normal);
   color: rgb(var(--color-on-container));
-  font-weight: 600;
+  font-weight: 400;
   user-select: none;
 }
 
@@ -625,8 +625,11 @@ body {
   }
   .version {
     text-align: center;
-    font-weight: normal;
   }
+}
+
+.b {
+  font-weight: 600;
 }
 
 @keyframes breathing {
